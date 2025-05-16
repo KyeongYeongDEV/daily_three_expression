@@ -10,7 +10,9 @@ import { BatchModule } from './batch/batch.module';
 import { SendModule } from './send/send.module';
 import { Expression } from './ai/entitys/expression.entity';
 import { User } from './user/entitys/user.entity';
-import { UserExpressionProgress } from './shared/entitys/user-expression-progress.entity';
+import { UserExpressionProgress } from './user-expression-progress/entitys/user-expression-progress.entity';
+import { UserExpressionService } from './user-expression-progress/user-expression-progress.service';
+import { UserExpressionProgressModule } from './user-expression-progress/user-expression-progress.module';
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { UserExpressionProgress } from './shared/entitys/user-expression-progres
     AIModule,
     BatchModule,
     SendModule,
+    UserExpressionProgressModule,
   ],
+  providers: [UserExpressionService],
 })
 export class AppModule {}
