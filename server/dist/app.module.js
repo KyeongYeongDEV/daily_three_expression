@@ -10,6 +10,7 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const ioredis_1 = require("@nestjs-modules/ioredis");
+const typeorm_1 = require("@nestjs/typeorm");
 const user_module_1 = require("./user/user.module");
 const admin_module_1 = require("./admin/admin.module");
 const ai_module_1 = require("./ai/ai.module");
@@ -22,6 +23,20 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({ isGlobal: true }),
+            typeorm_1.TypeOrmModule.forRootAsync({
+                imports: [config_1.ConfigModule],
+                inject: [config_1.ConfigService],
+                useFactory: (configService) => ({
+                    type: 'mysql',
+                    host: configService.get('DB_HOST'),
+                    port: parseInt(configService.get('DB_PORT') || '3306', 10),
+                    username: configService.get('DB_USERNAME'),
+                    password: configService.get('DB_PASSWORD'),
+                    database: configService.get('DB_DATABASE'),
+                    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+                    synchronize: true,
+                }),
+            }),
             ioredis_1.RedisModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
