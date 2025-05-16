@@ -1,10 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
-import { User } from './user.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
+import { User } from '../../user/entitys/user.entity';
 
 @Entity()
 export class Expression {
   @PrimaryGeneratedColumn()
   e_id: number;
+
+  @Column()
+  expression_numer : number;
 
   @Column()
   category: string;

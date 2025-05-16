@@ -8,9 +8,9 @@ import { AdminModule } from './admin/admin.module';
 import { AIModule } from './ai/ai.module';
 import { BatchModule } from './batch/batch.module';
 import { SendModule } from './send/send.module';
-import { Expression } from './entitys/expression.entity';
-import { User } from './entitys/user.entity';
-import { UserExpressionProgress } from './entitys/user-expression-progress.entity';
+import { Expression } from './ai/entitys/expression.entity';
+import { User } from './user/entitys/user.entity';
+import { UserExpressionProgress } from './shared/entitys/user-expression-progress.entity';
 
 @Module({
   imports: [

@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
-import { Expression } from './expression.entity';
+import { Expression } from '../../ai/entitys/expression.entity';
 
 @Entity()
 export class User {

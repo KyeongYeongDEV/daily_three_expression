@@ -1,6 +1,6 @@
-import { Column,Entity,JoinColumn,ManyToOne,PrimaryGeneratedColumn } from 'typeorm';
-import { User } from './user.entity';
-import { Expression } from './expression.entity';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from '../../user/entitys/user.entity';
+import { Expression } from '../../ai/entitys/expression.entity';
 
 export type DeliveryStatus = 'success' | 'failed' | 'pending';
 
