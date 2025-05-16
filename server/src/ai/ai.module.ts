@@ -4,9 +4,13 @@ import { AiService } from "./ai.service";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from '@nestjs/typeorm'; 
 import { AiRepository } from "./ai.repository";
+import { Expression } from "./entitys/expression.entity";
 
 @Module({
-  imports : [ConfigModule, TypeOrmModule],
+  imports : [
+    ConfigModule, 
+    TypeOrmModule.forFeature([Expression]),
+  ],
   controllers : [AiController],
   providers : [AiService, AiRepository],
 })
