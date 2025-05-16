@@ -1,12 +1,19 @@
-import { registerAs } from "@nestjs/config";
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 
-export default registerAs('typeorm', () => ({
-  type: process.env.DB_TYPE,
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  synchronize: true,
-}));
+export default async function typeOrmConfig(
+  configService: ConfigService,
+): Promise<TypeOrmModuleOptions> {
+  return {
+    type: 'mysql',
+    host: configService.get<string>('DB_HOST'),
+    port: parseInt(configService.get<string>('DB_PORT') || '3306', 10),
+    username: configService.get<string>('DB_USERNAME'),
+    password: configService.get<string>('DB_PASSWORD'),
+    database: configService.get<string>('DB_DATABASE'),
+    entities: [__dirname + '/../**/*.entity.{ts,js}'],
+    synchronize: false, 
+    charset: 'utf8mb4',
+    logging: true,
+  };
+}

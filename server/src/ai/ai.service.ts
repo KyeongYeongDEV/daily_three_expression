@@ -3,11 +3,6 @@ import { AiRepository } from './ai.repository';
 import OpenAI from 'openai';
 import { ConfigService } from '@nestjs/config';
 
-function decodeUnicode(str: string): string {
-  return str.replace(/\\u[\dA-F]{4}/gi, (match) =>
-    String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16))
-  );
-}
 
 @Injectable()
 export class AiService {
@@ -48,7 +43,12 @@ export class AiService {
     const discriptions = this.configService.get<string>('OPENAI_DESCRIPTION') as string;
     const content = this.configService.get<string>('OPENAI_CONTENT') as string;
     const prompts = this.configService.get<string>('OPENAI_PROMPT') as string;
-    
+
+    function decodeUnicode(str: string): string {
+      return str.replace(/\\u[\dA-F]{4}/gi, (match) =>
+        String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16))
+      );
+    }
 
     const functions = [
       {

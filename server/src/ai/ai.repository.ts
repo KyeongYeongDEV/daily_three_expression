@@ -6,21 +6,21 @@ export class AiRepository {
   constructor(private readonly dataSource: DataSource) {}
 
   async checkDuplicate(vector: number[]): Promise<boolean> {
-    // const rows = await this.dataSource.query('SELECT expression, embedding FROM expression_embeddings');
+    const rows = await this.dataSource.query('SELECT expression, embedding FROM expression_embeddings');
 
-    // for (const row of rows) {
-    //   const existing = JSON.parse(row.embedding);
-    //   const similarity = this.cosineSimilarity(existing, vector);
-    //   if (similarity > 0.9) return true;
-    // }
+    for (const row of rows) {
+      const existing = JSON.parse(row.embedding);
+      const similarity = this.cosineSimilarity(existing, vector);
+      if (similarity > 0.9) return true;
+    }
     return false;
   }
 
   async saveExpression(expression: string, vector: number[]): Promise<void> {
-    // await this.dataSource.query(
-    //   'INSERT INTO expression_embeddings (expression, embedding) VALUES (?, ?)',
-    //   [expression, JSON.stringify(vector)],
-    // );
+    await this.dataSource.query(
+      'INSERT INTO expression_embeddings (expression, embedding) VALUES (?, ?)',
+      [expression, JSON.stringify(vector)],
+    );
   }
 
   private cosineSimilarity(a: number[], b: number[]): number {
