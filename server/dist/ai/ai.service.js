@@ -14,9 +14,6 @@ const common_1 = require("@nestjs/common");
 const ai_repository_1 = require("./ai.repository");
 const openai_1 = require("openai");
 const config_1 = require("@nestjs/config");
-function decodeUnicode(str) {
-    return str.replace(/\\u[\dA-F]{4}/gi, (match) => String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16)));
-}
 let AiService = class AiService {
     aiRepository;
     configService;
@@ -50,6 +47,9 @@ let AiService = class AiService {
         const discriptions = this.configService.get('OPENAI_DESCRIPTION');
         const content = this.configService.get('OPENAI_CONTENT');
         const prompts = this.configService.get('OPENAI_PROMPT');
+        function decodeUnicode(str) {
+            return str.replace(/\\u[\dA-F]{4}/gi, (match) => String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16)));
+        }
         const functions = [
             {
                 name: 'returnExpressions',
