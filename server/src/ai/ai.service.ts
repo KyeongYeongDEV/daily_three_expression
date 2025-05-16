@@ -36,13 +36,19 @@ export class AiService {
     const completion = await this.openAi.chat.completions.create({
       model: 'gpt-4-turbo',
       messages: [
-        { role: 'system', content: 'You are the best English conversation teacher' }, // 프롬프트 설정
-        { role: 'user', content: prompt }, //  내 질문
+        { role: 'system', content: 'You must ONLY respond with a JSON array of 3 English expressions. No explanation.' },
+        { role: 'user', content: prompt },
       ],
     });
-
+  
     const response = completion.choices[0].message?.content;
-    return JSON.parse(response ?? '[]');
+  
+    try {
+      return JSON.parse(response ?? '[]');
+    } catch (e) {
+      console.error('❌ JSON 파싱 실패! GPT 응답:', response);
+      return [];
+    }
   }
 
   private async getEmbedding(text: string): Promise<number[]> {
