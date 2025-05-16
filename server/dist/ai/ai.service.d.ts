@@ -5,7 +5,7 @@ export declare class AiService {
     private readonly configService;
     private openAi;
     constructor(aiRepository: AiRepository, configService: ConfigService);
-    generateAndSaveIfUnique(prompt: string): Promise<string[]>;
+    generateAndSaveIfUnique(): Promise<string[]>;
     private generateFromGPT;
     private getEmbedding;
 }

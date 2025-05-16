@@ -7,8 +7,8 @@ export class AiController {
   constructor(private readonly aiService: AiService) {}
 
   @Get('test')
-  async testGenerate(@Query('prompt') prompt: string) {
-    const result = await this.aiService.generateAndSaveIfUnique(prompt);
+  async testGenerate() {
+    const result = await this.aiService.generateAndSaveIfUnique();
     console.log('GPT 응답 결과:', result);
     return { expressions: result };
   }
