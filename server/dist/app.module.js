@@ -16,6 +16,11 @@ const admin_module_1 = require("./admin/admin.module");
 const ai_module_1 = require("./ai/ai.module");
 const batch_module_1 = require("./batch/batch.module");
 const send_module_1 = require("./send/send.module");
+const expression_module_1 = require("./expression/expression.module");
+const expression_entity_1 = require("./expression/entities/expression.entity");
+const user_entity_1 = require("./user/entities/user.entity");
+const expression_delivery_entity_1 = require("./expression/entities/expression_delivery.entity");
+const mysql_config_1 = require("./config/mysql.config");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -26,17 +31,13 @@ exports.AppModule = AppModule = __decorate([
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
-                useFactory: (configService) => ({
-                    type: 'mysql',
-                    host: configService.get('DB_HOST'),
-                    port: parseInt(configService.get('DB_PORT') || '3306', 10),
-                    username: configService.get('DB_USERNAME'),
-                    password: configService.get('DB_PASSWORD'),
-                    database: configService.get('DB_DATABASE'),
-                    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-                    synchronize: true,
-                }),
+                useFactory: mysql_config_1.typeOrmConfig,
             }),
+            typeorm_1.TypeOrmModule.forFeature([
+                expression_entity_1.Expression,
+                user_entity_1.User,
+                expression_delivery_entity_1.ExpressionDelivery,
+            ]),
             ioredis_1.RedisModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
@@ -53,7 +54,10 @@ exports.AppModule = AppModule = __decorate([
             ai_module_1.AIModule,
             batch_module_1.BatchModule,
             send_module_1.SendModule,
+            expression_module_1.ExpressionModule,
         ],
+        providers: [],
+        controllers: [],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
