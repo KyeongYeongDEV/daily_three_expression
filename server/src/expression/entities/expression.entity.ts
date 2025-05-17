@@ -1,13 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
-import { User } from '../../user/entitys/user.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+} from 'typeorm';
+import { ExpressionDelivery } from './expression_delivery.entity';
 
-@Entity()
+@Entity('expression')
 export class Expression {
   @PrimaryGeneratedColumn()
   e_id: number;
 
   @Column()
-  expression_numer : number;
+  expression_numer: number;
 
   @Column()
   category: string;
@@ -36,6 +41,6 @@ export class Expression {
   @Column({ default: true })
   is_active: boolean;
 
-  @ManyToMany(() => User, (user) => user.expressions)
-  users: User[];
+  @OneToMany(() => ExpressionDelivery, (delivery) => delivery.expression)
+  deliveries: ExpressionDelivery[];
 }

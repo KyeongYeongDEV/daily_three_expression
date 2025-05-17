@@ -8,19 +8,26 @@ import { AdminModule } from './admin/admin.module';
 import { AIModule } from './ai/ai.module';
 import { BatchModule } from './batch/batch.module';
 import { SendModule } from './send/send.module';
-import { Expression } from './ai/entitys/expression.entity';
-import { User } from './user/entitys/user.entity';
-import { UserExpressionProgress } from './user-expression-progress/entitys/user-expression-progress.entity';
-import { UserExpressionService } from './user-expression-progress/user-expression-progress.service';
-import { UserExpressionProgressModule } from './user-expression-progress/user-expression-progress.module';
+import { ExpressionModule } from './expression/expression.module';
+
+import { Expression } from './expression/entities/expression.entity';
+import { User } from './user/entities/user.entity';
+import { ExpressionDelivery } from './expression/entities/expression_delivery.entity';
+import { typeOrmConfig } from './config/mysql.config';
+
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: typeOrmConfig,
+    }),
     TypeOrmModule.forFeature([
       Expression,
       User,
-      UserExpressionProgress,
+      ExpressionDelivery,
     ]),
     RedisModule.forRootAsync({
       imports: [ConfigModule],
@@ -38,8 +45,9 @@ import { UserExpressionProgressModule } from './user-expression-progress/user-ex
     AIModule,
     BatchModule,
     SendModule,
-    UserExpressionProgressModule,
+    ExpressionModule,
   ],
-  providers: [UserExpressionService],
+  providers: [],
+  controllers: [],
 })
 export class AppModule {}

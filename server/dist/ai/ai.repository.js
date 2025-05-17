@@ -18,9 +18,17 @@ let AiRepository = class AiRepository {
         this.dataSource = dataSource;
     }
     async checkDuplicate(vector) {
+        const rows = await this.dataSource.query('SELECT expression, embedding FROM expression_embeddings');
+        for (const row of rows) {
+            const existing = JSON.parse(row.embedding);
+            const similarity = this.cosineSimilarity(existing, vector);
+            if (similarity > 0.9)
+                return true;
+        }
         return false;
     }
     async saveExpression(expression, vector) {
+        await this.dataSource.query('INSERT INTO expression_embeddings (expression, embedding) VALUES (?, ?)', [expression, JSON.stringify(vector)]);
     }
     cosineSimilarity(a, b) {
         const dot = a.reduce((sum, val, i) => sum + val * b[i], 0);

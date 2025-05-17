@@ -1,20 +1,3 @@
-declare const _default: (() => {
-    type: string | undefined;
-    host: string | undefined;
-    port: number;
-    username: string | undefined;
-    password: string | undefined;
-    database: string | undefined;
-    entities: string[];
-    synchronize: boolean;
-}) & import("@nestjs/config").ConfigFactoryKeyHost<{
-    type: string | undefined;
-    host: string | undefined;
-    port: number;
-    username: string | undefined;
-    password: string | undefined;
-    database: string | undefined;
-    entities: string[];
-    synchronize: boolean;
-}>;
-export default _default;
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
+export declare const typeOrmConfig: (configService: ConfigService) => Promise<TypeOrmModuleOptions>;

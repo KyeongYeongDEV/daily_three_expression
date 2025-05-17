@@ -4,7 +4,7 @@ import { AiService } from "./ai.service";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from '@nestjs/typeorm'; 
 import { AiRepository } from "./ai.repository";
-import { Expression } from "./entitys/expression.entity";
+import { Expression } from "../expression/entities/expression.entity";
 
 @Module({
   imports : [

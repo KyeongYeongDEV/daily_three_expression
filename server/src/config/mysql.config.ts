@@ -1,9 +1,10 @@
+// src/config/typeorm.config.ts
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 
-export default async function typeOrmConfig(
+export const typeOrmConfig = async (
   configService: ConfigService,
-): Promise<TypeOrmModuleOptions> {
+): Promise<TypeOrmModuleOptions> => {
   return {
     type: 'mysql',
     host: configService.get<string>('DB_HOST'),
@@ -12,8 +13,8 @@ export default async function typeOrmConfig(
     password: configService.get<string>('DB_PASSWORD'),
     database: configService.get<string>('DB_DATABASE'),
     entities: [__dirname + '/../**/*.entity.{ts,js}'],
-    synchronize: false, 
+    synchronize: true, //TODO 배포시 false
     charset: 'utf8mb4',
     logging: true,
   };
-}
+};

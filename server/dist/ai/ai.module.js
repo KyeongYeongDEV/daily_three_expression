@@ -13,12 +13,16 @@ const ai_service_1 = require("./ai.service");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const ai_repository_1 = require("./ai.repository");
+const expression_entity_1 = require("../expression/entities/expression.entity");
 let AIModule = class AIModule {
 };
 exports.AIModule = AIModule;
 exports.AIModule = AIModule = __decorate([
     (0, common_1.Module)({
-        imports: [config_1.ConfigModule, typeorm_1.TypeOrmModule],
+        imports: [
+            config_1.ConfigModule,
+            typeorm_1.TypeOrmModule.forFeature([expression_entity_1.Expression]),
+        ],
         controllers: [ai_controller_1.AiController],
         providers: [ai_service_1.AiService, ai_repository_1.AiRepository],
     })
