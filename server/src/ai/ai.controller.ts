@@ -1,5 +1,5 @@
 // src/ai/ai.controller.ts
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Post, Query } from '@nestjs/common';
 import { AiService } from './ai.service';
 
 @Controller('ai')
@@ -8,8 +8,13 @@ export class AiController {
 
   @Get('test')
   async testGenerate() {
-    const result = await this.aiService.generateAndSaveIfUnique();
-    console.log('GPT 응답 결과:', result);
-    return { expressions: result };
+    //const result = await this.aiService.generateAndSaveIfUnique();
+    //console.log('GPT 응답 결과:', result);
+    //return { expressions: result };
+  }
+
+  @Post('generate')
+  async generateUniqueExpressions() {
+    //TODO 
   }
 }

@@ -1,11 +1,10 @@
-import { AiRepository } from './ai.repository';
 import { ConfigService } from '@nestjs/config';
+import { QdrantService } from './qdrant/qdrant.service';
 export declare class AiService {
-    private readonly aiRepository;
     private readonly configService;
+    private readonly qdrantSerivce;
     private openAi;
-    constructor(aiRepository: AiRepository, configService: ConfigService);
-    generateAndSaveIfUnique(): Promise<string[]>;
-    private generateFromGPT;
+    constructor(configService: ConfigService, qdrantSerivce: QdrantService);
+    private getExpressionFromGPT;
     private getEmbedding;
 }

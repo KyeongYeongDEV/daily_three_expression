@@ -13,7 +13,7 @@ import { ExpressionModule } from './expression/expression.module';
 import { Expression } from './expression/entities/expression.entity';
 import { User } from './user/entities/user.entity';
 import { ExpressionDelivery } from './expression/entities/expression_delivery.entity';
-import { typeOrmConfig } from './config/mysql.config';
+import { typeOrmConfig } from './common/config/mysql.config';
 
 
 @Module({

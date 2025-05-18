@@ -12,8 +12,9 @@ const ai_controller_1 = require("./ai.controller");
 const ai_service_1 = require("./ai.service");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
-const ai_repository_1 = require("./ai.repository");
 const expression_entity_1 = require("../expression/entities/expression.entity");
+const qdrant_service_1 = require("./qdrant/qdrant.service");
+const qdrant_repository_1 = require("./qdrant/qdrant.repository");
 let AIModule = class AIModule {
 };
 exports.AIModule = AIModule;
@@ -24,7 +25,7 @@ exports.AIModule = AIModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([expression_entity_1.Expression]),
         ],
         controllers: [ai_controller_1.AiController],
-        providers: [ai_service_1.AiService, ai_repository_1.AiRepository],
+        providers: [ai_service_1.AiService, qdrant_service_1.QdrantService, qdrant_repository_1.QdrantRepository],
     })
 ], AIModule);
 ;

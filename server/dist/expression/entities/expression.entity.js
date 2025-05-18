@@ -14,7 +14,7 @@ const typeorm_1 = require("typeorm");
 const expression_delivery_entity_1 = require("./expression_delivery.entity");
 let Expression = class Expression {
     e_id;
-    expression_numer;
+    expression_number;
     category;
     expression;
     example1;
@@ -34,7 +34,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
-], Expression.prototype, "expression_numer", void 0);
+], Expression.prototype, "expression_number", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
@@ -64,7 +64,7 @@ __decorate([
     __metadata("design:type", String)
 ], Expression.prototype, "translation_example2", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'date' }),
+    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
     __metadata("design:type", Date)
 ], Expression.prototype, "created_at", void 0);
 __decorate([
