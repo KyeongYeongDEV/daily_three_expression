@@ -18,9 +18,8 @@ let AiController = class AiController {
         this.aiService = aiService;
     }
     async testGenerate() {
-        const result = await this.aiService.generateAndSaveIfUnique();
-        console.log('GPT 응답 결과:', result);
-        return { expressions: result };
+    }
+    async generateUniqueExpressions() {
     }
 };
 exports.AiController = AiController;
@@ -30,6 +29,12 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AiController.prototype, "testGenerate", null);
+__decorate([
+    (0, common_1.Post)('generate'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AiController.prototype, "generateUniqueExpressions", null);
 exports.AiController = AiController = __decorate([
     (0, common_1.Controller)('ai'),
     __metadata("design:paramtypes", [ai_service_1.AiService])

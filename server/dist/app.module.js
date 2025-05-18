@@ -20,7 +20,7 @@ const expression_module_1 = require("./expression/expression.module");
 const expression_entity_1 = require("./expression/entities/expression.entity");
 const user_entity_1 = require("./user/entities/user.entity");
 const expression_delivery_entity_1 = require("./expression/entities/expression_delivery.entity");
-const mysql_config_1 = require("./config/mysql.config");
+const mysql_config_1 = require("./common/config/mysql.config");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;

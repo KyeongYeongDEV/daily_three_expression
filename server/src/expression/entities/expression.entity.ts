@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
+  CreateDateColumn,
 } from 'typeorm';
 import { ExpressionDelivery } from './expression_delivery.entity';
 
@@ -12,7 +13,7 @@ export class Expression {
   e_id: number;
 
   @Column()
-  expression_numer: number;
+  expression_number: number;
 
   @Column()
   category: string;
@@ -35,7 +36,7 @@ export class Expression {
   @Column()
   translation_example2: string;
 
-  @Column({ type: 'date' })
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 
   @Column({ default: true })

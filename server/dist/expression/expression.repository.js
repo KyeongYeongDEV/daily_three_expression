@@ -31,6 +31,9 @@ let ExpressionRepository = class ExpressionRepository {
     findById(id) {
         return this.expressionRepository.findOneBy({ e_id: id });
     }
+    findByCategory(category) {
+        return this.expressionRepository.findOneBy({ category: category });
+    }
 };
 exports.ExpressionRepository = ExpressionRepository;
 exports.ExpressionRepository = ExpressionRepository = __decorate([

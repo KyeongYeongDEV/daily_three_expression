@@ -22,4 +22,8 @@ export class ExpressionRepository {
   findById(id: number): Promise<Expression | null> {
     return this.expressionRepository.findOneBy({ e_id: id });
   }
+
+  findByCategory(category : string): Promise<Expression | null> {
+    return this.expressionRepository.findOneBy({ category : category });
+  }
 }
