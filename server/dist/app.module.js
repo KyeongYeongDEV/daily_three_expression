@@ -34,7 +34,7 @@ exports.AppModule = AppModule = __decorate([
                 useFactory: mysql_config_1.typeOrmConfig,
             }),
             typeorm_1.TypeOrmModule.forFeature([
-                expression_entity_1.Expression,
+                expression_entity_1.ExpressionEntity,
                 user_entity_1.User,
                 expression_delivery_entity_1.ExpressionDelivery,
             ]),

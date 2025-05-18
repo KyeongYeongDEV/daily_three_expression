@@ -1,7 +1,7 @@
 // src/expression/expression.service.ts
 import { Injectable } from '@nestjs/common';
 import { ExpressionRepository } from './expression.repository';
-import { Expression } from './entities/expression.entity';
+import { ExpressionEntity } from './entities/expression.entity';
 
 @Injectable()
 export class ExpressionService {
@@ -9,11 +9,17 @@ export class ExpressionService {
     private readonly expressionRepository: ExpressionRepository,
   ) {}
 
-  async getAllExpressions(): Promise<Expression[]> {
-    return this.expressionRepository.findAll();
+  async getAllExpressions(): Promise<ExpressionEntity[] | string> {
+    try {
+      return this.expressionRepository.findAll();
+    } catch (error) {
+      console.error(error)
+      return '에러'
+    }
+    
   }
 
-  async createNewExpression(input: Expression): Promise<Expression> {
+  async createNewExpression(input: ExpressionEntity): Promise<ExpressionEntity> {
     
     return this.expressionRepository.save(input);
   }

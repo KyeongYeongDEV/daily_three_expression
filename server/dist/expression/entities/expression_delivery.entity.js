@@ -39,9 +39,9 @@ __decorate([
     __metadata("design:type", user_entity_1.User)
 ], ExpressionDelivery.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => expression_entity_1.Expression, (expression) => expression.deliveries),
+    (0, typeorm_1.ManyToOne)(() => expression_entity_1.ExpressionEntity, (expression) => expression.deliveries),
     (0, typeorm_1.JoinColumn)({ name: 'e_id' }),
-    __metadata("design:type", expression_entity_1.Expression)
+    __metadata("design:type", expression_entity_1.ExpressionEntity)
 ], ExpressionDelivery.prototype, "expression", void 0);
 exports.ExpressionDelivery = ExpressionDelivery = __decorate([
     (0, typeorm_1.Entity)('expression_delivery')

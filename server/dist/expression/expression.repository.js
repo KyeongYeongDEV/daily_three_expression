@@ -38,7 +38,7 @@ let ExpressionRepository = class ExpressionRepository {
 exports.ExpressionRepository = ExpressionRepository;
 exports.ExpressionRepository = ExpressionRepository = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_2.InjectRepository)(expression_entity_1.Expression)),
+    __param(0, (0, typeorm_2.InjectRepository)(expression_entity_1.ExpressionEntity)),
     __metadata("design:paramtypes", [typeorm_1.Repository])
 ], ExpressionRepository);
 //# sourceMappingURL=expression.repository.js.map

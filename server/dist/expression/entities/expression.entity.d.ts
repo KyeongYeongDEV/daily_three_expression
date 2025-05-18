@@ -1,5 +1,5 @@
 import { ExpressionDelivery } from './expression_delivery.entity';
-export declare class Expression {
+export declare class ExpressionEntity {
     e_id: number;
     expression_number: number;
     category: string;

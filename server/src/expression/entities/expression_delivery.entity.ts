@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
-import { Expression } from './expression.entity';
+import { ExpressionEntity } from './expression.entity';
 
 export type DeliveryStatus = 'success' | 'failed' | 'pending';
 
@@ -25,7 +25,7 @@ export class ExpressionDelivery {
   @JoinColumn({ name: 'u_id' })
   user: User;
 
-  @ManyToOne(() => Expression, (expression) => expression.deliveries)
+  @ManyToOne(() => ExpressionEntity, (expression) => expression.deliveries)
   @JoinColumn({ name: 'e_id' })
-  expression: Expression;
+  expression: ExpressionEntity;
 }

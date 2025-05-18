@@ -8,7 +8,7 @@ import {
 import { ExpressionDelivery } from './expression_delivery.entity';
 
 @Entity('expression')
-export class Expression {
+export class ExpressionEntity {
   @PrimaryGeneratedColumn()
   e_id: number;
 

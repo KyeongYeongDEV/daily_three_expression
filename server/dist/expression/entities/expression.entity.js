@@ -9,10 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Expression = void 0;
+exports.ExpressionEntity = void 0;
 const typeorm_1 = require("typeorm");
 const expression_delivery_entity_1 = require("./expression_delivery.entity");
-let Expression = class Expression {
+let ExpressionEntity = class ExpressionEntity {
     e_id;
     expression_number;
     category;
@@ -26,56 +26,56 @@ let Expression = class Expression {
     is_active;
     deliveries;
 };
-exports.Expression = Expression;
+exports.ExpressionEntity = ExpressionEntity;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], Expression.prototype, "e_id", void 0);
+], ExpressionEntity.prototype, "e_id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
-], Expression.prototype, "expression_number", void 0);
+], ExpressionEntity.prototype, "expression_number", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Expression.prototype, "category", void 0);
+], ExpressionEntity.prototype, "category", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Expression.prototype, "expression", void 0);
+], ExpressionEntity.prototype, "expression", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Expression.prototype, "example1", void 0);
+], ExpressionEntity.prototype, "example1", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Expression.prototype, "example2", void 0);
+], ExpressionEntity.prototype, "example2", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Expression.prototype, "translation_expression", void 0);
+], ExpressionEntity.prototype, "translation_expression", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Expression.prototype, "translation_example1", void 0);
+], ExpressionEntity.prototype, "translation_example1", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Expression.prototype, "translation_example2", void 0);
+], ExpressionEntity.prototype, "translation_example2", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
     __metadata("design:type", Date)
-], Expression.prototype, "created_at", void 0);
+], ExpressionEntity.prototype, "created_at", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: true }),
     __metadata("design:type", Boolean)
-], Expression.prototype, "is_active", void 0);
+], ExpressionEntity.prototype, "is_active", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => expression_delivery_entity_1.ExpressionDelivery, (delivery) => delivery.expression),
     __metadata("design:type", Array)
-], Expression.prototype, "deliveries", void 0);
-exports.Expression = Expression = __decorate([
+], ExpressionEntity.prototype, "deliveries", void 0);
+exports.ExpressionEntity = ExpressionEntity = __decorate([
     (0, typeorm_1.Entity)('expression')
-], Expression);
+], ExpressionEntity);
 //# sourceMappingURL=expression.entity.js.map

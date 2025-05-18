@@ -1,29 +1,29 @@
 // expression.repository.ts
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Expression } from './entities/expression.entity';
+import { ExpressionEntity } from './entities/expression.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ExpressionRepository {
   constructor(
-    @InjectRepository(Expression)
-    private readonly expressionRepository: Repository<Expression>,
+    @InjectRepository(ExpressionEntity)
+    private readonly expressionRepository: Repository<ExpressionEntity>,
   ) {}
 
-  findAll(): Promise<Expression[]> {
+  findAll(): Promise<ExpressionEntity[]> {
     return this.expressionRepository.find();
   }
 
-  save(expression: Expression): Promise<Expression> {
+  save(expression: ExpressionEntity): Promise<ExpressionEntity> {
     return this.expressionRepository.save(expression);
   }
 
-  findById(id: number): Promise<Expression | null> {
+  findById(id: number): Promise<ExpressionEntity | null> {
     return this.expressionRepository.findOneBy({ e_id: id });
   }
 
-  findByCategory(category : string): Promise<Expression | null> {
+  findByCategory(category : string): Promise<ExpressionEntity | null> {
     return this.expressionRepository.findOneBy({ category : category });
   }
 }

@@ -18,7 +18,13 @@ let ExpressionService = class ExpressionService {
         this.expressionRepository = expressionRepository;
     }
     async getAllExpressions() {
-        return this.expressionRepository.findAll();
+        try {
+            return this.expressionRepository.findAll();
+        }
+        catch (error) {
+            console.error(error);
+            return '에러';
+        }
     }
     async createNewExpression(input) {
         return this.expressionRepository.save(input);
