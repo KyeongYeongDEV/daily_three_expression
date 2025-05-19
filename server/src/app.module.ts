@@ -10,9 +10,9 @@ import { BatchModule } from './batch/batch.module';
 import { SendModule } from './send/send.module';
 import { ExpressionModule } from './expression/expression.module';
 
-import { Expression } from './expression/entities/expression.entity';
+import { ExpressionEntity } from './expression/entities/expression.entity';
 import { User } from './user/entities/user.entity';
-import { ExpressionDelivery } from './expression/entities/expression_delivery.entity';
+import { ExpressionDelivery } from './expression/entities/expression-delivery.entity';
 import { typeOrmConfig } from './common/config/mysql.config';
 
 
@@ -25,7 +25,7 @@ import { typeOrmConfig } from './common/config/mysql.config';
       useFactory: typeOrmConfig,
     }),
     TypeOrmModule.forFeature([
-      Expression,
+      ExpressionEntity,
       User,
       ExpressionDelivery,
     ]),

@@ -4,10 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExpressionController } from './expression.controller';
 import { ExpressionService } from './expression.service';
 import { ExpressionRepository } from './expression.repository';
-import { Expression } from './entities/expression.entity';
+import { ExpressionEntity } from './entities/expression.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Expression])],
+  imports: [TypeOrmModule.forFeature([ExpressionEntity])],
   controllers: [ExpressionController],
   providers: [ExpressionService, ExpressionRepository],
   exports: [ExpressionRepository],

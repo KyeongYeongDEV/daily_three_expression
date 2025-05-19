@@ -18,7 +18,7 @@ let ExpressionModule = class ExpressionModule {
 exports.ExpressionModule = ExpressionModule;
 exports.ExpressionModule = ExpressionModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([expression_entity_1.Expression])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([expression_entity_1.ExpressionEntity])],
         controllers: [expression_controller_1.ExpressionController],
         providers: [expression_service_1.ExpressionService, expression_repository_1.ExpressionRepository],
         exports: [expression_repository_1.ExpressionRepository],

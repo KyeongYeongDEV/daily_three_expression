@@ -22,7 +22,7 @@ exports.AIModule = AIModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule,
-            typeorm_1.TypeOrmModule.forFeature([expression_entity_1.Expression]),
+            typeorm_1.TypeOrmModule.forFeature([expression_entity_1.ExpressionEntity]),
         ],
         controllers: [ai_controller_1.AiController],
         providers: [ai_service_1.AiService, qdrant_service_1.QdrantService, qdrant_repository_1.QdrantRepository],

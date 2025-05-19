@@ -19,7 +19,7 @@ const send_module_1 = require("./send/send.module");
 const expression_module_1 = require("./expression/expression.module");
 const expression_entity_1 = require("./expression/entities/expression.entity");
 const user_entity_1 = require("./user/entities/user.entity");
-const expression_delivery_entity_1 = require("./expression/entities/expression_delivery.entity");
+const expression_delivery_entity_1 = require("./expression/entities/expression-delivery.entity");
 const mysql_config_1 = require("./common/config/mysql.config");
 let AppModule = class AppModule {
 };
@@ -34,7 +34,7 @@ exports.AppModule = AppModule = __decorate([
                 useFactory: mysql_config_1.typeOrmConfig,
             }),
             typeorm_1.TypeOrmModule.forFeature([
-                expression_entity_1.Expression,
+                expression_entity_1.ExpressionEntity,
                 user_entity_1.User,
                 expression_delivery_entity_1.ExpressionDelivery,
             ]),

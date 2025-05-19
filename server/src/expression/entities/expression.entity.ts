@@ -5,10 +5,10 @@ import {
   OneToMany,
   CreateDateColumn,
 } from 'typeorm';
-import { ExpressionDelivery } from './expression_delivery.entity';
+import { ExpressionDelivery } from './expression-delivery.entity';
 
 @Entity('expression')
-export class Expression {
+export class ExpressionEntity {
   @PrimaryGeneratedColumn()
   e_id: number;
 

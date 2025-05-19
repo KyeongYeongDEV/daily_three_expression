@@ -22,23 +22,40 @@ let ExpressionRepository = class ExpressionRepository {
     constructor(expressionRepository) {
         this.expressionRepository = expressionRepository;
     }
-    findAll() {
+    async findAll() {
         return this.expressionRepository.find();
     }
-    save(expression) {
+    async save(expression) {
         return this.expressionRepository.save(expression);
     }
-    findById(id) {
+    async findById(id) {
         return this.expressionRepository.findOneBy({ e_id: id });
     }
-    findByCategory(category) {
+    async findThreeExpressionsByStartIdAndCategory(startId, category) {
+        return this.expressionRepository
+            .createQueryBuilder('expression')
+            .where('expression.e_id >= :startId', { startId })
+            .andWhere('expression.category = :category', { category })
+            .orderBy('expression.e_id', 'ASC')
+            .limit(3)
+            .getMany();
+    }
+    async findThreeExpressionsByStartId(startId) {
+        return this.expressionRepository
+            .createQueryBuilder('expression')
+            .where('expression.e_id >= :startId', { startId })
+            .orderBy('expression.e_id', 'ASC')
+            .limit(3)
+            .getMany();
+    }
+    async findByCategory(category) {
         return this.expressionRepository.findOneBy({ category: category });
     }
 };
 exports.ExpressionRepository = ExpressionRepository;
 exports.ExpressionRepository = ExpressionRepository = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_2.InjectRepository)(expression_entity_1.Expression)),
+    __param(0, (0, typeorm_2.InjectRepository)(expression_entity_1.ExpressionEntity)),
     __metadata("design:paramtypes", [typeorm_1.Repository])
 ], ExpressionRepository);
 //# sourceMappingURL=expression.repository.js.map
