@@ -14,11 +14,19 @@ export class ExpressionController {
   }
   @Get('one/:id')
   async getExpressionById(@Param('id') id : number) : Promise<ExpressionResponse>{
-    return this.expressionService.getExpressionById(id);
+    return this.expressionService.getExpressionById( id );
   }
 
   @Get('three/:id')
   async getThreeExpressionsByStartId(@Param('id') id : number) : Promise<ExpressionListResponse>{
-    return this.expressionService.getThreeExpressionsByStartId(id);
+    return this.expressionService.getThreeExpressionsByStartId( id );
+  }  
+  
+  @Get('three/:category/:id')
+  async getThreeExpressionsByStartIdAndCategory(
+    @Param('id') id : number,
+    @Param('category') category : string,
+  ) : Promise<ExpressionListResponse>{
+    return this.expressionService.getThreeExpressionsByStartIdAndCategory( id, category );
   }
 }

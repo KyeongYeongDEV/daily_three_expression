@@ -22,10 +22,10 @@ export class ExpressionRepository {
     return this.expressionRepository.findOneBy({ e_id: id });
   }
 
-  async findThreeExpressionsByStartIdAndCategory(startId : number, category : string) : Promise<ExpressionEntity[]>{
+  async findThreeExpressionsByStartIdAndCategory(startId : number, category : string) : Promise<ExpressionEntity[] | null>{
     return this.expressionRepository
       .createQueryBuilder('expression')
-      .where('expression.e_id > :startId', { startId })
+      .where('expression.e_id >= :startId', { startId })
       .andWhere('expression.category = :category', { category })
       .orderBy('expression.e_id', 'ASC') 
       .limit(3)

@@ -7,5 +7,6 @@ export declare class ExpressionService {
     getAllExpressions(): Promise<ExpressionListResponse>;
     getExpressionById(id: number): Promise<ExpressionResponse>;
     getThreeExpressionsByStartId(id: number): Promise<ExpressionListResponse>;
+    getThreeExpressionsByStartIdAndCategory(id: number, category: string): Promise<ExpressionListResponse>;
     createNewExpression(input: ExpressionEntity): Promise<ExpressionEntity>;
 }

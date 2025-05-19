@@ -51,7 +51,20 @@ let ExpressionService = class ExpressionService {
         }
         catch (error) {
             console.error(`[getThreeExpressionsByStartId]` + error);
-            return response_helper_1.ResponseHelper.fail(`id ${id}부터 표현 3개 조회에 실패 했습니다.`);
+            return response_helper_1.ResponseHelper.fail(`id ${id}부터 표현 3개 조회 중 에러가 발생했습니다.`);
+        }
+    }
+    async getThreeExpressionsByStartIdAndCategory(id, category) {
+        try {
+            const result = await this.expressionRepository.findThreeExpressionsByStartIdAndCategory(id, category);
+            if (!result) {
+                throw new common_1.NotFoundException(`${id}라는 id를 가진 표현은 없습니다.`);
+            }
+            return response_helper_1.ResponseHelper.success(result, `${category}에서 id ${id}로 시작하는 표현 3개 조회를 성공했습니다`);
+        }
+        catch (error) {
+            console.error('[getThreeExpressionsByStartIdAndCategory]', error);
+            return response_helper_1.ResponseHelper.fail(`${category}에서 id ${id}로 시작하는 표현 3개 조회 중 에러가 발생했습니다`);
         }
     }
     async createNewExpression(input) {

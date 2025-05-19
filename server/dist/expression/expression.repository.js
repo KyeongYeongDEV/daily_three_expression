@@ -34,7 +34,7 @@ let ExpressionRepository = class ExpressionRepository {
     async findThreeExpressionsByStartIdAndCategory(startId, category) {
         return this.expressionRepository
             .createQueryBuilder('expression')
-            .where('expression.e_id > :startId', { startId })
+            .where('expression.e_id >= :startId', { startId })
             .andWhere('expression.category = :category', { category })
             .orderBy('expression.e_id', 'ASC')
             .limit(3)
