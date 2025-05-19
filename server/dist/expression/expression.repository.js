@@ -32,6 +32,21 @@ let ExpressionRepository = class ExpressionRepository {
         return this.expressionRepository.findOneBy({ e_id: id });
     }
     async findThreeExpressionsByStartIdAndCategory(startId, category) {
+        return this.expressionRepository
+            .createQueryBuilder('expression')
+            .where('expression.e_id > :startId', { startId })
+            .andWhere('expression.category = :category', { category })
+            .orderBy('expression.e_id', 'ASC')
+            .limit(3)
+            .getMany();
+    }
+    async findThreeExpressionsByStartId(startId) {
+        return this.expressionRepository
+            .createQueryBuilder('expression')
+            .where('expression.e_id >= :startId', { startId })
+            .orderBy('expression.e_id', 'ASC')
+            .limit(3)
+            .getMany();
     }
     async findByCategory(category) {
         return this.expressionRepository.findOneBy({ category: category });

@@ -5,4 +5,5 @@ export declare class ExpressionController {
     constructor(expressionService: ExpressionService);
     getExpressions(): Promise<ExpressionListResponse>;
     getExpressionById(id: number): Promise<ExpressionResponse>;
+    getThreeExpressionsByStartId(id: number): Promise<ExpressionListResponse>;
 }

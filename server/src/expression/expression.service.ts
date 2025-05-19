@@ -4,7 +4,6 @@ import { ExpressionEntity } from './entities/expression.entity';
 import { ResponseHelper } from 'src/common/helpers/response.helper';
 import { ExpressionResponseDto } from './dto/response/expression-response.dto';
 import { ExpressionListResponse, ExpressionResponse } from 'src/common/types/response.type';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class ExpressionService {
@@ -36,6 +35,23 @@ export class ExpressionService {
       return ResponseHelper.fail('하나의 표현 조회 중 에러가 발생했습니다');
     }
   }
+
+  async getThreeExpressionsByStartId(id : number) : Promise<ExpressionListResponse>{
+    try {
+      //TODO 만약에 startId가 마지막 id이거나 마지막 전 id일 경우 3개를 못 가져옴 - 처리하기
+      const result : ExpressionResponseDto[] | null =  await this.expressionRepository.findThreeExpressionsByStartId(id);
+      
+      if(!result){
+        throw new NotFoundException(`${id}라는 id를 가진 표현은 없습니다.`);
+      }
+
+      return ResponseHelper.success(result, `id ${id}부터 표현 3개 조회를 성공했습니다.`);
+    } catch (error) {
+      console.error(`[getThreeExpressionsByStartId]` + error);
+      return ResponseHelper.fail(`id ${id}부터 표현 3개 조회에 실패 했습니다.`)
+    }
+  }
+  
 
   async createNewExpression(input: ExpressionEntity): Promise<ExpressionEntity> {
     return this.expressionRepository.save(input);

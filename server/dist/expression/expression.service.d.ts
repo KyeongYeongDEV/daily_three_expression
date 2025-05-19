@@ -6,5 +6,6 @@ export declare class ExpressionService {
     constructor(expressionRepository: ExpressionRepository);
     getAllExpressions(): Promise<ExpressionListResponse>;
     getExpressionById(id: number): Promise<ExpressionResponse>;
+    getThreeExpressionsByStartId(id: number): Promise<ExpressionListResponse>;
     createNewExpression(input: ExpressionEntity): Promise<ExpressionEntity>;
 }

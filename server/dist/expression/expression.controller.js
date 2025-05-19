@@ -26,6 +26,9 @@ let ExpressionController = class ExpressionController {
     async getExpressionById(id) {
         return this.expressionService.getExpressionById(id);
     }
+    async getThreeExpressionsByStartId(id) {
+        return this.expressionService.getThreeExpressionsByStartId(id);
+    }
 };
 exports.ExpressionController = ExpressionController;
 __decorate([
@@ -41,6 +44,13 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], ExpressionController.prototype, "getExpressionById", null);
+__decorate([
+    (0, common_1.Get)('three/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], ExpressionController.prototype, "getThreeExpressionsByStartId", null);
 exports.ExpressionController = ExpressionController = __decorate([
     (0, common_1.Controller)('expression'),
     __metadata("design:paramtypes", [expression_service_1.ExpressionService])
