@@ -11,7 +11,7 @@ import { ExpressionEntity } from './expression.entity';
 export type DeliveryStatus = 'success' | 'failed' | 'pending';
 
 @Entity('expression_delivery')
-export class ExpressionDelivery {
+export class ExpressionDeliveryEntity {
   @PrimaryGeneratedColumn()
   ue_id: number;
 

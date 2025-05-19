@@ -5,7 +5,7 @@ import {
   OneToMany,
   CreateDateColumn,
 } from 'typeorm';
-import { ExpressionDelivery } from './expression-delivery.entity';
+import { ExpressionDeliveryEntity } from './expression-delivery.entity';
 
 @Entity('expression')
 export class ExpressionEntity {
@@ -42,6 +42,6 @@ export class ExpressionEntity {
   @Column({ default: true })
   is_active: boolean;
 
-  @OneToMany(() => ExpressionDelivery, (delivery) => delivery.expression)
-  deliveries: ExpressionDelivery[];
+  @OneToMany(() => ExpressionDeliveryEntity, (delivery) => delivery.expression)
+  deliveries: ExpressionDeliveryEntity[];
 }

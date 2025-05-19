@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { ExpressionEntity } from './entities/expression.entity';
+import { ExpressionEntity } from '../entities/expression.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -10,12 +10,12 @@ export class ExpressionRepository {
     private readonly expressionRepository: Repository<ExpressionEntity>,
   ) {}
 
-  async findAll(): Promise<ExpressionEntity[]> {
-    return this.expressionRepository.find();
-  }
-
   async save(expression: ExpressionEntity): Promise<ExpressionEntity> {
     return this.expressionRepository.save(expression);
+  }
+  
+  async findAll(): Promise<ExpressionEntity[]> {
+    return this.expressionRepository.find();
   }
 
   async findById(id: number): Promise<ExpressionEntity | null> {

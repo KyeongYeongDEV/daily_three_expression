@@ -11,12 +11,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpressionService = void 0;
 const common_1 = require("@nestjs/common");
-const expression_repository_1 = require("./expression.repository");
+const expression_repository_1 = require("./repository/expression.repository");
 const response_helper_1 = require("../common/helpers/response.helper");
+const expression_delivery_repository_1 = require("./repository/expression-delivery.repository");
 let ExpressionService = class ExpressionService {
     expressionRepository;
-    constructor(expressionRepository) {
+    expressionDeliveryRepository;
+    constructor(expressionRepository, expressionDeliveryRepository) {
         this.expressionRepository = expressionRepository;
+        this.expressionDeliveryRepository = expressionDeliveryRepository;
     }
     async getAllExpressions() {
         try {
@@ -67,6 +70,16 @@ let ExpressionService = class ExpressionService {
             return response_helper_1.ResponseHelper.fail(`${category}에서 id ${id}로 시작하는 표현 3개 조회 중 에러가 발생했습니다`);
         }
     }
+    async getDeliveriedExpressionsByUid(id) {
+        try {
+            const result = await this.expressionDeliveryRepository.findDeliveriedExpressionsByUid(id);
+            return response_helper_1.ResponseHelper.success(result, `${id}에 전송된 모든 표현 조회에 성공했습니다.`);
+        }
+        catch (error) {
+            console.error('[getDeliveriedExpressionsByUid]', error);
+            return response_helper_1.ResponseHelper.fail(`${id}에 전송된 모든 표현 조회에 실패했습니다.`);
+        }
+    }
     async createNewExpression(input) {
         return this.expressionRepository.save(input);
     }
@@ -74,6 +87,7 @@ let ExpressionService = class ExpressionService {
 exports.ExpressionService = ExpressionService;
 exports.ExpressionService = ExpressionService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [expression_repository_1.ExpressionRepository])
+    __metadata("design:paramtypes", [expression_repository_1.ExpressionRepository,
+        expression_delivery_repository_1.ExpressionDeliveryRepository])
 ], ExpressionService);
 //# sourceMappingURL=expression.service.js.map

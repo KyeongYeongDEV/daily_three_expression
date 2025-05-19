@@ -52,7 +52,7 @@ __decorate([
     __metadata("design:type", Date)
 ], User.prototype, "updated_at", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => expression_delivery_entity_1.ExpressionDelivery, (delivery) => delivery.user),
+    (0, typeorm_1.OneToMany)(() => expression_delivery_entity_1.ExpressionDeliveryEntity, (delivery) => delivery.user),
     __metadata("design:type", Array)
 ], User.prototype, "deliveries", void 0);
 exports.User = User = __decorate([

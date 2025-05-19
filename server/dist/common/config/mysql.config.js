@@ -12,7 +12,7 @@ const typeOrmConfig = async (configService) => {
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [expression_entity_1.ExpressionEntity, user_entity_1.User, expression_delivery_entity_1.ExpressionDelivery],
+        entities: [expression_entity_1.ExpressionEntity, user_entity_1.User, expression_delivery_entity_1.ExpressionDeliveryEntity],
         synchronize: true,
         charset: 'utf8mb4',
         logging: true,

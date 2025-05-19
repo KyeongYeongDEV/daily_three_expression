@@ -12,7 +12,7 @@ import { ExpressionModule } from './expression/expression.module';
 
 import { ExpressionEntity } from './expression/entities/expression.entity';
 import { User } from './user/entities/user.entity';
-import { ExpressionDelivery } from './expression/entities/expression-delivery.entity';
+import { ExpressionDeliveryEntity } from './expression/entities/expression-delivery.entity';
 import { typeOrmConfig } from './common/config/mysql.config';
 
 
@@ -27,7 +27,7 @@ import { typeOrmConfig } from './common/config/mysql.config';
     TypeOrmModule.forFeature([
       ExpressionEntity,
       User,
-      ExpressionDelivery,
+      ExpressionDeliveryEntity,
     ]),
     RedisModule.forRootAsync({
       imports: [ConfigModule],
