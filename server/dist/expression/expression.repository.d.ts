@@ -6,5 +6,6 @@ export declare class ExpressionRepository {
     findAll(): Promise<ExpressionEntity[]>;
     save(expression: ExpressionEntity): Promise<ExpressionEntity>;
     findById(id: number): Promise<ExpressionEntity | null>;
+    findThreeExpressionsByStartIdAndCategory(startId: number, category: string): Promise<void>;
     findByCategory(category: string): Promise<ExpressionEntity | null>;
 }

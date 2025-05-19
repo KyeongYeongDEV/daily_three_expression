@@ -1,4 +1,4 @@
-import { ExpressionDelivery } from '../../expression/entities/expression_delivery.entity';
+import { ExpressionDelivery } from '../../expression/entities/expression-delivery.entity';
 export declare class User {
     u_id: number;
     email: string;

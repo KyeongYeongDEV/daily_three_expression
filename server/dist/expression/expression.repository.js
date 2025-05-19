@@ -22,16 +22,18 @@ let ExpressionRepository = class ExpressionRepository {
     constructor(expressionRepository) {
         this.expressionRepository = expressionRepository;
     }
-    findAll() {
+    async findAll() {
         return this.expressionRepository.find();
     }
-    save(expression) {
+    async save(expression) {
         return this.expressionRepository.save(expression);
     }
-    findById(id) {
+    async findById(id) {
         return this.expressionRepository.findOneBy({ e_id: id });
     }
-    findByCategory(category) {
+    async findThreeExpressionsByStartIdAndCategory(startId, category) {
+    }
+    async findByCategory(category) {
         return this.expressionRepository.findOneBy({ category: category });
     }
 };

@@ -4,7 +4,7 @@ import {
   Column,
   OneToMany,
 } from 'typeorm';
-import { ExpressionDelivery } from '../../expression/entities/expression_delivery.entity';
+import { ExpressionDelivery } from '../../expression/entities/expression-delivery.entity';
 
 @Entity('user')
 export class User {
