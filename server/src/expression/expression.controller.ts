@@ -1,15 +1,19 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ExpressionService } from './expression.service';
+import { ExpressionListResponse, ExpressionResponse } from 'src/common/types/response.type';
 
 @Controller('expression')
 export class ExpressionController {
   constructor(
-    private readonly expressionSerivce : ExpressionService,
+    private readonly expressionService : ExpressionService,
   ){}
 
-  @Get('test')
-  async getExpressions() {
-    return this.expressionSerivce.getAllExpressions();
+  @Get('all')
+  async getExpressions() : Promise<ExpressionListResponse>{
+    return this.expressionService.getAllExpressions();
   }
-  
+  @Get('one/:id')
+  async getExpressionById(@Param('id') id : number) : Promise<ExpressionResponse>{
+    return this.expressionService.getExpressionById(id);
+  }
 }

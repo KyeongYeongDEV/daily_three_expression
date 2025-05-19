@@ -7,4 +7,5 @@ interface ApiResponse<T> {
   data : T | null;
 }
 
+export type ExpressionResponse = ApiResponse<ExpressionResponseDto>;
 export type ExpressionListResponse = ApiResponse<ExpressionResponseDto[]>;

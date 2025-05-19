@@ -5,5 +5,6 @@ interface ApiResponse<T> {
     message: string;
     data: T | null;
 }
+export type ExpressionResponse = ApiResponse<ExpressionResponseDto>;
 export type ExpressionListResponse = ApiResponse<ExpressionResponseDto[]>;
 export {};

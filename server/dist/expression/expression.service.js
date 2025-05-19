@@ -21,11 +21,24 @@ let ExpressionService = class ExpressionService {
     async getAllExpressions() {
         try {
             const result = await this.expressionRepository.findAll();
-            return response_helper_1.ResponseHelper.success(result, '이미 등록된 토큰입니다. 활성화 상태로 업데이트되었습니다.');
+            return response_helper_1.ResponseHelper.success(result, '모든 표현들 조회를 성공했습니다.');
         }
         catch (error) {
-            console.error(error);
-            return response_helper_1.ResponseHelper.fail('표현 조회 중 에러가 발생했습니다.');
+            console.error('[getAllExpressions]' + error);
+            return response_helper_1.ResponseHelper.fail('모든 표현들 조회 중 에러가 발생했습니다.');
+        }
+    }
+    async getExpressionById(id) {
+        try {
+            const result = await this.expressionRepository.findById(id);
+            if (!result) {
+                throw new common_1.NotFoundException(`${id}라는 id를 가진 표현은 없습니다.`);
+            }
+            return response_helper_1.ResponseHelper.success(result, `id : ${id} 조회를 성공했습니다.`);
+        }
+        catch (error) {
+            console.error('[getExpressionById]' + error);
+            return response_helper_1.ResponseHelper.fail('하나의 표현 조회 중 에러가 발생했습니다');
         }
     }
     async createNewExpression(input) {

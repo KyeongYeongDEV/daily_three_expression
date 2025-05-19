@@ -8,26 +8,39 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpressionController = void 0;
 const common_1 = require("@nestjs/common");
 const expression_service_1 = require("./expression.service");
 let ExpressionController = class ExpressionController {
-    expressionSerivce;
-    constructor(expressionSerivce) {
-        this.expressionSerivce = expressionSerivce;
+    expressionService;
+    constructor(expressionService) {
+        this.expressionService = expressionService;
     }
     async getExpressions() {
-        return this.expressionSerivce.getAllExpressions();
+        return this.expressionService.getAllExpressions();
+    }
+    async getExpressionById(id) {
+        return this.expressionService.getExpressionById(id);
     }
 };
 exports.ExpressionController = ExpressionController;
 __decorate([
-    (0, common_1.Get)('test'),
+    (0, common_1.Get)('all'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ExpressionController.prototype, "getExpressions", null);
+__decorate([
+    (0, common_1.Get)('one/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], ExpressionController.prototype, "getExpressionById", null);
 exports.ExpressionController = ExpressionController = __decorate([
     (0, common_1.Controller)('expression'),
     __metadata("design:paramtypes", [expression_service_1.ExpressionService])
