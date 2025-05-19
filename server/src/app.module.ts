@@ -7,8 +7,8 @@ import { UserModule } from './user/user.module';
 import { AdminModule } from './admin/admin.module';
 import { AIModule } from './ai/ai.module';
 import { BatchModule } from './batch/batch.module';
-import { SendModule } from './send/send.module';
 import { ExpressionModule } from './expression/expression.module';
+import { MailerModule } from './mailer/mailer.module';
 
 import { ExpressionEntity } from './expression/entities/expression.entity';
 import { User } from './user/entities/user.entity';
@@ -44,7 +44,7 @@ import { typeOrmConfig } from './common/config/mysql.config';
     AdminModule,
     AIModule,
     BatchModule,
-    SendModule,
+    MailerModule,
     ExpressionModule,
   ],
   providers: [],
