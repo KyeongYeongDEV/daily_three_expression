@@ -1,4 +1,4 @@
-import { ExpressionResponseDto } from "src/expression/dto/response/expression-response.dto";
+import { ExpressionResponseDto } from "src/expression/dto/response.dto";
 
 interface ApiResponse<T> {
   success : boolean;

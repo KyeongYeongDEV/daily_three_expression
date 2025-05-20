@@ -11,9 +11,10 @@ import { ExpressionModule } from './expression/expression.module';
 import { MailerModule } from './mailer/mailer.module';
 
 import { ExpressionEntity } from './expression/entities/expression.entity';
-import { User } from './user/entities/user.entity';
+import { UserEntity } from './user/user.entity';
 import { ExpressionDeliveryEntity } from './expression/entities/expression-delivery.entity';
 import { typeOrmConfig } from './common/config/mysql.config';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -26,7 +27,7 @@ import { typeOrmConfig } from './common/config/mysql.config';
     }),
     TypeOrmModule.forFeature([
       ExpressionEntity,
-      User,
+      UserEntity,
       ExpressionDeliveryEntity,
     ]),
     RedisModule.forRootAsync({
@@ -46,6 +47,7 @@ import { typeOrmConfig } from './common/config/mysql.config';
     BatchModule,
     MailerModule,
     ExpressionModule,
+    AuthModule,
   ],
   providers: [],
   controllers: [],

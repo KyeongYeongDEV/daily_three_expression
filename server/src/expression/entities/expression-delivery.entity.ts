@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '../../user/entities/user.entity';
+import { UserEntity } from '../../user/user.entity';
 import { ExpressionEntity } from './expression.entity';
 
 export type DeliveryStatus = 'success' | 'failed' | 'pending';
@@ -21,9 +21,9 @@ export class ExpressionDeliveryEntity {
   @Column({ type: 'enum', enum: ['success', 'failed', 'pending'], default: 'pending' })
   delivery_status: DeliveryStatus;
 
-  @ManyToOne(() => User, (user) => user.deliveries)
+  @ManyToOne(() => UserEntity, (user) => user.deliveries)
   @JoinColumn({ name: 'u_id' })
-  user: User;
+  user: UserEntity;
 
   @ManyToOne(() => ExpressionEntity, (expression) => expression.deliveries)
   @JoinColumn({ name: 'e_id' })

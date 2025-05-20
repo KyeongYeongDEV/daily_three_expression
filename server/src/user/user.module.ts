@@ -1,16 +1,21 @@
-import { Module } from "@nestjs/common";
-import { UserController } from "./user.controller";
-import { UserService } from "./user.service";
-import { ConfigModule } from "@nestjs/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "./entities/user.entity";
-
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserController } from './user.controller';
+import { UserService } from './user.service';
+import { UserEntity } from './user.entity';
+import { TypeOrmUserAdapter } from './typeorm-user.adapter';
+import { UserPort } from './user.port';
 @Module({
-  imports : [
-      ConfigModule, 
-      TypeOrmModule.forFeature([User]),
-    ],
-  controllers : [UserController],
-  providers : [UserService]
+  imports: [TypeOrmModule.forFeature([UserEntity])],
+  controllers: [UserController],
+  providers: [
+    UserService,
+    TypeOrmUserAdapter,
+    {
+      provide: 'UserPort',
+      useExisting: TypeOrmUserAdapter,
+    },
+  ],
+  exports: [UserService],
 })
-export class UserModule{};
+export class UserModule {}
