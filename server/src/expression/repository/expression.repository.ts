@@ -30,7 +30,7 @@ export class ExpressionRepository {
       .orderBy('expression.e_id', 'ASC') 
       .limit(3)
       .getMany();
-  }
+  }ㅂ
 
   async findThreeExpressionsByStartId(startId : number) : Promise<ExpressionEntity[] | null> {
     return this.expressionRepository
