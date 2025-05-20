@@ -16,7 +16,7 @@ export class MailerService {
       pool: true, 
       maxConnections: 5,
       maxMessages: 100,
-      rateLimit: 1, // 초당 1개 제한
+      rateLimit: 5, // 초당 5개 제한
     });
   }
 

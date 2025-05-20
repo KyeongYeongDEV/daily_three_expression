@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ExpressionRepository } from './repository/expression.repository';
 import { ExpressionEntity } from './entities/expression.entity';
 import { ResponseHelper } from 'src/common/helpers/response.helper';
-import { ExpressionResponseDto } from './dto/response/expression-response.dto';
+import { ExpressionResponseDto } from './dto/response.dto';
 import { ExpressionListResponse, ExpressionResponse } from 'src/common/types/response.type';
 import { ExpressionDeliveryRepository } from './repository/expression-delivery.repository';
 

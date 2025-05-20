@@ -7,33 +7,33 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class ExpressionRepository {
   constructor(
     @InjectRepository(ExpressionEntity)
-    private readonly expressionRepository: Repository<ExpressionEntity>,
-  ) {}
+    private readonly orm: Repository<ExpressionEntity>,
+  ) {}     
 
   async save(expression: ExpressionEntity): Promise<ExpressionEntity> {
-    return this.expressionRepository.save(expression);
+    return this.orm.save(expression);
   }
   
   async findAll(): Promise<ExpressionEntity[]> {
-    return this.expressionRepository.find();
+    return this.orm.find();
   }
 
   async findById(id: number): Promise<ExpressionEntity | null> {
-    return this.expressionRepository.findOneBy({ e_id: id });
+    return this.orm.findOneBy({ e_id: id });
   }
 
   async findThreeExpressionsByStartIdAndCategory(startId : number, category : string) : Promise<ExpressionEntity[] | null>{
-    return this.expressionRepository
+    return this.orm
       .createQueryBuilder('expression')
       .where('expression.e_id >= :startId', { startId })
       .andWhere('expression.category = :category', { category })
       .orderBy('expression.e_id', 'ASC') 
       .limit(3)
       .getMany();
-  }ㅂ
+  }
 
   async findThreeExpressionsByStartId(startId : number) : Promise<ExpressionEntity[] | null> {
-    return this.expressionRepository
+    return this.orm
     .createQueryBuilder('expression')
     .where('expression.e_id >= :startId', { startId })
     .orderBy('expression.e_id', 'ASC') 
@@ -42,6 +42,6 @@ export class ExpressionRepository {
   }
 
   async findByCategory(category : string): Promise<ExpressionEntity | null> {
-    return this.expressionRepository.findOneBy({ category : category });
+    return this.orm.findOneBy({ category : category });
   }
 }

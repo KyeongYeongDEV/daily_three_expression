@@ -2,7 +2,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { ExpressionEntity } from 'src/expression/entities/expression.entity';
-import { User } from 'src/user/entities/user.entity';
+import { UserEntity } from 'src/user/user.entity';
 import { ExpressionDeliveryEntity } from 'src/expression/entities/expression-delivery.entity';
 
 export const typeOrmConfig = async (
@@ -15,7 +15,7 @@ export const typeOrmConfig = async (
     username: configService.get<string>('DB_USERNAME'),
     password: configService.get<string>('DB_PASSWORD'),
     database: configService.get<string>('DB_DATABASE'),
-    entities: [ExpressionEntity, User, ExpressionDeliveryEntity],
+    entities: [ExpressionEntity, UserEntity, ExpressionDeliveryEntity],
     synchronize: true, //TODO 배포시 false
     charset: 'utf8mb4',
     logging: true,
