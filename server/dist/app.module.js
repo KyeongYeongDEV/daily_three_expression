@@ -36,7 +36,7 @@ exports.AppModule = AppModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([
                 expression_entity_1.ExpressionEntity,
                 user_entity_1.User,
-                expression_delivery_entity_1.ExpressionDelivery,
+                expression_delivery_entity_1.ExpressionDeliveryEntity,
             ]),
             ioredis_1.RedisModule.forRootAsync({
                 imports: [config_1.ConfigModule],

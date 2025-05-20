@@ -1,4 +1,4 @@
-import { ExpressionDelivery } from './expression-delivery.entity';
+import { ExpressionDeliveryEntity } from './expression-delivery.entity';
 export declare class ExpressionEntity {
     e_id: number;
     expression_number: number;
@@ -11,5 +11,5 @@ export declare class ExpressionEntity {
     translation_example2: string;
     created_at: Date;
     is_active: boolean;
-    deliveries: ExpressionDelivery[];
+    deliveries: ExpressionDeliveryEntity[];
 }

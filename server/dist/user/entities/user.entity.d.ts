@@ -1,4 +1,4 @@
-import { ExpressionDelivery } from '../../expression/entities/expression-delivery.entity';
+import { ExpressionDeliveryEntity } from '../../expression/entities/expression-delivery.entity';
 export declare class User {
     u_id: number;
     email: string;
@@ -7,5 +7,5 @@ export declare class User {
     is_email_subscribed: boolean;
     created_at: Date;
     updated_at: Date;
-    deliveries: ExpressionDelivery[];
+    deliveries: ExpressionDeliveryEntity[];
 }

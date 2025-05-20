@@ -13,12 +13,16 @@ export class ExpressionController {
     return this.expressionService.getAllExpressions();
   }
   @Get('one/:id')
-  async getExpressionById(@Param('id') id : number) : Promise<ExpressionResponse>{
+  async getExpressionById(
+    @Param('id') id : number,
+  ) : Promise<ExpressionResponse>{
     return this.expressionService.getExpressionById( id );
   }
 
   @Get('three/:id')
-  async getThreeExpressionsByStartId(@Param('id') id : number) : Promise<ExpressionListResponse>{
+  async getThreeExpressionsByStartId(
+    @Param('id') id : number,
+  ) : Promise<ExpressionListResponse>{
     return this.expressionService.getThreeExpressionsByStartId( id );
   }  
   
@@ -28,5 +32,12 @@ export class ExpressionController {
     @Param('category') category : string,
   ) : Promise<ExpressionListResponse>{
     return this.expressionService.getThreeExpressionsByStartIdAndCategory( id, category );
+  }
+
+  @Get('deliveried/:id')
+  async getDeliveriedExpressionsByUid(
+    @Param('id') id : number,
+  ) : Promise<ExpressionListResponse> {
+    return this.expressionService.getDeliveriedExpressionsByUid( id );
   }
 }

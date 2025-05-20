@@ -4,7 +4,7 @@ import {
   Column,
   OneToMany,
 } from 'typeorm';
-import { ExpressionDelivery } from '../../expression/entities/expression-delivery.entity';
+import { ExpressionDeliveryEntity } from '../../expression/entities/expression-delivery.entity';
 
 @Entity('user')
 export class User {
@@ -29,6 +29,6 @@ export class User {
   @Column({ type: 'date' })
   updated_at: Date;
 
-  @OneToMany(() => ExpressionDelivery, (delivery) => delivery.user)
-  deliveries: ExpressionDelivery[];
+  @OneToMany(() => ExpressionDeliveryEntity, (delivery) => delivery.user)
+  deliveries: ExpressionDeliveryEntity[];
 }

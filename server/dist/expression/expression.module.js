@@ -11,8 +11,9 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const expression_controller_1 = require("./expression.controller");
 const expression_service_1 = require("./expression.service");
-const expression_repository_1 = require("./expression.repository");
+const expression_repository_1 = require("./repository/expression.repository");
 const expression_entity_1 = require("./entities/expression.entity");
+const expression_delivery_repository_1 = require("./repository/expression-delivery.repository");
 let ExpressionModule = class ExpressionModule {
 };
 exports.ExpressionModule = ExpressionModule;
@@ -20,8 +21,8 @@ exports.ExpressionModule = ExpressionModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([expression_entity_1.ExpressionEntity])],
         controllers: [expression_controller_1.ExpressionController],
-        providers: [expression_service_1.ExpressionService, expression_repository_1.ExpressionRepository],
-        exports: [expression_repository_1.ExpressionRepository],
+        providers: [expression_service_1.ExpressionService, expression_repository_1.ExpressionRepository, expression_delivery_repository_1.ExpressionDeliveryRepository],
+        exports: [expression_repository_1.ExpressionRepository, expression_delivery_repository_1.ExpressionDeliveryRepository],
     })
 ], ExpressionModule);
 //# sourceMappingURL=expression.module.js.map

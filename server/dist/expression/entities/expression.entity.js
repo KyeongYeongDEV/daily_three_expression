@@ -72,7 +72,7 @@ __decorate([
     __metadata("design:type", Boolean)
 ], ExpressionEntity.prototype, "is_active", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => expression_delivery_entity_1.ExpressionDelivery, (delivery) => delivery.expression),
+    (0, typeorm_1.OneToMany)(() => expression_delivery_entity_1.ExpressionDeliveryEntity, (delivery) => delivery.expression),
     __metadata("design:type", Array)
 ], ExpressionEntity.prototype, "deliveries", void 0);
 exports.ExpressionEntity = ExpressionEntity = __decorate([
