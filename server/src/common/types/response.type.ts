@@ -1,4 +1,5 @@
 import { ExpressionResponseDto } from "src/expression/dto/response.dto";
+import { UserEntity } from "src/user/user.entity";
 
 interface ApiResponse<T> {
   success : boolean;
@@ -9,3 +10,6 @@ interface ApiResponse<T> {
 
 export type ExpressionResponse = ApiResponse<ExpressionResponseDto>;
 export type ExpressionListResponse = ApiResponse<ExpressionResponseDto[]>;
+
+export type UserRegisterResponse = ApiResponse<UserEntity>;
+export type UserInfoResponse = ApiResponse<UserEntity>;

@@ -1,18 +1,18 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserEntity } from './user.entity';
 
-@Controller('users')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  async register(@Body() user: UserEntity) {
-    return this.userService.register(user);
+  @Post('singup')
+  async registerUser(@Body() user: UserEntity) {
+    return this.userService.registerUser(user);
   }
 
-  @Get(':email') 
-  async find(@Param('email') email: string) {
-    return this.userService.getUserByEmail(email);
+  @Post('email') 
+  async getUserInfoByEmail(@Body() email: string) {
+    return this.userService.getUserInfoByEmail(email);
   }
 }

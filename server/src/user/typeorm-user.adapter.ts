@@ -3,23 +3,31 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { UserPort } from './user.port';
+import { UserExistDTO } from './dto/response.dto';
 
 @Injectable()
 export class TypeOrmUserAdapter implements UserPort {
   constructor(
-    @InjectRepository(UserEntity)
+    @InjectRepository( UserEntity )
     private readonly userRepository: Repository<UserEntity>,
   ) {}
-
-  findByEmail(email: string): Promise<UserEntity | null> {
-    return this.userRepository.findOneBy({ email });
+  findUserInfoByEmail( email: string ): Promise<UserEntity | null> {
+    return this.userRepository.createQueryBuilder('user')
+    .where('user.email = :email', { email })
+    .getOne();
   }
 
-  existsByEmail(email: string): Promise<boolean> {
-    return this.userRepository.exist({ where: { email } });
+  findUserByEmail( email: string ): Promise<UserExistDTO | null> {
+    return this.userRepository.createQueryBuilder('user')
+    .select([
+      'user.u_id',
+      'user.email',
+    ])
+    .where('user.email = :email', { email })
+    .getOne();
   }
 
-  save(user: UserEntity): Promise<UserEntity> {
+  saveUser( user: UserEntity ): Promise<UserEntity> {
     return this.userRepository.save(user);
   }
 }

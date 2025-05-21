@@ -9,23 +9,23 @@ import { ExpressionResponseDto } from '../dto/response.dto';
 export class TypeOrmExpressionAdapter implements ExpressionPort {
   constructor(
     @InjectRepository(ExpressionEntity)
-    private readonly orm: Repository<ExpressionEntity>,
+    private readonly expressionRepository: Repository<ExpressionEntity>,
   ) {}
 
   async save(expression: ExpressionEntity): Promise<ExpressionEntity> {
-    return this.orm.save(expression);
+    return this.expressionRepository.save(expression);
   }
 
   async findAll(): Promise<ExpressionResponseDto[]> {
-    return this.orm.find();
+    return this.expressionRepository.find();
   }
 
   async findById(id: number): Promise<ExpressionResponseDto | null> {
-    return this.orm.findOneBy({ e_id: id });
+    return this.expressionRepository.findOneBy({ e_id: id });
   }
 
   async findThreeExpressionsByStartIdAndCategory(startId: number, category: string): Promise<ExpressionResponseDto[]> {
-    return this.orm.createQueryBuilder('expression')
+    return this.expressionRepository.createQueryBuilder('expression')
       .where('expression.e_id >= :startId', { startId })
       .andWhere('expression.category = :category', { category })
       .orderBy('expression.e_id', 'ASC')
@@ -34,7 +34,7 @@ export class TypeOrmExpressionAdapter implements ExpressionPort {
   }
 
   async findThreeExpressionsByStartId(startId: number): Promise<ExpressionResponseDto[]> {
-    return this.orm.createQueryBuilder('expression')
+    return this.expressionRepository.createQueryBuilder('expression')
       .where('expression.e_id >= :startId', { startId })
       .orderBy('expression.e_id', 'ASC')
       .limit(3)
