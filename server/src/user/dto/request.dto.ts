@@ -1,15 +1,10 @@
-// // fcm/dto/save-token.dto.ts
-// import { IsNotEmpty, IsString, IsNumber, IsIn } from 'class-validator';
 
-// export class SaveFcmTokenDto {
-//   @IsNumber()
-//   user_id: number;
+import { IsEmail, IsBoolean } from 'class-validator';
 
-//   @IsString()
-//   @IsNotEmpty()
-//   token: string;
+export class UserRequestDto {
+  @IsEmail({}, { message: '이메일 형식이 올바르지 않습니다.' })
+  email: string;
 
-//   @IsIn(['ios', 'android'])
-//   platform: 'ios' | 'android';
-// }
-// 이런 느낌으로 하기
+  // @IsBoolean({ message: '이메일 수신 여부는 true/false여야 합니다.' })
+  // is_email_subscribed: boolean;
+}

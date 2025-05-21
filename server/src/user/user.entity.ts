@@ -14,9 +14,6 @@ export class UserEntity {
   @Column()
   email: string;
 
-  @Column()
-  level: string;
-
   @Column({ default: false })
   is_email_verified: boolean;
 

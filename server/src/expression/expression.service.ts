@@ -1,21 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { ExpressionRepository } from './repository/expression.repository';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { EXPRESSION_PORT, ExpressionPort } from './port/expression.port';
+import { EXPRESSION_DELIVERY_PORT, ExpressionDeliveryPort } from './port/expression-delivery.port';
 import { ExpressionEntity } from './entities/expression.entity';
 import { ResponseHelper } from 'src/common/helpers/response.helper';
 import { ExpressionResponseDto } from './dto/response.dto';
 import { ExpressionListResponse, ExpressionResponse } from 'src/common/types/response.type';
-import { ExpressionDeliveryRepository } from './repository/expression-delivery.repository';
 
 @Injectable()
 export class ExpressionService {
   constructor(
-    private readonly expressionRepository: ExpressionRepository,
-    private readonly expressionDeliveryRepository : ExpressionDeliveryRepository
+    @Inject(EXPRESSION_PORT)
+    private readonly expressionPort: ExpressionPort,
+    @Inject(EXPRESSION_DELIVERY_PORT)
+    private readonly expressionDeliveryPort: ExpressionDeliveryPort,
   ) {}
 
   async getAllExpressions() : Promise<ExpressionListResponse> {
     try {
-      const result : ExpressionResponseDto[] = await this.expressionRepository.findAll();
+      const result : ExpressionResponseDto[] = await this.expressionPort.findAll();
       return ResponseHelper.success( result, '모든 표현들 조회를 성공했습니다.');
     } catch (error) {
       console.error('[getAllExpressions]' + error);
@@ -25,7 +27,7 @@ export class ExpressionService {
 
   async getExpressionById(id : number) : Promise<ExpressionResponse> {
     try {
-      const result : ExpressionResponseDto | null = await this.expressionRepository.findById(id);
+      const result : ExpressionResponseDto | null = await this.expressionPort.findById(id);
 
       if(!result){
         throw new NotFoundException(`${id}라는 id를 가진 표현은 없습니다.`);
@@ -42,7 +44,7 @@ export class ExpressionService {
     try {
       //TODO 만약에 startId가 마지막 id이거나 마지막 전 id일 경우 3개를 못 가져옴 - 처리하기
       const result : ExpressionResponseDto[] | null =  
-        await this.expressionRepository.findThreeExpressionsByStartId(id);
+        await this.expressionPort.findThreeExpressionsByStartId(id);
       
       if(!result){
         throw new NotFoundException(`${id}라는 id를 가진 표현은 없습니다.`);
@@ -59,7 +61,7 @@ export class ExpressionService {
     try {
       //TODO 만약에 startId가 마지막 id이거나 마지막 전 id일 경우 3개를 못 가져옴 - 처리하기
       const result : ExpressionResponseDto[] | null = 
-        await this.expressionRepository.findThreeExpressionsByStartIdAndCategory( id, category );
+        await this.expressionPort.findThreeExpressionsByStartIdAndCategory( id, category );
 
       if(!result){
         throw new NotFoundException(`${id}라는 id를 가진 표현은 없습니다.`);
@@ -73,7 +75,7 @@ export class ExpressionService {
 
   async getDeliveriedExpressionsByUid( id : number ) : Promise<ExpressionListResponse> {
     try {
-      const result :ExpressionResponseDto[] | null = await this.expressionDeliveryRepository.findDeliveriedExpressionsByUid( id );
+      const result :ExpressionResponseDto[] | null = await this.expressionDeliveryPort.findDeliveriedExpressionsByUid( id );
       return ResponseHelper.success(result, `${id}에 전송된 모든 표현 조회에 성공했습니다.`);
     } catch (error) {
       console.error('[getDeliveriedExpressionsByUid]', error);
@@ -82,6 +84,6 @@ export class ExpressionService {
   }
 
   async createNewExpression(input: ExpressionEntity): Promise<ExpressionEntity> {
-    return this.expressionRepository.save(input);
+    return this.expressionPort.save(input);
   }
 }

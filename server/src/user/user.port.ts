@@ -1,7 +1,9 @@
+import { UserExistDTO } from './dto/response.dto';
 import { UserEntity } from './user.entity';
 
 export interface UserPort {
-  findByEmail(email: string): Promise<UserEntity | null>;
-  save(user: UserEntity): Promise<UserEntity>;
-  existsByEmail(email: string): Promise<boolean>;
+  findUserByEmail( email: string): Promise<UserExistDTO | null>;
+  findUserInfoByEmail( email: string ): Promise<UserEntity | null>;
+  saveUser( user: UserEntity ): Promise<UserEntity>;
+  findUserByUid( id : number ): Promise<UserEntity | null>;
 }
