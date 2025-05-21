@@ -33,6 +33,11 @@ export class UserService {
       if(await this.isExistsUserByEmail(user.email)){
         throw new Error('이미 존재하는 회원입니다');
       }
+      const current = new Date();
+
+      user.created_at = current;
+      user.updated_at = current
+
       const result : UserEntity | null= await this.userPort.saveUser(user);
       if(!result){
         throw new Error('사용자 정보 저장 실패');
