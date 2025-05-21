@@ -11,5 +11,4 @@ interface ApiResponse<T> {
 export type ExpressionResponse = ApiResponse<ExpressionResponseDto>;
 export type ExpressionListResponse = ApiResponse<ExpressionResponseDto[]>;
 
-export type UserRegisterResponse = ApiResponse<UserEntity>;
 export type UserInfoResponse = ApiResponse<UserEntity>;

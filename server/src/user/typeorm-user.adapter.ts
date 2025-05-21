@@ -19,11 +19,17 @@ export class TypeOrmUserAdapter implements UserPort {
 
   findUserByEmail( email: string ): Promise<UserExistDTO | null> {
     return this.userRepository.createQueryBuilder('user')
+    .where('user.email = :email', { email })
+    .getOne();
+  }
+
+  findUserByUid( u_id : number ): Promise<UserEntity | null> {
+    return this.userRepository.createQueryBuilder('user')
     .select([
       'user.u_id',
       'user.email',
     ])
-    .where('user.email = :email', { email })
+    .where('user.u_id = :u_id', { u_id })
     .getOne();
   }
 
