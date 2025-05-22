@@ -1,6 +1,5 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserEntity } from './user.entity';
 import { UserEmailRequestDto, UserRegisterRequestDto, UserVerifiedUpdateRequestDto } from './dto/request.dto';
 
 @Controller('user')
@@ -17,13 +16,13 @@ export class UserController {
     return this.userService.getUserInfoByEmail(userEmailRequestDto);
   }
 
-  @Post('email/verified') 
+  @Post('verified/email') 
   async updateEmailVerified(@Body() userVerifiedUpdateRequestDto : UserVerifiedUpdateRequestDto) {
     return this.userService.updateEmailVerified(userVerifiedUpdateRequestDto);
   }
 
-  @Post('email') 
+  @Post('verified/subscribe') 
   async updateSubscribeVerified(@Body() userVerifiedUpdateRequestDto : UserVerifiedUpdateRequestDto) {
     return this.userService.updateSubscribeVerified(userVerifiedUpdateRequestDto);
   }
-}
+} 

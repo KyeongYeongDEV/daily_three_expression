@@ -1,5 +1,6 @@
 
 import { IsEmail, IsBoolean, IsOptional, IsInt, Min } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UserEmailRequestDto {
   @IsEmail({}, { message: '이메일 형식이 올바르지 않습니다.' })
@@ -28,6 +29,7 @@ export class UserVerifiedUpdateRequestDto {
   @Min(1, { message: 'u_id는 1 이상의 값이어야 합니다.' })
   u_id: number;
 
+  @Transform(({ value }) => value === 'true' || value === true)
   @IsBoolean({ message: 'verified는 true 또는 false 값이어야 합니다.' })
   verified: boolean;
 }
