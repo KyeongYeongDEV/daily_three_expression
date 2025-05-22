@@ -7,4 +7,5 @@ export declare class ExpressionController {
     getExpressionById(id: number): Promise<ExpressionResponse>;
     getThreeExpressionsByStartId(id: number): Promise<ExpressionListResponse>;
     getThreeExpressionsByStartIdAndCategory(id: number, category: string): Promise<ExpressionListResponse>;
+    getDeliveriedExpressionsByUid(id: number): Promise<ExpressionListResponse>;
 }

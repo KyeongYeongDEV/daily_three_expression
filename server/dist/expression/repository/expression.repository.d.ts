@@ -1,8 +1,8 @@
 import { Repository } from 'typeorm';
 import { ExpressionEntity } from '../entities/expression.entity';
 export declare class ExpressionRepository {
-    private readonly expressionRepository;
-    constructor(expressionRepository: Repository<ExpressionEntity>);
+    private readonly orm;
+    constructor(orm: Repository<ExpressionEntity>);
     save(expression: ExpressionEntity): Promise<ExpressionEntity>;
     findAll(): Promise<ExpressionEntity[]>;
     findById(id: number): Promise<ExpressionEntity | null>;

@@ -1,5 +1,5 @@
 import { ExpressionDeliveryEntity } from '../../expression/entities/expression-delivery.entity';
-export declare class User {
+export declare class UserEntity {
     u_id: number;
     email: string;
     level: string;

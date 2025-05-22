@@ -18,21 +18,21 @@ const typeorm_1 = require("typeorm");
 const expression_entity_1 = require("../entities/expression.entity");
 const typeorm_2 = require("@nestjs/typeorm");
 let ExpressionRepository = class ExpressionRepository {
-    expressionRepository;
-    constructor(expressionRepository) {
-        this.expressionRepository = expressionRepository;
+    orm;
+    constructor(orm) {
+        this.orm = orm;
     }
     async save(expression) {
-        return this.expressionRepository.save(expression);
+        return this.orm.save(expression);
     }
     async findAll() {
-        return this.expressionRepository.find();
+        return this.orm.find();
     }
     async findById(id) {
-        return this.expressionRepository.findOneBy({ e_id: id });
+        return this.orm.findOneBy({ e_id: id });
     }
     async findThreeExpressionsByStartIdAndCategory(startId, category) {
-        return this.expressionRepository
+        return this.orm
             .createQueryBuilder('expression')
             .where('expression.e_id >= :startId', { startId })
             .andWhere('expression.category = :category', { category })
@@ -41,7 +41,7 @@ let ExpressionRepository = class ExpressionRepository {
             .getMany();
     }
     async findThreeExpressionsByStartId(startId) {
-        return this.expressionRepository
+        return this.orm
             .createQueryBuilder('expression')
             .where('expression.e_id >= :startId', { startId })
             .orderBy('expression.e_id', 'ASC')
@@ -49,7 +49,7 @@ let ExpressionRepository = class ExpressionRepository {
             .getMany();
     }
     async findByCategory(category) {
-        return this.expressionRepository.findOneBy({ category: category });
+        return this.orm.findOneBy({ category: category });
     }
 };
 exports.ExpressionRepository = ExpressionRepository;
