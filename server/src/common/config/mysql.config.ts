@@ -2,7 +2,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { ExpressionEntity } from 'src/expression/entities/expression.entity';
-import { UserEntity } from 'src/user/user.entity';
+import { UserEntity } from 'src/user/domain/user.entity';
 import { ExpressionDeliveryEntity } from 'src/expression/entities/expression-delivery.entity';
 
 export const typeOrmConfig = async (

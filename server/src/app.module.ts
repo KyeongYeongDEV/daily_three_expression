@@ -11,7 +11,7 @@ import { ExpressionModule } from './expression/expression.module';
 import { MailerModule } from './mailer/mailer.module';
 
 import { ExpressionEntity } from './expression/entities/expression.entity';
-import { UserEntity } from './user/user.entity';
+import { UserEntity } from './user/domain/user.entity';
 import { ExpressionDeliveryEntity } from './expression/entities/expression-delivery.entity';
 import { typeOrmConfig } from './common/config/mysql.config';
 import { AuthModule } from './auth/auth.module';

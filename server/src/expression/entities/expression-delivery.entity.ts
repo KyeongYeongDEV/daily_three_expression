@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { UserEntity } from '../../user/user.entity';
+import { UserEntity } from '../../user/domain/user.entity';
 import { ExpressionEntity } from './expression.entity';
 
 export type DeliveryStatus = 'success' | 'failed' | 'pending';
