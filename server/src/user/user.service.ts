@@ -4,7 +4,7 @@ import { UserEntity } from './user.entity';
 import { UserInfoResponse } from 'src/common/types/response.type';
 import { ResponseHelper } from 'src/common/helpers/response.helper';
 import { UserExistDTO } from './dto/response.dto';
-import { UserRequestDto } from './dto/request.dto';
+import { UserRegisterRequestDto, UserEmailRequestDto, UserVerifiedUpdateRequestDto } from './dto/request.dto';
 
 @Injectable()
 export class UserService {
@@ -28,16 +28,26 @@ export class UserService {
     return !!exists; // null | undefinded = false, 객체가 있으면 true;
   }
 
-  async registerUser(user: UserEntity): Promise<UserInfoResponse> {
+  private mapToUserEntity(dto: UserRegisterRequestDto): UserEntity {
+    const current = new Date();
+
+    const user = new UserEntity();
+    user.email = dto.email;
+    user.is_email_verified = dto.is_email_verified;
+    user.is_email_subscribed = dto.is_email_subscribed;
+    user.created_at = current;
+    user.updated_at = current;
+    
+    return user;
+  }
+
+  async registerUser(userRegisterRequestDto: UserRegisterRequestDto): Promise<UserInfoResponse> {
     try {
-      if(await this.isExistsUserByEmail(user.email)){
+      if(await this.isExistsUserByEmail(userRegisterRequestDto.email)){
         throw new Error('이미 존재하는 회원입니다');
       }
-      const current = new Date();
-
-      user.created_at = current;
-      user.updated_at = current
-
+      
+      const user : UserEntity = this.mapToUserEntity(userRegisterRequestDto);
       const result : UserEntity | null= await this.userPort.saveUser(user);
       if(!result){
         throw new Error('사용자 정보 저장 실패');
@@ -50,9 +60,9 @@ export class UserService {
     }
   }
 
-  async getUserInfoByEmail(userRequestDto: UserRequestDto): Promise<UserInfoResponse> {
+  async getUserInfoByEmail(userEmailRequestDto: UserEmailRequestDto): Promise<UserInfoResponse> {
     try {
-      const result : UserEntity | null = await this.userPort.findUserInfoByEmail(userRequestDto.email);
+      const result : UserEntity | null = await this.userPort.findUserInfoByEmail(userEmailRequestDto.email);
 
       if(!result){
         throw new Error('사용자 정보 조회 실패');
@@ -65,37 +75,30 @@ export class UserService {
     }
   }
 
-
-
-  async updateEmailVerified(u_id: number, verified: boolean): Promise<UserInfoResponse> {
+  private async updateUserVerifiedFlag(
+    u_id: number,
+    field: 'is_email_verified' | 'is_email_subscribed',
+    value: boolean,
+  ): Promise<UserInfoResponse> {
     try {
-      const user : UserEntity  = await this.getUserInfoByUid( u_id );
-
-      user.is_email_verified = verified;
+      const user = await this.getUserInfoByUid(u_id);
+      user[field] = value;
       user.updated_at = new Date();
-
+  
       const result = await this.userPort.saveUser(user);
-      
-      return ResponseHelper.success(result, "이메일 인증 여부 수정을 성공했습니다.");
+      return ResponseHelper.success(result, `${field} 필드 수정에 성공했습니다.`);
     } catch (error) {
-      console.error('[updateEmailVerified] ', error);
-      return ResponseHelper.fail("이메일 인증 여부 수정에 실패했습니다.");
+      console.error(`[updateUserVerifiedFlag] ${field} 변경 실패:`, error);
+      return ResponseHelper.fail(`${field} 필드 수정에 실패했습니다.`);
     }
   }
-  
-  async updateSubscribeVerified(u_id: number, verified: boolean): Promise<UserInfoResponse> {
-    try {
-      const user : UserEntity  = await this.getUserInfoByUid( u_id );
-  
-      user.is_email_subscribed = verified;
-      user.updated_at = new Date();
 
-      const result = await this.userPort.saveUser(user);
-      
-      return ResponseHelper.success(result, "이메일 수신 동의 여부 정보 수정을 성공했습니다.");
-    } catch (error) {
-      console.error('[updateEmailVerified] ', error);
-      return ResponseHelper.fail("이메일 수신 동의 여부 정보 수정에 실패했습니다.");
-    }
+  async updateEmailVerified(userVerifiedUpdateRequestDto : UserVerifiedUpdateRequestDto): Promise<UserInfoResponse> {
+    return this.updateUserVerifiedFlag(userVerifiedUpdateRequestDto.u_id, 'is_email_verified', userVerifiedUpdateRequestDto.verified)
   }
+  
+  async updateSubscribeVerified(userVerifiedUpdateRequestDto : UserVerifiedUpdateRequestDto): Promise<UserInfoResponse> {
+    return this.updateUserVerifiedFlag(userVerifiedUpdateRequestDto.u_id, 'is_email_subscribed', userVerifiedUpdateRequestDto.verified)
+  }
+  
 }

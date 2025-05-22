@@ -1,29 +1,29 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserEntity } from './user.entity';
-import { UserRequestDto } from './dto/request.dto';
+import { UserEmailRequestDto, UserRegisterRequestDto, UserVerifiedUpdateRequestDto } from './dto/request.dto';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('signup')
-  async registerUser(@Body() user: UserEntity) {
-    return this.userService.registerUser(user);
+  async registerUser(@Body() userRegisterRequestDto: UserRegisterRequestDto) {
+    return this.userService.registerUser(userRegisterRequestDto);
   }
 
   @Post('email') 
-  async getUserInfoByEmail(@Body() userRequestDto: UserRequestDto) {
-    return this.userService.getUserInfoByEmail(userRequestDto);
+  async getUserInfoByEmail(@Body() userEmailRequestDto: UserEmailRequestDto) {
+    return this.userService.getUserInfoByEmail(userEmailRequestDto);
   }
 
   @Post('email/verified') 
-  async updateEmailVerified(@Body() u_id: number, verified: boolean) {
-    return this.userService.updateEmailVerified(u_id, verified);
+  async updateEmailVerified(@Body() userVerifiedUpdateRequestDto : UserVerifiedUpdateRequestDto) {
+    return this.userService.updateEmailVerified(userVerifiedUpdateRequestDto);
   }
 
   @Post('email') 
-  async updateSubscribeVerified(@Body() u_id: number, verified: boolean) {
-    return this.userService.updateSubscribeVerified(u_id, verified);
+  async updateSubscribeVerified(@Body() userVerifiedUpdateRequestDto : UserVerifiedUpdateRequestDto) {
+    return this.userService.updateSubscribeVerified(userVerifiedUpdateRequestDto);
   }
 }
