@@ -13,7 +13,7 @@ export class UserService {
     private readonly userPort: UserPort,
   ) {}
 
-  private async getUserInfoByUid(u_id : number) : Promise<UserEntity> {
+  async getUserInfoByUid(u_id : number) : Promise<UserEntity> {
     const user : UserEntity | null = await this.userPort.findUserByUid(u_id);
 
     if(!user){
@@ -23,7 +23,7 @@ export class UserService {
     return user;
   }
 
-  private async isExistsUserByEmail( email : string ) : Promise<boolean> {
+  async isExistsUserByEmail( email : string ) : Promise<boolean> {
     const exists : UserExistDTO | null = await this.userPort.findUserByEmail(email);
     return !!exists; // null | undefinded = false, 객체가 있으면 true;
   }
@@ -56,7 +56,7 @@ export class UserService {
       return ResponseHelper.success(result, '회원가입에 성공했습니다');
     } catch (error) {
       console.error('[registerUser] ', error);
-      return ResponseHelper.fail('회원가입에 실패했습니다');
+      return ResponseHelper.fail('회원가입에 실패했습니다', 400);
     }
   }
 
@@ -71,7 +71,7 @@ export class UserService {
       return ResponseHelper.success(result, '회원정보 조회에 성공했습니다');
     } catch (error) {
       console.error('[getUserByEmail]' ,error);
-      return ResponseHelper.fail('회원정보 조회에 실패했습니다.');
+      return ResponseHelper.fail('회원정보 조회에 실패했습니다.', 400);
     }
   }
 
@@ -89,7 +89,7 @@ export class UserService {
       return ResponseHelper.success(result, `${field} 필드 수정에 성공했습니다.`);
     } catch (error) {
       console.error(`[updateUserVerifiedFlag] ${field} 변경 실패:`, error);
-      return ResponseHelper.fail(`${field} 필드 수정에 실패했습니다.`);
+      return ResponseHelper.fail(`${field} 필드 수정에 실패했습니다.`, 400);
     }
   }
 

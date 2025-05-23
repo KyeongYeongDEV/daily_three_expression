@@ -2,6 +2,8 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { UserService } from '../../service/user.service';
 import { UserEmailRequestDto, UserRegisterRequestDto, UserVerifiedUpdateRequestDto } from '../../dto/request.dto';
 
+
+//TODO try/catch response 방식을 service에서 controller로 옮기기
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
