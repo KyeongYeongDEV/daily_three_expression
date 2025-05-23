@@ -17,11 +17,14 @@ const ai_module_1 = require("./ai/ai.module");
 const batch_module_1 = require("./batch/batch.module");
 const expression_module_1 = require("./expression/expression.module");
 const mailer_module_1 = require("./mailer/mailer.module");
+const auth_module_1 = require("./auth/auth.module");
+const jwt_1 = require("@nestjs/jwt");
 const expression_entity_1 = require("./expression/domain/expression.entity");
 const user_entity_1 = require("./user/domain/user.entity");
 const expression_delivery_entity_1 = require("./expression/domain/expression-delivery.entity");
 const mysql_config_1 = require("./common/config/mysql.config");
-const auth_module_1 = require("./auth/auth.module");
+const jwt_config_1 = require("./common/config/jwt.config");
+const redis_config_1 = require("./common/config/redis.config");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -29,6 +32,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({ isGlobal: true }),
+            jwt_1.JwtModule.register(jwt_config_1.jwtConfig),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
@@ -58,8 +62,9 @@ exports.AppModule = AppModule = __decorate([
             expression_module_1.ExpressionModule,
             auth_module_1.AuthModule,
         ],
-        providers: [],
+        providers: [redis_config_1.RedisConfig],
         controllers: [],
+        exports: ['REDIS']
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

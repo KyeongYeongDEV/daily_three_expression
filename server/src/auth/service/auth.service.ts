@@ -8,6 +8,7 @@ import { JwtPort } from '../port/out/jwt.port';
 import { error } from 'console';
 import { UserService } from 'src/user/service/user.service';
 import { LoginDto } from '../dto/auth.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService implements AuthServicePort {
@@ -82,7 +83,7 @@ export class AuthService implements AuthServicePort {
     }
   } 
 
-  async login(loginDto : LoginDto) {
+  async login(loginDto : LoginDto, res : Response) {
       try {
         const user = (await this.userService.getUserInfoByEmail(loginDto)).data;
   
@@ -90,7 +91,19 @@ export class AuthService implements AuthServicePort {
         if (!user.is_email_verified) throw new UnauthorizedException('이메일 인증되지 않음');
   
         const tokens = await this.createToken(user.u_id, user.email);
-        return ResponseHelper.success(tokens, '로그인 성공');
+
+        if(!tokens.data) {
+          throw new Error('토큰 생성 실패');
+        }
+        
+        res.cookie('refreshToken', tokens.data.refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          path: '/',
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+        return ResponseHelper.success({ accessToken: tokens.data.accessToken }, '로그인 성공');
       } catch (e) {
         return ResponseHelper.fail('로그인 실패');
       }
