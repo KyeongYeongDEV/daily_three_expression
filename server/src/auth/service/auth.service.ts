@@ -58,7 +58,7 @@ export class AuthService implements AuthServicePort {
       return ResponseHelper.success(null, '로그아웃에 성공했습니다.');
     } catch (error) {
       console.error('[logout]', error);
-      return ResponseHelper.fail('로그아웃 중 에러가 발생했습니다.');
+      return ResponseHelper.fail('로그아웃 중 에러가 발생했습니다.'); 
     }
   }
 }
