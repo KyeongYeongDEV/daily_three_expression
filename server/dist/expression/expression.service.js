@@ -8,22 +8,25 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpressionService = void 0;
 const common_1 = require("@nestjs/common");
-const expression_repository_1 = require("./repository/expression.repository");
+const expression_port_1 = require("./port/expression.port");
+const expression_delivery_port_1 = require("./port/expression-delivery.port");
 const response_helper_1 = require("../common/helpers/response.helper");
-const expression_delivery_repository_1 = require("./repository/expression-delivery.repository");
 let ExpressionService = class ExpressionService {
-    expressionRepository;
-    expressionDeliveryRepository;
-    constructor(expressionRepository, expressionDeliveryRepository) {
-        this.expressionRepository = expressionRepository;
-        this.expressionDeliveryRepository = expressionDeliveryRepository;
+    expressionPort;
+    expressionDeliveryPort;
+    constructor(expressionPort, expressionDeliveryPort) {
+        this.expressionPort = expressionPort;
+        this.expressionDeliveryPort = expressionDeliveryPort;
     }
     async getAllExpressions() {
         try {
-            const result = await this.expressionRepository.findAll();
+            const result = await this.expressionPort.findAll();
             return response_helper_1.ResponseHelper.success(result, '모든 표현들 조회를 성공했습니다.');
         }
         catch (error) {
@@ -33,7 +36,7 @@ let ExpressionService = class ExpressionService {
     }
     async getExpressionById(id) {
         try {
-            const result = await this.expressionRepository.findById(id);
+            const result = await this.expressionPort.findById(id);
             if (!result) {
                 throw new common_1.NotFoundException(`${id}라는 id를 가진 표현은 없습니다.`);
             }
@@ -46,7 +49,7 @@ let ExpressionService = class ExpressionService {
     }
     async getThreeExpressionsByStartId(id) {
         try {
-            const result = await this.expressionRepository.findThreeExpressionsByStartId(id);
+            const result = await this.expressionPort.findThreeExpressionsByStartId(id);
             if (!result) {
                 throw new common_1.NotFoundException(`${id}라는 id를 가진 표현은 없습니다.`);
             }
@@ -59,7 +62,7 @@ let ExpressionService = class ExpressionService {
     }
     async getThreeExpressionsByStartIdAndCategory(id, category) {
         try {
-            const result = await this.expressionRepository.findThreeExpressionsByStartIdAndCategory(id, category);
+            const result = await this.expressionPort.findThreeExpressionsByStartIdAndCategory(id, category);
             if (!result) {
                 throw new common_1.NotFoundException(`${id}라는 id를 가진 표현은 없습니다.`);
             }
@@ -72,7 +75,7 @@ let ExpressionService = class ExpressionService {
     }
     async getDeliveriedExpressionsByUid(id) {
         try {
-            const result = await this.expressionDeliveryRepository.findDeliveriedExpressionsByUid(id);
+            const result = await this.expressionDeliveryPort.findDeliveriedExpressionsByUid(id);
             return response_helper_1.ResponseHelper.success(result, `${id}에 전송된 모든 표현 조회에 성공했습니다.`);
         }
         catch (error) {
@@ -81,13 +84,14 @@ let ExpressionService = class ExpressionService {
         }
     }
     async createNewExpression(input) {
-        return this.expressionRepository.save(input);
+        return this.expressionPort.save(input);
     }
 };
 exports.ExpressionService = ExpressionService;
 exports.ExpressionService = ExpressionService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [expression_repository_1.ExpressionRepository,
-        expression_delivery_repository_1.ExpressionDeliveryRepository])
+    __param(0, (0, common_1.Inject)(expression_port_1.EXPRESSION_PORT)),
+    __param(1, (0, common_1.Inject)(expression_delivery_port_1.EXPRESSION_DELIVERY_PORT)),
+    __metadata("design:paramtypes", [Object, Object])
 ], ExpressionService);
 //# sourceMappingURL=expression.service.js.map

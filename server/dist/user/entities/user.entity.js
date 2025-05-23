@@ -9,10 +9,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.UserEntity = void 0;
 const typeorm_1 = require("typeorm");
 const expression_delivery_entity_1 = require("../../expression/entities/expression-delivery.entity");
-let User = class User {
+let UserEntity = class UserEntity {
     u_id;
     email;
     level;
@@ -22,40 +22,40 @@ let User = class User {
     updated_at;
     deliveries;
 };
-exports.User = User;
+exports.UserEntity = UserEntity;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], User.prototype, "u_id", void 0);
+], UserEntity.prototype, "u_id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], User.prototype, "email", void 0);
+], UserEntity.prototype, "email", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], User.prototype, "level", void 0);
+], UserEntity.prototype, "level", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
-], User.prototype, "is_email_verified", void 0);
+], UserEntity.prototype, "is_email_verified", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
-], User.prototype, "is_email_subscribed", void 0);
+], UserEntity.prototype, "is_email_subscribed", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'date' }),
     __metadata("design:type", Date)
-], User.prototype, "created_at", void 0);
+], UserEntity.prototype, "created_at", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'date' }),
     __metadata("design:type", Date)
-], User.prototype, "updated_at", void 0);
+], UserEntity.prototype, "updated_at", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => expression_delivery_entity_1.ExpressionDeliveryEntity, (delivery) => delivery.user),
     __metadata("design:type", Array)
-], User.prototype, "deliveries", void 0);
-exports.User = User = __decorate([
+], UserEntity.prototype, "deliveries", void 0);
+exports.UserEntity = UserEntity = __decorate([
     (0, typeorm_1.Entity)('user')
-], User);
+], UserEntity);
 //# sourceMappingURL=user.entity.js.map

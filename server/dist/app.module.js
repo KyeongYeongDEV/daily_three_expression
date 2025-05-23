@@ -15,12 +15,13 @@ const user_module_1 = require("./user/user.module");
 const admin_module_1 = require("./admin/admin.module");
 const ai_module_1 = require("./ai/ai.module");
 const batch_module_1 = require("./batch/batch.module");
-const send_module_1 = require("./send/send.module");
 const expression_module_1 = require("./expression/expression.module");
-const expression_entity_1 = require("./expression/entities/expression.entity");
-const user_entity_1 = require("./user/entities/user.entity");
-const expression_delivery_entity_1 = require("./expression/entities/expression-delivery.entity");
+const mailer_module_1 = require("./mailer/mailer.module");
+const expression_entity_1 = require("./expression/domain/expression.entity");
+const user_entity_1 = require("./user/domain/user.entity");
+const expression_delivery_entity_1 = require("./expression/domain/expression-delivery.entity");
 const mysql_config_1 = require("./common/config/mysql.config");
+const auth_module_1 = require("./auth/auth.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -35,7 +36,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             typeorm_1.TypeOrmModule.forFeature([
                 expression_entity_1.ExpressionEntity,
-                user_entity_1.User,
+                user_entity_1.UserEntity,
                 expression_delivery_entity_1.ExpressionDeliveryEntity,
             ]),
             ioredis_1.RedisModule.forRootAsync({
@@ -53,8 +54,9 @@ exports.AppModule = AppModule = __decorate([
             admin_module_1.AdminModule,
             ai_module_1.AIModule,
             batch_module_1.BatchModule,
-            send_module_1.SendModule,
+            mailer_module_1.MailerModule,
             expression_module_1.ExpressionModule,
+            auth_module_1.AuthModule,
         ],
         providers: [],
         controllers: [],

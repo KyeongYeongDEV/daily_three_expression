@@ -1,4 +1,4 @@
-import { ExpressionEntity } from '../entities/expression.entity';
+import { ExpressionEntity } from '../domain/expression.entity';
 import { ExpressionResponseDto } from '../dto/response.dto';
 
 export const EXPRESSION_PORT = Symbol('ExpressionPort');

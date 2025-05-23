@@ -1,11 +1,11 @@
-import { ExpressionRepository } from './repository/expression.repository';
+import { ExpressionPort } from './port/expression.port';
+import { ExpressionDeliveryPort } from './port/expression-delivery.port';
 import { ExpressionEntity } from './entities/expression.entity';
 import { ExpressionListResponse, ExpressionResponse } from 'src/common/types/response.type';
-import { ExpressionDeliveryRepository } from './repository/expression-delivery.repository';
 export declare class ExpressionService {
-    private readonly expressionRepository;
-    private readonly expressionDeliveryRepository;
-    constructor(expressionRepository: ExpressionRepository, expressionDeliveryRepository: ExpressionDeliveryRepository);
+    private readonly expressionPort;
+    private readonly expressionDeliveryPort;
+    constructor(expressionPort: ExpressionPort, expressionDeliveryPort: ExpressionDeliveryPort);
     getAllExpressions(): Promise<ExpressionListResponse>;
     getExpressionById(id: number): Promise<ExpressionResponse>;
     getThreeExpressionsByStartId(id: number): Promise<ExpressionListResponse>;

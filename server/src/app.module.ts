@@ -10,16 +10,19 @@ import { BatchModule } from './batch/batch.module';
 import { ExpressionModule } from './expression/expression.module';
 import { MailerModule } from './mailer/mailer.module';
 
-import { ExpressionEntity } from './expression/entities/expression.entity';
-import { UserEntity } from './user/user.entity';
-import { ExpressionDeliveryEntity } from './expression/entities/expression-delivery.entity';
+import { ExpressionEntity } from './expression/domain/expression.entity';
+import { UserEntity } from './user/domain/user.entity';
+import { ExpressionDeliveryEntity } from './expression/domain/expression-delivery.entity';
 import { typeOrmConfig } from './common/config/mysql.config';
 import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConfig } from './common/config/jwt.config';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    JwtModule.register(jwtConfig),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -51,5 +54,6 @@ import { AuthModule } from './auth/auth.module';
   ],
   providers: [],
   controllers: [],
+  exports : []
 })
 export class AppModule {}
