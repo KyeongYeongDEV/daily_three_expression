@@ -1,7 +1,11 @@
-// src/config/jwt.config.ts
+import { ConfigService } from '@nestjs/config';
 import { JwtModuleOptions } from '@nestjs/jwt';
 
-export const jwtConfig: JwtModuleOptions = {
-  secret: process.env.JWT_SECRET || 'supersecretkey',
-  signOptions: { expiresIn: '15m' }, // 기본 accessToken 기준
-};
+export const jwtConfig = async (
+  configService: ConfigService,
+): Promise<JwtModuleOptions> => ({
+  secret: configService.get<string>('JWT_SECRET') || 'supersecretkey',
+  signOptions: {
+    expiresIn: '15m',
+  },
+});

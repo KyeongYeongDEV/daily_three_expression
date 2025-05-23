@@ -7,13 +7,21 @@ import { JwtAdapter } from './adapter/out/jwt.adapter';
 import { RedisAdapter } from './adapter/out/redis.adpter';
 import { UserModule } from 'src/user/user.module';
 import { RedisConfigModule } from 'src/common/config/config.module';
+import { JwtStrategy } from './strategy/jwt.strategy';
+import { PassportModule } from '@nestjs/passport';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 
 @Module({
   imports : [
-    JwtModule.register(jwtConfig),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: jwtConfig,
+    }),
     RedisConfigModule,
     UserModule,
+    PassportModule,
   ],
   providers: [
     AuthService,
@@ -27,6 +35,7 @@ import { RedisConfigModule } from 'src/common/config/config.module';
       provide: 'JwtPort',
       useExisting: JwtAdapter,
     },
+    JwtStrategy
   ],
   controllers: [AuthController],
   exports : ['RedisPort', 'JwtPort']
