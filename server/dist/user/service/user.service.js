@@ -56,7 +56,7 @@ let UserService = class UserService {
         }
         catch (error) {
             console.error('[registerUser] ', error);
-            return response_helper_1.ResponseHelper.fail('회원가입에 실패했습니다');
+            return response_helper_1.ResponseHelper.fail('회원가입에 실패했습니다', 400);
         }
     }
     async getUserInfoByEmail(userEmailRequestDto) {
@@ -69,7 +69,7 @@ let UserService = class UserService {
         }
         catch (error) {
             console.error('[getUserByEmail]', error);
-            return response_helper_1.ResponseHelper.fail('회원정보 조회에 실패했습니다.');
+            return response_helper_1.ResponseHelper.fail('회원정보 조회에 실패했습니다.', 400);
         }
     }
     async updateUserVerifiedFlag(u_id, field, value) {
@@ -82,7 +82,7 @@ let UserService = class UserService {
         }
         catch (error) {
             console.error(`[updateUserVerifiedFlag] ${field} 변경 실패:`, error);
-            return response_helper_1.ResponseHelper.fail(`${field} 필드 수정에 실패했습니다.`);
+            return response_helper_1.ResponseHelper.fail(`${field} 필드 수정에 실패했습니다.`, 400);
         }
     }
     async updateEmailVerified(userVerifiedUpdateRequestDto) {

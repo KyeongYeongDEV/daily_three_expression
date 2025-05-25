@@ -10,13 +10,46 @@ exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./service/auth.service");
 const auth_controller_1 = require("./adapter/in/auth.controller");
+const jwt_config_1 = require("../common/config/jwt.config");
+const jwt_1 = require("@nestjs/jwt");
+const jwt_adapter_1 = require("./adapter/out/jwt.adapter");
+const redis_adpter_1 = require("./adapter/out/redis.adpter");
+const user_module_1 = require("../user/user.module");
+const config_module_1 = require("../common/config/config.module");
+const jwt_strategy_1 = require("./strategy/jwt.strategy");
+const passport_1 = require("@nestjs/passport");
+const config_1 = require("@nestjs/config");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
-        providers: [auth_service_1.AuthService],
-        controllers: [auth_controller_1.AuthController]
+        imports: [
+            jwt_1.JwtModule.registerAsync({
+                imports: [config_1.ConfigModule],
+                inject: [config_1.ConfigService],
+                useFactory: jwt_config_1.jwtConfig,
+            }),
+            config_module_1.RedisConfigModule,
+            user_module_1.UserModule,
+            passport_1.PassportModule,
+        ],
+        providers: [
+            auth_service_1.AuthService,
+            redis_adpter_1.RedisAdapter,
+            {
+                provide: 'RedisPort',
+                useExisting: redis_adpter_1.RedisAdapter,
+            },
+            jwt_adapter_1.JwtAdapter,
+            {
+                provide: 'JwtPort',
+                useExisting: jwt_adapter_1.JwtAdapter,
+            },
+            jwt_strategy_1.JwtStrategy
+        ],
+        controllers: [auth_controller_1.AuthController],
+        exports: ['RedisPort', 'JwtPort']
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

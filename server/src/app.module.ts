@@ -9,20 +9,24 @@ import { AIModule } from './ai/ai.module';
 import { BatchModule } from './batch/batch.module';
 import { ExpressionModule } from './expression/expression.module';
 import { MailerModule } from './mailer/mailer.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 import { ExpressionEntity } from './expression/domain/expression.entity';
 import { UserEntity } from './user/domain/user.entity';
 import { ExpressionDeliveryEntity } from './expression/domain/expression-delivery.entity';
 import { typeOrmConfig } from './common/config/mysql.config';
-import { AuthModule } from './auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
 import { jwtConfig } from './common/config/jwt.config';
-
+import { RedisConfig } from './common/config/redis.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    JwtModule.register(jwtConfig),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: jwtConfig,
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -52,8 +56,8 @@ import { jwtConfig } from './common/config/jwt.config';
     ExpressionModule,
     AuthModule,
   ],
-  providers: [],
+  providers: [RedisConfig],
   controllers: [],
-  exports : []
+  exports : ['REDIS']
 })
 export class AppModule {}

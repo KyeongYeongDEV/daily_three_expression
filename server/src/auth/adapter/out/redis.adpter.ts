@@ -1,10 +1,11 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import Redis from "ioredis";
 import { RedisPort } from "src/auth/port/out/redis.port";
 
 @Injectable()
 export class RedisAdapter implements RedisPort {
   constructor(
+    @Inject('REDIS')
     private readonly redisClient : Redis,
   ){}
   
