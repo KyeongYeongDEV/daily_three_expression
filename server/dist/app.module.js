@@ -61,7 +61,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             user_module_1.UserModule,
             admin_module_1.AdminModule,
-            ai_module_1.AIModule,
+            ai_module_1.AiModule,
             batch_module_1.BatchModule,
             expression_module_1.ExpressionModule,
             auth_module_1.AuthModule,

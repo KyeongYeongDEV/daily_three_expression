@@ -1,6 +1,6 @@
 // src/ai/ai.controller.ts
 import { Controller, Get, Post, Query } from '@nestjs/common';
-import { AiService } from './ai.service';
+import { AiService } from './service/ai.service';
 
 @Controller('ai')
 export class AiController {

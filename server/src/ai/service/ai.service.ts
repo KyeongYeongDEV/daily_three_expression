@@ -7,8 +7,6 @@ import { OpenAiPort } from '../port/out/openai.port';
 
 @Injectable()
 export class AiService  implements OpenAiPort {
-  private openAi: OpenAI;
-  
   constructor(
     private readonly configService: ConfigService,
   ) {
@@ -16,7 +14,9 @@ export class AiService  implements OpenAiPort {
       apiKey: this.configService.get<string>('OPENAI_API_KEY'),
     });
   }
-
+  
+  private openAi: OpenAI;
+  
   async getExpressionFromGPT(): Promise<any[]> {
     try {
       const content = this.configService.get<string>('OPENAI_CONTENT') as string;

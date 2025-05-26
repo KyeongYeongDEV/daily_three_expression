@@ -16,15 +16,21 @@ const expression_port_1 = require("./port/expression.port");
 const expression_delivery_port_1 = require("./port/expression-delivery.port");
 const expression_adapter_1 = require("./adapter/out/expression.adapter");
 const expression_delivery_adapter_1 = require("./adapter/out/expression-delivery.adapter");
+const ai_module_1 = require("../ai/ai.module");
+const expression_generation_service_1 = require("./service/expression-generation.service");
 let ExpressionModule = class ExpressionModule {
 };
 exports.ExpressionModule = ExpressionModule;
 exports.ExpressionModule = ExpressionModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([expression_entity_1.ExpressionEntity])],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([expression_entity_1.ExpressionEntity]),
+            ai_module_1.AiModule
+        ],
         controllers: [expression_controller_1.ExpressionController],
         providers: [
             expression_service_1.ExpressionService,
+            expression_generation_service_1.ExpressionGenerationService,
             expression_adapter_1.TypeOrmExpressionAdapter,
             expression_delivery_adapter_1.TypeOrmExpressionDeliveryAdapter,
             {
@@ -36,7 +42,10 @@ exports.ExpressionModule = ExpressionModule = __decorate([
                 useExisting: expression_delivery_adapter_1.TypeOrmExpressionDeliveryAdapter,
             },
         ],
-        exports: [expression_service_1.ExpressionService],
+        exports: [
+            expression_service_1.ExpressionService,
+            expression_generation_service_1.ExpressionGenerationService,
+        ],
     })
 ], ExpressionModule);
 //# sourceMappingURL=expression.module.js.map

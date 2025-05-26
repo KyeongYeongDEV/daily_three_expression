@@ -1,13 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { AiService } from "./ai.service";
+import { Inject, Injectable } from "@nestjs/common";
+import { AiService } from "../../ai/service/ai.service";
 import { ExpressionPort } from "src/expression/port/expression.port";
-import { QdrantPort } from "../port/out/qdrant.port";
+import { QdrantPort } from "../../ai/port/out/qdrant.port";
 
 @Injectable()
 export class ExpressionGenerationService {
   constructor(
-    private readonly aiService: AiService,
+    private readonly aiService: AiService, // TODO OpenaiPort로 변경할 것
+    @Inject('ExpressionPort') 
     private readonly expressionPort: ExpressionPort,
+    @Inject('QdrantPort')
     private readonly qdrant: QdrantPort, 
   ) {}
 
@@ -23,9 +25,10 @@ export class ExpressionGenerationService {
       for (const exp of candidates) {
         const similarity = await this.qdrant.searchSimilar(exp.expression);
         if (similarity > 0.9) continue;
-
+        
         const saved = await this.expressionPort.save(exp);
         await this.qdrant.insertEmbedding(saved.e_id, exp.expression);
+        console.log(`✅ ${saved.e_id} 저장 완료: ${exp.expression}`);
 
         savedCount++;
         if (savedCount >= this.TARGET_COUNT) break;

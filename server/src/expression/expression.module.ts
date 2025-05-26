@@ -9,12 +9,18 @@ import { EXPRESSION_DELIVERY_PORT } from './port/expression-delivery.port';
 
 import { TypeOrmExpressionAdapter } from './adapter/out/expression.adapter';
 import { TypeOrmExpressionDeliveryAdapter } from './adapter/out/expression-delivery.adapter';
+import { AiModule } from 'src/ai/ai.module';
+import { ExpressionGenerationService } from './service/expression-generation.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ExpressionEntity])],
+  imports: [
+    TypeOrmModule.forFeature([ExpressionEntity]),
+    AiModule
+  ],
   controllers: [ExpressionController],
   providers: [
     ExpressionService,
+    ExpressionGenerationService,
     TypeOrmExpressionAdapter,
     TypeOrmExpressionDeliveryAdapter,
     {
@@ -26,6 +32,9 @@ import { TypeOrmExpressionDeliveryAdapter } from './adapter/out/expression-deliv
       useExisting: TypeOrmExpressionDeliveryAdapter,
     },
   ],
-  exports: [ExpressionService],
+  exports: [
+    ExpressionService,
+    ExpressionGenerationService,
+  ],
 })
 export class ExpressionModule {}

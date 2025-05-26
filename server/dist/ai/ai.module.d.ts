@@ -1,2 +1,2 @@
-export declare class AIModule {
+export declare class AiModule {
 }

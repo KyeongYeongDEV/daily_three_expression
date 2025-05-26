@@ -13,16 +13,16 @@ exports.AiService = void 0;
 const common_1 = require("@nestjs/common");
 const openai_1 = require("openai");
 const config_1 = require("@nestjs/config");
-const openAI_helper_1 = require("../common/helpers/openAI.helper");
+const openAI_helper_1 = require("../../common/helpers/openAI.helper");
 let AiService = class AiService {
     configService;
-    openAi;
     constructor(configService) {
         this.configService = configService;
         this.openAi = new openai_1.default({
             apiKey: this.configService.get('OPENAI_API_KEY'),
         });
     }
+    openAi;
     async getExpressionFromGPT() {
         try {
             const content = this.configService.get('OPENAI_CONTENT');

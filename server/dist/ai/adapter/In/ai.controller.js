@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiController = void 0;
 const common_1 = require("@nestjs/common");
-const ai_service_1 = require("./service/ai.service");
+const ai_service_1 = require("../../service/ai.service");
 let AiController = class AiController {
     aiService;
     constructor(aiService) {

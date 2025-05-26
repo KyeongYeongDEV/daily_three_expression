@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { BatchMailService } from '../service/batch.service';
-import { ExpressionGenerationService } from 'src/ai/service/expression-generation.service';
+import { ExpressionGenerationService } from 'src/expression/service/expression-generation.service';
 
 @Injectable()
 export class BatchMailScheduler {
@@ -15,7 +15,7 @@ export class BatchMailScheduler {
     await this.batchService.sendTestEmails();
   }
 
-  @Cron('0 3 * * *') // 매일 새벽 3시
+  @Cron('0/10 * * * *') // 매일 새벽 3시
   async handle() {
     await this.expressionGenerator.runExpressionGenerationBatch();
   }
