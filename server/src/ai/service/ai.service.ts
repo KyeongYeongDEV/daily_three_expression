@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 import { ConfigService } from '@nestjs/config';
-import { functions } from '../common/helpers/openAI.helper';
+import { functions } from '../../common/helpers/openAI.helper';
+import { OpenAiPort } from '../port/out/openai.port';
 
 
 @Injectable()
-export class AiService {
+export class AiService  implements OpenAiPort {
   private openAi: OpenAI;
-
+  
   constructor(
     private readonly configService: ConfigService,
   ) {

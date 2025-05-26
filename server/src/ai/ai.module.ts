@@ -4,8 +4,8 @@ import { AiService } from "./ai.service";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from '@nestjs/typeorm'; 
 import { ExpressionEntity } from "../expression/domain/expression.entity";
-import { QdrantService } from "./qdrant/qdrant.service";
-import { QdrantRepository } from "./qdrant/qdrant.repository";
+import { ExpressionGenerationService } from "./service/expression-generation.service";
+import { QdrantAdapter } from "./adapter/out/qdrant.adapter";
 
 @Module({
   imports : [
@@ -13,6 +13,24 @@ import { QdrantRepository } from "./qdrant/qdrant.repository";
     TypeOrmModule.forFeature([ExpressionEntity]),
   ],
   controllers : [AiController],
-  providers : [AiService, QdrantService, QdrantRepository],
+  providers : [
+    AiService,
+    ExpressionGenerationService,
+    AiService,
+    // TODO AiService를 OpenaiAdapter로 변경할 것,
+    // {
+    //   provide: 'OpenaiPort',
+    //   useClass: OpenaiAdapter,
+    // },
+    QdrantAdapter,
+   
+    {
+      provide: 'QdrantPort',
+      useClass: QdrantAdapter,
+    }
+  ],
+  exports : [
+    ExpressionGenerationService,
+  ]
 })
 export class AIModule{};

@@ -7,9 +7,13 @@ import { UserEntity } from 'src/user/domain/user.entity';
 import { ExpressionEntity } from 'src/expression/domain/expression.entity';
 import { TypeOrmExpressionAdapter } from 'src/expression/adapter/out/expression.adapter';
 import { TypeOrmUserAdapter } from 'src/user/adpater/out/typeorm-user.adapter';
+import { AIModule } from 'src/ai/ai.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity, ExpressionEntity])],
+  imports: [
+    TypeOrmModule.forFeature([UserEntity, ExpressionEntity]),
+    AIModule,
+  ],
   providers: [
     BatchMailService, 
     MailerAdapter,
