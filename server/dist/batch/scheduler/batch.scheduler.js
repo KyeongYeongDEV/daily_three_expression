@@ -9,27 +9,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MailerController = void 0;
+exports.BatchMailScheduler = void 0;
 const common_1 = require("@nestjs/common");
-const mailer_service_1 = require("./mailer.service");
-let MailerController = class MailerController {
-    mailerSerivce;
-    constructor(mailerSerivce) {
-        this.mailerSerivce = mailerSerivce;
+const schedule_1 = require("@nestjs/schedule");
+const batch_service_1 = require("../service/batch.service");
+let BatchMailScheduler = class BatchMailScheduler {
+    batchService;
+    constructor(batchService) {
+        this.batchService = batchService;
     }
-    async sendEmail() {
-        return await this.mailerSerivce.sendMail('cky4594709@gmail.com', '오늘의 표현 3개입니다!', '<h3>🔥 오늘의 표현</h3><ul><li>I’m into it.</li><li>That’s a good call.</li><li>What do you mean?</li></ul>');
+    async handleCron() {
+        await this.batchService.sendTestEmails();
     }
 };
-exports.MailerController = MailerController;
+exports.BatchMailScheduler = BatchMailScheduler;
 __decorate([
-    (0, common_1.Get)('/send'),
+    (0, schedule_1.Cron)('*/1 * * * *'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], MailerController.prototype, "sendEmail", null);
-exports.MailerController = MailerController = __decorate([
-    (0, common_1.Controller)('mailer'),
-    __metadata("design:paramtypes", [mailer_service_1.MailerService])
-], MailerController);
-//# sourceMappingURL=mailer.controller.js.map
+], BatchMailScheduler.prototype, "handleCron", null);
+exports.BatchMailScheduler = BatchMailScheduler = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [batch_service_1.BatchMailService])
+], BatchMailScheduler);
+//# sourceMappingURL=batch.scheduler.js.map

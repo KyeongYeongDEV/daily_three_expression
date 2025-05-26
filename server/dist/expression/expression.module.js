@@ -14,8 +14,8 @@ const expression_service_1 = require("./service/expression.service");
 const expression_entity_1 = require("./domain/expression.entity");
 const expression_port_1 = require("./port/expression.port");
 const expression_delivery_port_1 = require("./port/expression-delivery.port");
-const typeorm_expression_adapter_1 = require("./adapter/out/typeorm-expression.adapter");
-const typeorm_expression_delivery_adapter_1 = require("./adapter/out/typeorm-expression-delivery.adapter");
+const expression_adapter_1 = require("./adapter/out/expression.adapter");
+const expression_delivery_adapter_1 = require("./adapter/out/expression-delivery.adapter");
 let ExpressionModule = class ExpressionModule {
 };
 exports.ExpressionModule = ExpressionModule;
@@ -25,15 +25,15 @@ exports.ExpressionModule = ExpressionModule = __decorate([
         controllers: [expression_controller_1.ExpressionController],
         providers: [
             expression_service_1.ExpressionService,
-            typeorm_expression_adapter_1.TypeOrmExpressionAdapter,
-            typeorm_expression_delivery_adapter_1.TypeOrmExpressionDeliveryAdapter,
+            expression_adapter_1.TypeOrmExpressionAdapter,
+            expression_delivery_adapter_1.TypeOrmExpressionDeliveryAdapter,
             {
                 provide: expression_port_1.EXPRESSION_PORT,
-                useExisting: typeorm_expression_adapter_1.TypeOrmExpressionAdapter,
+                useExisting: expression_adapter_1.TypeOrmExpressionAdapter,
             },
             {
                 provide: expression_delivery_port_1.EXPRESSION_DELIVERY_PORT,
-                useExisting: typeorm_expression_delivery_adapter_1.TypeOrmExpressionDeliveryAdapter,
+                useExisting: expression_delivery_adapter_1.TypeOrmExpressionDeliveryAdapter,
             },
         ],
         exports: [expression_service_1.ExpressionService],

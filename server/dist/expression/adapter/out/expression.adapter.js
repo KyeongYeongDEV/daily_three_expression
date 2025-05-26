@@ -53,4 +53,4 @@ exports.TypeOrmExpressionAdapter = TypeOrmExpressionAdapter = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(expression_entity_1.ExpressionEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], TypeOrmExpressionAdapter);
-//# sourceMappingURL=typeorm-expression.adapter.js.map
+//# sourceMappingURL=expression.adapter.js.map

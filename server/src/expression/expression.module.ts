@@ -7,8 +7,8 @@ import { ExpressionEntity } from './domain/expression.entity';
 import { EXPRESSION_PORT } from './port/expression.port';
 import { EXPRESSION_DELIVERY_PORT } from './port/expression-delivery.port';
 
-import { TypeOrmExpressionAdapter } from './adapter/out/typeorm-expression.adapter';
-import { TypeOrmExpressionDeliveryAdapter } from './adapter/out/typeorm-expression-delivery.adapter';
+import { TypeOrmExpressionAdapter } from './adapter/out/expression.adapter';
+import { TypeOrmExpressionDeliveryAdapter } from './adapter/out/expression-delivery.adapter';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ExpressionEntity])],

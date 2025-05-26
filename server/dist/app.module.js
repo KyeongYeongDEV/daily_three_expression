@@ -16,9 +16,9 @@ const admin_module_1 = require("./admin/admin.module");
 const ai_module_1 = require("./ai/ai.module");
 const batch_module_1 = require("./batch/batch.module");
 const expression_module_1 = require("./expression/expression.module");
-const mailer_module_1 = require("./mailer/mailer.module");
 const auth_module_1 = require("./auth/auth.module");
 const jwt_1 = require("@nestjs/jwt");
+const schedule_1 = require("@nestjs/schedule");
 const expression_entity_1 = require("./expression/domain/expression.entity");
 const user_entity_1 = require("./user/domain/user.entity");
 const expression_delivery_entity_1 = require("./expression/domain/expression-delivery.entity");
@@ -32,6 +32,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({ isGlobal: true }),
+            schedule_1.ScheduleModule.forRoot(),
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
@@ -62,7 +63,6 @@ exports.AppModule = AppModule = __decorate([
             admin_module_1.AdminModule,
             ai_module_1.AIModule,
             batch_module_1.BatchModule,
-            mailer_module_1.MailerModule,
             expression_module_1.ExpressionModule,
             auth_module_1.AuthModule,
         ],

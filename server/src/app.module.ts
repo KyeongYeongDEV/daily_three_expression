@@ -2,19 +2,19 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
 import { UserModule } from './user/user.module';
 import { AdminModule } from './admin/admin.module';
 import { AIModule } from './ai/ai.module';
 import { BatchModule } from './batch/batch.module';
 import { ExpressionModule } from './expression/expression.module';
-import { MailerModule } from './mailer/mailer.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ScheduleModule } from '@nestjs/schedule';
 
 import { ExpressionEntity } from './expression/domain/expression.entity';
 import { UserEntity } from './user/domain/user.entity';
 import { ExpressionDeliveryEntity } from './expression/domain/expression-delivery.entity';
+
 import { typeOrmConfig } from './common/config/mysql.config';
 import { jwtConfig } from './common/config/jwt.config';
 import { RedisConfig } from './common/config/redis.config';
@@ -22,6 +22,7 @@ import { RedisConfig } from './common/config/redis.config';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -52,7 +53,6 @@ import { RedisConfig } from './common/config/redis.config';
     AdminModule,
     AIModule,
     BatchModule,
-    MailerModule,
     ExpressionModule,
     AuthModule,
   ],

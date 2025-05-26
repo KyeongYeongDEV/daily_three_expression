@@ -6,4 +6,5 @@ export interface UserPort {
   findUserInfoByEmail( email: string ): Promise<UserEntity | null>;
   saveUser( user: UserEntity ): Promise<UserEntity>;
   findUserByUid( id : number ): Promise<UserEntity | null>;
+  findAllUsersEmail() : Promise<string[]>;
 }

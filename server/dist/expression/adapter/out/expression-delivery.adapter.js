@@ -32,4 +32,4 @@ exports.TypeOrmExpressionDeliveryAdapter = TypeOrmExpressionDeliveryAdapter = __
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [typeorm_1.DataSource])
 ], TypeOrmExpressionDeliveryAdapter);
-//# sourceMappingURL=typeorm-expression-delivery.adapter.js.map
+//# sourceMappingURL=expression-delivery.adapter.js.map
