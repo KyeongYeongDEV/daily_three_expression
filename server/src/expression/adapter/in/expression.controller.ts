@@ -34,10 +34,12 @@ export class ExpressionController {
     return this.expressionService.getThreeExpressionsByStartIdAndCategory( id, category );
   }
 
-  @Get('deliveried/:id')
+  @Get('deliveried/:u_id')
   async getDeliveriedExpressionsByUid(
     @Param('id') id : number,
   ) : Promise<ExpressionListResponse> {
     return this.expressionService.getDeliveriedExpressionsByUid( id );
   }
+
+  
 }

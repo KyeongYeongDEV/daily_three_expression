@@ -9,6 +9,7 @@ export class MailerController {
 
   @Get('/send')
   async sendEmail() {
+    //TODO @Param() 으로 받는 유저의 이메일로 변경
     return await this.mailerSerivce.sendMail(
       'cky4594709@gmail.com',
       '오늘의 표현 3개입니다!',

@@ -6,17 +6,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BatchModule = void 0;
+exports.BatchService = void 0;
 const common_1 = require("@nestjs/common");
-const batch_service_1 = require("./batch.service");
-let BatchModule = class BatchModule {
+let BatchService = class BatchService {
 };
-exports.BatchModule = BatchModule;
-exports.BatchModule = BatchModule = __decorate([
-    (0, common_1.Module)({
-        imports: [],
-        providers: [batch_service_1.BatchService],
-    })
-], BatchModule);
-;
-//# sourceMappingURL=batch.module.js.map
+exports.BatchService = BatchService;
+exports.BatchService = BatchService = __decorate([
+    (0, common_1.Injectable)()
+], BatchService);
+//# sourceMappingURL=batch.service.js.map
