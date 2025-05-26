@@ -23,8 +23,7 @@ export class AuthController {
   async logout(@Req() req : any) {
     return await this.authService.logout(req.user.email);
   }
-
-  @UseGuards(JwtAuthGuard)
+  @Post('reissue')
   async reissue(@Body() { email, refreshToken }: ReissueDto) {
     return await this.authService.reissue( email, refreshToken );
   }
