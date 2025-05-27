@@ -53,6 +53,15 @@ export class TypeOrmExpressionAdapter implements ExpressionPort {
       return this.expressionBlackListRepository.save({ expression, count: 1 });
     }
   }
+  async findTop5BlacklistedExpressions(): Promise<string[]> {
+    const records = await this.expressionBlackListRepository
+      .createQueryBuilder('blacklist')
+      .orderBy('blacklist.count', 'DESC')
+      .limit(5)
+      .getMany();
+  
+    return records.map(record => record.expression);
+  }
   
 }
 // 

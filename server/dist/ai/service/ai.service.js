@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiService = void 0;
 const common_1 = require("@nestjs/common");
@@ -15,9 +18,11 @@ const openai_1 = require("openai");
 const config_1 = require("@nestjs/config");
 const openAI_helper_1 = require("../../common/helpers/openAI.helper");
 let AiService = class AiService {
+    expressionPort;
     configService;
     openAi;
-    constructor(configService) {
+    constructor(expressionPort, configService) {
+        this.expressionPort = expressionPort;
         this.configService = configService;
         this.openAi = new openai_1.default({
             apiKey: this.configService.get('OPENAI_API_KEY'),
@@ -26,7 +31,12 @@ let AiService = class AiService {
     async getExpressionFromGPT() {
         try {
             const content = this.configService.get('OPENAI_CONTENT');
-            const prompt = this.configService.get('OPENAI_PROMPT');
+            let prompt = this.configService.get('OPENAI_PROMPT');
+            const blacklist = await this.expressionPort.findTop5BlacklistedExpressions();
+            if (blacklist.length > 0) {
+                const exclusions = blacklist.map(exp => `- "${exp}"`).join('\n');
+                prompt += `Absolutely avoid using any of the following expressions:\n${exclusions}`;
+            }
             const completion = await this.openAi.chat.completions.create({
                 model: 'gpt-4-1106-preview',
                 temperature: 0.7,
@@ -38,7 +48,6 @@ let AiService = class AiService {
                 function_call: { name: 'returnExpressions' },
             });
             let raw = completion.choices[0].message?.function_call?.arguments ?? '{}';
-            console.log('🧪 GPT 응답 원본:', raw);
             const cleaned = raw
                 .replace(/\\n/g, '')
                 .replace(/\\"/g, '"')
@@ -76,6 +85,7 @@ let AiService = class AiService {
 exports.AiService = AiService;
 exports.AiService = AiService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [config_1.ConfigService])
+    __param(0, (0, common_1.Inject)('ExpressionPort')),
+    __metadata("design:paramtypes", [Object, config_1.ConfigService])
 ], AiService);
 //# sourceMappingURL=ai.service.js.map

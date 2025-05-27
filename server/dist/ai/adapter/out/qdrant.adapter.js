@@ -42,6 +42,18 @@ let QdrantAdapter = class QdrantAdapter {
         };
         await (0, rxjs_1.firstValueFrom)(this.httpService.put(`http://localhost:6333/collections/${this.COLLECTION}/points`, payload));
     }
+    async trySaveIfNotSimilar(expression) {
+        const similarity = await this.searchSimilar(expression.expression);
+        if (similarity > 0.9) {
+            const result = await this.expressionPort.saveExpressionBlackList(expression.expression);
+            console.warn(`⚠️ 중복 표현 스킵: ${expression.expression}`);
+            return result.expression;
+        }
+        const saved = await this.expressionPort.save(expression);
+        await this.insertEmbedding(saved.e_id, expression.expression);
+        console.log(`✅ ${saved.e_id} 저장 완료: ${expression.expression}`);
+        return `✅ 저장됨: ${expression.expression}`;
+    }
     async searchSimilar(text) {
         const vector = await this.aiService.getEmbedding(text);
         if (!vector || vector.length === 0)

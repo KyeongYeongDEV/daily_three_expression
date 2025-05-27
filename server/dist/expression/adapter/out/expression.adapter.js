@@ -17,10 +17,13 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const expression_entity_1 = require("../../domain/expression.entity");
+const expression_black_list_entity_1 = require("../../domain/expression-black-list.entity");
 let TypeOrmExpressionAdapter = class TypeOrmExpressionAdapter {
     expressionRepository;
-    constructor(expressionRepository) {
+    expressionBlackListRepository;
+    constructor(expressionRepository, expressionBlackListRepository) {
         this.expressionRepository = expressionRepository;
+        this.expressionBlackListRepository = expressionBlackListRepository;
     }
     async save(expression) {
         return this.expressionRepository.save(expression);
@@ -46,11 +49,31 @@ let TypeOrmExpressionAdapter = class TypeOrmExpressionAdapter {
             .limit(3)
             .getMany();
     }
+    async saveExpressionBlackList(expression) {
+        const found = await this.expressionBlackListRepository.findOne({ where: { expression } });
+        if (found) {
+            found.count += 1;
+            return this.expressionBlackListRepository.save(found);
+        }
+        else {
+            return this.expressionBlackListRepository.save({ expression, count: 1 });
+        }
+    }
+    async findTop5BlacklistedExpressions() {
+        const records = await this.expressionBlackListRepository
+            .createQueryBuilder('blacklist')
+            .orderBy('blacklist.count', 'DESC')
+            .limit(5)
+            .getMany();
+        return records.map(record => record.expression);
+    }
 };
 exports.TypeOrmExpressionAdapter = TypeOrmExpressionAdapter;
 exports.TypeOrmExpressionAdapter = TypeOrmExpressionAdapter = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(expression_entity_1.ExpressionEntity)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(expression_black_list_entity_1.ExpressionBlackListEntity)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], TypeOrmExpressionAdapter);
 //# sourceMappingURL=expression.adapter.js.map

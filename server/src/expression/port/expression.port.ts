@@ -11,4 +11,5 @@ export interface ExpressionPort {
   findThreeExpressionsByStartIdAndCategory(id: number, category: string): Promise<ExpressionResponseDto[]>;
   save(expression: ExpressionEntity): Promise<ExpressionEntity>;
   saveExpressionBlackList(expression: string): Promise<ExpressionBlackListEntity>;
+  findTop5BlacklistedExpressions(): Promise<string[]>;
 }
