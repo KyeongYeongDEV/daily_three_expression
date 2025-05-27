@@ -16,6 +16,7 @@ const expression_entity_1 = require("../expression/domain/expression.entity");
 const qdrant_adapter_1 = require("./adapter/out/qdrant.adapter");
 const axios_1 = require("@nestjs/axios");
 const expression_adapter_1 = require("../expression/adapter/out/expression.adapter");
+const expression_module_1 = require("../expression/expression.module");
 let AiModule = class AiModule {
 };
 exports.AiModule = AiModule;
@@ -25,6 +26,7 @@ exports.AiModule = AiModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([expression_entity_1.ExpressionEntity]),
             config_1.ConfigModule,
             axios_1.HttpModule,
+            (0, common_1.forwardRef)(() => expression_module_1.ExpressionModule),
         ],
         controllers: [ai_controller_1.AiController],
         providers: [

@@ -1,8 +1,0 @@
-import { ConfigService } from '@nestjs/config';
-export declare class AiService {
-    private readonly configService;
-    private openAi;
-    constructor(configService: ConfigService);
-    getExpressionFromGPT(): Promise<any[]>;
-    getEmbedding(text: string): Promise<number[]>;
-}

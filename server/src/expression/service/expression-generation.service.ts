@@ -17,28 +17,36 @@ export class ExpressionGenerationService {
   private readonly TARGET_COUNT = 3;
 
   async runExpressionGenerationBatch(): Promise<void> {
+    console.log('✅ Batch Expression Generation started');
+  
     let savedCount = 0;
-
-    for (let i = 0; i < this.MAX_RETRY && savedCount < this.TARGET_COUNT; i++) {
+  
+    for (let attempt = 0; attempt < this.MAX_RETRY; attempt++) {
       const candidates = await this.aiService.getExpressionFromGPT();
-
+  
       for (const exp of candidates) {
         const similarity = await this.qdrant.searchSimilar(exp.expression);
-        if (similarity > 0.9) continue;
-        
+        if (similarity > 0.9) {
+          console.log(`⚠️ 중복 표현 스킵: ${exp.expression}`);
+          continue;
+        }
+  
         const saved = await this.expressionPort.save(exp);
         await this.qdrant.insertEmbedding(saved.e_id, exp.expression);
         console.log(`✅ ${saved.e_id} 저장 완료: ${exp.expression}`);
-
+  
         savedCount++;
-        if (savedCount >= this.TARGET_COUNT) break;
       }
+  
+      if (savedCount >= this.TARGET_COUNT) {
+        console.log(`🎉 ${savedCount}개 표현 저장 완료`);
+        return;
+      }
+  
+      console.log(`🔁 아직 ${savedCount}/${this.TARGET_COUNT} 저장됨 → GPT 재요청`);
     }
-
-    if (savedCount < this.TARGET_COUNT) {
-      console.warn(`❗최대 시도 후 ${savedCount}개만 저장됨`);
-    } else {
-      console.log('✅ 3개 이상 저장 완료, 프로세스 종료');
-    }
+  
+    console.warn(`❗최대 ${this.MAX_RETRY}회 시도했지만 ${savedCount}개만 저장됨`);
   }
+  
 }

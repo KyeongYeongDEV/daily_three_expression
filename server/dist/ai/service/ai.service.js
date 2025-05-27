@@ -16,40 +16,43 @@ const config_1 = require("@nestjs/config");
 const openAI_helper_1 = require("../../common/helpers/openAI.helper");
 let AiService = class AiService {
     configService;
+    openAi;
     constructor(configService) {
         this.configService = configService;
         this.openAi = new openai_1.default({
             apiKey: this.configService.get('OPENAI_API_KEY'),
         });
     }
-    openAi;
     async getExpressionFromGPT() {
         try {
             const content = this.configService.get('OPENAI_CONTENT');
-            const prompts = this.configService.get('OPENAI_PROMPT');
-            function decodeUnicode(str) {
-                return str.replace(/\\u[\dA-F]{4}/gi, (match) => String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16)));
-            }
+            const prompt = this.configService.get('OPENAI_PROMPT');
             const completion = await this.openAi.chat.completions.create({
                 model: 'gpt-4-1106-preview',
+                temperature: 0.7,
                 messages: [
-                    {
-                        role: 'system',
-                        content: content,
-                    },
-                    { role: 'user', content: prompts },
+                    { role: 'system', content },
+                    { role: 'user', content: prompt },
                 ],
                 functions: openAI_helper_1.functions,
                 function_call: { name: 'returnExpressions' },
             });
-            let response = completion.choices[0].message?.function_call?.arguments ?? '{}';
-            console.log(response);
-            response = decodeUnicode(response);
-            const parsed = JSON.parse(response);
-            return parsed.expressions ?? [];
+            let raw = completion.choices[0].message?.function_call?.arguments ?? '{}';
+            console.log('🧪 GPT 응답 원본:', raw);
+            const cleaned = raw
+                .replace(/\\n/g, '')
+                .replace(/\\"/g, '"')
+                .replace(/\\u[\dA-F]{4}/gi, '')
+                .trim();
+            const parsed = JSON.parse(cleaned);
+            const validExpressions = (parsed.expressions ?? []).filter((e) => e.translation_expression?.trim() &&
+                e.translation_example1?.trim() &&
+                e.translation_example2?.trim());
+            console.log('✅ GPT 응답 파싱 성공:', validExpressions);
+            return validExpressions;
         }
         catch (error) {
-            console.error('❌ JSON 파싱 실패 (function call 응답):');
+            console.error('❌ GPT 응답 파싱 실패:', error instanceof Error ? error.message : error);
             return [];
         }
     }
@@ -65,6 +68,7 @@ let AiService = class AiService {
             return result.data[0].embedding;
         }
         catch (error) {
+            console.error('❌ 임베딩 실패:', error);
             return [];
         }
     }

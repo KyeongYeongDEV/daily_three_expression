@@ -21,22 +21,14 @@ let BatchMailScheduler = class BatchMailScheduler {
         this.batchService = batchService;
         this.expressionGenerator = expressionGenerator;
     }
-    async handleCron() {
-        await this.batchService.sendTestEmails();
-    }
     async handle() {
+        console.log('✅ Batch Expression Generation started');
         await this.expressionGenerator.runExpressionGenerationBatch();
     }
 };
 exports.BatchMailScheduler = BatchMailScheduler;
 __decorate([
-    (0, schedule_1.Cron)('*/1 * * * *'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], BatchMailScheduler.prototype, "handleCron", null);
-__decorate([
-    (0, schedule_1.Cron)('0/10 * * * *'),
+    (0, schedule_1.Cron)('0/2 * * * *'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)

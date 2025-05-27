@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { AiController } from "./ai.controller";
 import { AiService } from "./service/ai.service";
 import { ConfigModule } from "@nestjs/config";
@@ -7,12 +7,14 @@ import { ExpressionEntity } from "../expression/domain/expression.entity";
 import { QdrantAdapter } from "./adapter/out/qdrant.adapter";
 import { HttpModule } from "@nestjs/axios";
 import { TypeOrmExpressionAdapter } from "src/expression/adapter/out/expression.adapter";
+import { ExpressionModule } from "src/expression/expression.module";
 
 @Module({
   imports : [
     TypeOrmModule.forFeature([ExpressionEntity]),
     ConfigModule, 
     HttpModule,
+    forwardRef(() => ExpressionModule), // ✅ 이것도 필요
   ],
   controllers : [AiController],
   providers : [

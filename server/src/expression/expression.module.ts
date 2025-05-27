@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExpressionController } from './adapter/in/expression.controller';
 import { ExpressionService } from './service/expression.service';
@@ -15,7 +15,7 @@ import { ExpressionGenerationService } from './service/expression-generation.ser
 @Module({
   imports: [
     TypeOrmModule.forFeature([ExpressionEntity]),
-    AiModule
+    forwardRef(() => AiModule),
   ],
   controllers: [ExpressionController],
   providers: [
@@ -35,6 +35,7 @@ import { ExpressionGenerationService } from './service/expression-generation.ser
   exports: [
     ExpressionService,
     ExpressionGenerationService,
+    EXPRESSION_PORT,
   ],
 })
 export class ExpressionModule {}

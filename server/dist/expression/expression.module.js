@@ -25,7 +25,7 @@ exports.ExpressionModule = ExpressionModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([expression_entity_1.ExpressionEntity]),
-            ai_module_1.AiModule
+            (0, common_1.forwardRef)(() => ai_module_1.AiModule),
         ],
         controllers: [expression_controller_1.ExpressionController],
         providers: [
@@ -45,6 +45,7 @@ exports.ExpressionModule = ExpressionModule = __decorate([
         exports: [
             expression_service_1.ExpressionService,
             expression_generation_service_1.ExpressionGenerationService,
+            expression_port_1.EXPRESSION_PORT,
         ],
     })
 ], ExpressionModule);

@@ -10,13 +10,14 @@ export class BatchMailScheduler {
     private readonly expressionGenerator: ExpressionGenerationService,
   ) {}
 
-  @Cron('*/1 * * * *') // 매 1분마다
-  async handleCron() {
-    await this.batchService.sendTestEmails();
-  }
+  // @Cron('*/1 * * * *') // 매 1분마다
+  // async handleCron() {
+  //   await this.batchService.sendTestEmails();
+  // }
 
-  @Cron('0/10 * * * *') // 매일 새벽 3시
+  @Cron('0/2 * * * *') //  @Cron('* 3 * * * *')매일 새벽 3시
   async handle() {
+    console.log('✅ Batch Expression Generation started');
     await this.expressionGenerator.runExpressionGenerationBatch();
   }
 }
