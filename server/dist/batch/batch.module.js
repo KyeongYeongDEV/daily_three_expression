@@ -26,7 +26,7 @@ exports.BatchModule = BatchModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.UserEntity, expression_entity_1.ExpressionEntity]),
             ai_module_1.AiModule,
-            expression_module_1.ExpressionModule
+            (0, common_1.forwardRef)(() => expression_module_1.ExpressionModule),
         ],
         providers: [
             batch_service_1.BatchMailService,
@@ -34,7 +34,7 @@ exports.BatchModule = BatchModule = __decorate([
             batch_scheduler_1.BatchMailScheduler,
             {
                 provide: 'ExpressionPort',
-                useClass: expression_adapter_1.TypeOrmExpressionAdapter,
+                useExisting: expression_adapter_1.TypeOrmExpressionAdapter,
             },
             {
                 provide: 'UserPort',

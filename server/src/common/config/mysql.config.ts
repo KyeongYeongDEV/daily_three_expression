@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { ExpressionEntity } from 'src/expression/domain/expression.entity';
 import { UserEntity } from 'src/user/domain/user.entity';
 import { ExpressionDeliveryEntity } from 'src/expression/domain/expression-delivery.entity';
+import { ExpressionBlackListEntity } from 'src/expression/domain/expression-black-list.entity';
 
 export const typeOrmConfig = async (
   configService: ConfigService,
@@ -15,7 +16,7 @@ export const typeOrmConfig = async (
     username: configService.get<string>('DB_USERNAME'),
     password: configService.get<string>('DB_PASSWORD'),
     database: configService.get<string>('DB_DATABASE'),
-    entities: [ExpressionEntity, UserEntity, ExpressionDeliveryEntity],
+    entities: [ExpressionEntity, UserEntity, ExpressionDeliveryEntity, ExpressionBlackListEntity],
     synchronize: true, //TODO 배포시 false
     charset: 'utf8mb4',
     logging: true,

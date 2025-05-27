@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BatchMailService } from './service/batch.service';
 import { MailerAdapter } from './adapter/out/mailer.adapter';
@@ -14,7 +14,7 @@ import { ExpressionModule } from 'src/expression/expression.module';
   imports: [
     TypeOrmModule.forFeature([UserEntity, ExpressionEntity]),
     AiModule,
-    ExpressionModule
+    forwardRef(() => ExpressionModule), 
   ],
   providers: [
     BatchMailService, 
@@ -22,7 +22,7 @@ import { ExpressionModule } from 'src/expression/expression.module';
     BatchMailScheduler, 
     {
       provide: 'ExpressionPort',
-      useClass: TypeOrmExpressionAdapter,
+      useExisting: TypeOrmExpressionAdapter,
     },
     {
       provide: 'UserPort',

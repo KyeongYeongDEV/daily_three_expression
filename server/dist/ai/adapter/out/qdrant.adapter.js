@@ -45,8 +45,9 @@ let QdrantAdapter = class QdrantAdapter {
     async trySaveIfNotSimilar(expression) {
         const similarity = await this.searchSimilar(expression.expression);
         if (similarity > 0.9) {
+            console.warn(`중복 표현 스킵: ${expression.expression}`);
             const result = await this.expressionPort.saveExpressionBlackList(expression.expression);
-            console.warn(`⚠️ 중복 표현 스킵: ${expression.expression}`);
+            console.log('saveExpressionBlackList 결과:', result);
             return result.expression;
         }
         const saved = await this.expressionPort.save(expression);
@@ -84,7 +85,7 @@ let QdrantAdapter = class QdrantAdapter {
             await (0, rxjs_1.firstValueFrom)(this.httpService.put(`http://localhost:6333/collections/${this.COLLECTION}/points`, payload));
             console.log(`✅ Qdrant 업로드 완료: ${exp.e_id}`);
         }
-        console.log(`🎉 총 ${expressions.length}개 표현 동기화 완료`);
+        console.log(`총 ${expressions.length}개 표현 동기화 완료`);
     }
     async deleteAllPoints() {
         const payload = {
@@ -93,7 +94,7 @@ let QdrantAdapter = class QdrantAdapter {
             },
         };
         await (0, rxjs_1.firstValueFrom)(this.httpService.post(`http://localhost:6333/collections/${this.COLLECTION}/points/delete`, payload));
-        console.log(`🧹 Qdrant '${this.COLLECTION}' 컬렉션 전체 삭제 완료`);
+        console.log(`Qdrant '${this.COLLECTION}' 컬렉션 전체 삭제 완료`);
     }
 };
 exports.QdrantAdapter = QdrantAdapter;

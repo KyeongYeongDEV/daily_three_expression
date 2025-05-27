@@ -17,13 +17,17 @@ const qdrant_adapter_1 = require("./adapter/out/qdrant.adapter");
 const axios_1 = require("@nestjs/axios");
 const expression_adapter_1 = require("../expression/adapter/out/expression.adapter");
 const expression_module_1 = require("../expression/expression.module");
+const expression_black_list_entity_1 = require("../expression/domain/expression-black-list.entity");
 let AiModule = class AiModule {
 };
 exports.AiModule = AiModule;
 exports.AiModule = AiModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([expression_entity_1.ExpressionEntity]),
+            typeorm_1.TypeOrmModule.forFeature([
+                expression_entity_1.ExpressionEntity,
+                expression_black_list_entity_1.ExpressionBlackListEntity,
+            ]),
             config_1.ConfigModule,
             axios_1.HttpModule,
             (0, common_1.forwardRef)(() => expression_module_1.ExpressionModule),

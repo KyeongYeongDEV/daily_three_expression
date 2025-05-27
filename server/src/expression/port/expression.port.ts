@@ -12,4 +12,5 @@ export interface ExpressionPort {
   save(expression: ExpressionEntity): Promise<ExpressionEntity>;
   saveExpressionBlackList(expression: string): Promise<ExpressionBlackListEntity>;
   findTop5BlacklistedExpressions(): Promise<string[]>;
+  toEntity(dto: any): ExpressionEntity;
 }

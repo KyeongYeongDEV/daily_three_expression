@@ -14,4 +14,5 @@ export declare class TypeOrmExpressionAdapter implements ExpressionPort {
     findThreeExpressionsByStartId(startId: number): Promise<ExpressionResponseDto[]>;
     saveExpressionBlackList(expression: string): Promise<ExpressionBlackListEntity>;
     findTop5BlacklistedExpressions(): Promise<string[]>;
+    toEntity(dto: any): ExpressionEntity;
 }

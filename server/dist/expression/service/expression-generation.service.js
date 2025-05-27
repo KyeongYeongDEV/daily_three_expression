@@ -32,23 +32,28 @@ let ExpressionGenerationService = class ExpressionGenerationService {
         for (let attempt = 0; attempt < this.MAX_RETRY; attempt++) {
             const candidates = await this.aiService.getExpressionFromGPT();
             for (const exp of candidates) {
-                const similarity = await this.qdrant.searchSimilar(exp.expression);
-                if (similarity > 0.9) {
-                    console.log(`⚠️ 중복 표현 스킵: ${exp.expression}`);
-                    continue;
+                const expressionEntity = this.expressionPort.toEntity(exp);
+                try {
+                    const result = await this.qdrant.trySaveIfNotSimilar(expressionEntity);
+                    if (result) {
+                        savedCount++;
+                        console.log(`누적 저장 ${savedCount}개`);
+                    }
+                    else {
+                        console.warn(`예상치 못한 응답: ${result}`);
+                    }
                 }
-                const saved = await this.expressionPort.save(exp);
-                await this.qdrant.insertEmbedding(saved.e_id, exp.expression);
-                console.log(`✅ ${saved.e_id} 저장 완료: ${exp.expression}`);
-                savedCount++;
+                catch (err) {
+                    console.error(`표현 처리 중 오류: ${exp.expression}`, err);
+                }
             }
             if (savedCount >= this.TARGET_COUNT) {
-                console.log(`🎉 ${savedCount}개 표현 저장 완료`);
+                console.log(`${savedCount}개 표현 저장 완료`);
                 return;
             }
-            console.log(`🔁 아직 ${savedCount}/${this.TARGET_COUNT} 저장됨 → GPT 재요청`);
+            console.log(`아직 ${savedCount}/${this.TARGET_COUNT} 저장됨 → GPT 재요청`);
         }
-        console.warn(`❗최대 ${this.MAX_RETRY}회 시도했지만 ${savedCount}개만 저장됨`);
+        console.warn(`최대 ${this.MAX_RETRY}회 시도했지만 ${savedCount}개만 저장됨`);
     }
 };
 exports.ExpressionGenerationService = ExpressionGenerationService;

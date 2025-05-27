@@ -8,6 +8,6 @@ export class ExpressionBlackListEntity {
   @Column({ type: 'varchar', length: 255, unique: true })
   expression: string;
 
-  @Column({ type: 'int', default: 1 })
+  @Column({ type: 'int'})
   count: number;
 }

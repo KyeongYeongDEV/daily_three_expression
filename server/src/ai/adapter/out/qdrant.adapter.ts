@@ -17,9 +17,6 @@ export class QdrantAdapter implements QdrantPort {
     private readonly expressionPort: ExpressionPort,
   ) {}
 
-  /**
-   * ✅ 벡터 삽입
-   */
   async insertEmbedding(id: number, text: string): Promise<void> {
     const vector = await this.aiService.getEmbedding(text);
     if (!vector || vector.length === 0) return;
@@ -42,16 +39,15 @@ export class QdrantAdapter implements QdrantPort {
     );
   }
 
-  /**
-   * ✅ 유사도 검색 및 저장 처리
-   */
   async trySaveIfNotSimilar(expression: ExpressionEntity): Promise<string> {
     const similarity = await this.searchSimilar(expression.expression);
     if (similarity > 0.9) {
+      console.warn(`중복 표현 스킵: ${expression.expression}`);
       const result = await this.expressionPort.saveExpressionBlackList(expression.expression);
-      console.warn(`⚠️ 중복 표현 스킵: ${expression.expression}`);
+      console.log('saveExpressionBlackList 결과:', result);
       return result.expression;
     }
+    
 
     const saved = await this.expressionPort.save(expression);
     await this.insertEmbedding(saved.e_id, expression.expression);
@@ -59,9 +55,6 @@ export class QdrantAdapter implements QdrantPort {
     return `✅ 저장됨: ${expression.expression}`;
   }
 
-  /**
-   * ✅ 유사도 검색
-   */
   async searchSimilar(text: string): Promise<number> {
     const vector = await this.aiService.getEmbedding(text);
     if (!vector || vector.length === 0) return 0;
@@ -82,9 +75,6 @@ export class QdrantAdapter implements QdrantPort {
     return res.data.result?.[0]?.score ?? 0;
   }
 
-  /**
-   * ✅ DB 전체 표현 → Qdrant에 벡터 업로드
-   */
   async syncAllExpressionsToQdrant(): Promise<void> {
     const expressions = await this.expressionPort.findAll();
 
@@ -112,12 +102,9 @@ export class QdrantAdapter implements QdrantPort {
       console.log(`✅ Qdrant 업로드 완료: ${exp.e_id}`);
     }
 
-    console.log(`🎉 총 ${expressions.length}개 표현 동기화 완료`);
+    console.log(`총 ${expressions.length}개 표현 동기화 완료`);
   }
 
-  /**
-   * ✅ 전체 벡터 삭제
-   */
   async deleteAllPoints(): Promise<void> {
     const payload = {
       filter: {
@@ -132,6 +119,6 @@ export class QdrantAdapter implements QdrantPort {
       )
     );
 
-    console.log(`🧹 Qdrant '${this.COLLECTION}' 컬렉션 전체 삭제 완료`);
+    console.log(`Qdrant '${this.COLLECTION}' 컬렉션 전체 삭제 완료`);
   }
 }

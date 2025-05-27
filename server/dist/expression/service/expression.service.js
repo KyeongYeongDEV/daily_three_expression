@@ -89,8 +89,8 @@ let ExpressionService = class ExpressionService {
     async saveExpressionBlackList(expression) {
         const result = await this.expressionPort.saveExpressionBlackList(expression);
         return result.count > 1
-            ? `🔁 '${expression}' 중복 count 증가 → ${result.count}`
-            : `🆕 '${expression}' 새로 저장됨 (count = 1)`;
+            ? `'${expression}' 중복 count 증가 → ${result.count}`
+            : `'${expression}' 새로 저장됨 (count = 1)`;
     }
 };
 exports.ExpressionService = ExpressionService;

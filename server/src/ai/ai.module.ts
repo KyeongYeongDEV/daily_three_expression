@@ -8,13 +8,17 @@ import { QdrantAdapter } from "./adapter/out/qdrant.adapter";
 import { HttpModule } from "@nestjs/axios";
 import { TypeOrmExpressionAdapter } from "src/expression/adapter/out/expression.adapter";
 import { ExpressionModule } from "src/expression/expression.module";
+import { ExpressionBlackListEntity } from "src/expression/domain/expression-black-list.entity";
 
 @Module({
   imports : [
-    TypeOrmModule.forFeature([ExpressionEntity]),
+    TypeOrmModule.forFeature([
+      ExpressionEntity, 
+      ExpressionBlackListEntity,
+    ]),
     ConfigModule, 
     HttpModule,
-    forwardRef(() => ExpressionModule), // ✅ 이것도 필요
+    forwardRef(() => ExpressionModule),
   ],
   controllers : [AiController],
   providers : [

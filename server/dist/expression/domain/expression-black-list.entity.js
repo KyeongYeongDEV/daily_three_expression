@@ -26,7 +26,7 @@ __decorate([
     __metadata("design:type", String)
 ], ExpressionBlackListEntity.prototype, "expression", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'int', default: 1 }),
+    (0, typeorm_1.Column)({ type: 'int' }),
     __metadata("design:type", Number)
 ], ExpressionBlackListEntity.prototype, "count", void 0);
 exports.ExpressionBlackListEntity = ExpressionBlackListEntity = __decorate([

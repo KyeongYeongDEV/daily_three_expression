@@ -50,13 +50,22 @@ let TypeOrmExpressionAdapter = class TypeOrmExpressionAdapter {
             .getMany();
     }
     async saveExpressionBlackList(expression) {
+        console.log(`🧪 saveExpressionBlackList 호출됨: ${expression}`);
         const found = await this.expressionBlackListRepository.findOne({ where: { expression } });
         if (found) {
             found.count += 1;
-            return this.expressionBlackListRepository.save(found);
+            const result = await this.expressionBlackListRepository.save(found);
+            console.log(`🔁 count 증가 완료: ${found.expression} → ${found.count}`);
+            return result;
         }
         else {
-            return this.expressionBlackListRepository.save({ expression, count: 1 });
+            const newEntry = this.expressionBlackListRepository.create({
+                expression,
+                count: 1,
+            });
+            const result = await this.expressionBlackListRepository.save(newEntry);
+            console.log(`🆕 새 표현 저장 완료: ${newEntry.expression}`);
+            return result;
         }
     }
     async findTop5BlacklistedExpressions() {
@@ -66,6 +75,17 @@ let TypeOrmExpressionAdapter = class TypeOrmExpressionAdapter {
             .limit(5)
             .getMany();
         return records.map(record => record.expression);
+    }
+    toEntity(dto) {
+        const entity = new expression_entity_1.ExpressionEntity();
+        entity.category = dto.category;
+        entity.expression = dto.expression;
+        entity.example1 = dto.example1;
+        entity.example2 = dto.example2;
+        entity.translation_expression = dto.translation_expression;
+        entity.translation_example1 = dto.translation_example1;
+        entity.translation_example2 = dto.translation_example2;
+        return entity;
     }
 };
 exports.TypeOrmExpressionAdapter = TypeOrmExpressionAdapter;

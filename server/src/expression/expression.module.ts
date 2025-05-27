@@ -11,10 +11,14 @@ import { TypeOrmExpressionAdapter } from './adapter/out/expression.adapter';
 import { TypeOrmExpressionDeliveryAdapter } from './adapter/out/expression-delivery.adapter';
 import { AiModule } from 'src/ai/ai.module';
 import { ExpressionGenerationService } from './service/expression-generation.service';
+import { ExpressionBlackListEntity } from './domain/expression-black-list.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ExpressionEntity]),
+    TypeOrmModule.forFeature([
+      ExpressionEntity,
+      ExpressionBlackListEntity,
+    ]),
     forwardRef(() => AiModule),
   ],
   controllers: [ExpressionController],
@@ -35,6 +39,7 @@ import { ExpressionGenerationService } from './service/expression-generation.ser
   exports: [
     ExpressionService,
     ExpressionGenerationService,
+    TypeOrmExpressionAdapter,
     EXPRESSION_PORT,
   ],
 })
