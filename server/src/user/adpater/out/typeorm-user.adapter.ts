@@ -11,19 +11,29 @@ export class TypeOrmUserAdapter implements UserPort {
     @InjectRepository( UserEntity )
     private readonly userRepository: Repository<UserEntity>,
   ) {}
-  findUserInfoByEmail( email: string ): Promise<UserEntity | null> {
+
+  async findAllUsersEmail(): Promise<string[]> {
+    const results = await this.userRepository
+    .createQueryBuilder('user')
+    .select('user.email', 'email')
+    .getRawMany();
+
+  return results.map(result => result.email);
+  }
+
+  async findUserInfoByEmail( email: string ): Promise<UserEntity | null> {
     return this.userRepository.createQueryBuilder('user')
     .where('user.email = :email', { email })
     .getOne();
   }
 
-  findUserByEmail( email: string ): Promise<UserExistDTO | null> {
+  async findUserByEmail( email: string ): Promise<UserExistDTO | null> {
     return this.userRepository.createQueryBuilder('user')
     .where('user.email = :email', { email })
     .getOne();
   }
 
-  findUserByUid( u_id : number ): Promise<UserEntity | null> {
+  async findUserByUid( u_id : number ): Promise<UserEntity | null> {
     return this.userRepository.createQueryBuilder('user')
     .select([
       'user.u_id',
@@ -33,7 +43,7 @@ export class TypeOrmUserAdapter implements UserPort {
     .getOne();
   }
 
-  saveUser( user: UserEntity ): Promise<UserEntity> {
+  async saveUser( user: UserEntity ): Promise<UserEntity> {
     return this.userRepository.save(user);
   }
 }

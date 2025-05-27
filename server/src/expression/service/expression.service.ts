@@ -5,6 +5,7 @@ import { ExpressionEntity } from '../domain/expression.entity';
 import { ResponseHelper } from 'src/common/helpers/response.helper';
 import { ExpressionResponseDto } from '../dto/response.dto';
 import { ExpressionListResponse, ExpressionResponse } from 'src/common/types/response.type';
+import { ExpressionBlackListEntity } from '../domain/expression-black-list.entity';
 
 @Injectable()
 export class ExpressionService {
@@ -86,4 +87,13 @@ export class ExpressionService {
   async createNewExpression(input: ExpressionEntity): Promise<ExpressionEntity> {
     return this.expressionPort.save(input);
   }
+
+  async saveExpressionBlackList(expression: string): Promise<string> {
+    const result: ExpressionBlackListEntity = await this.expressionPort.saveExpressionBlackList(expression);
+  
+    return result.count > 1
+      ? `'${expression}' 중복 count 증가 → ${result.count}`
+      : `'${expression}' 새로 저장됨 (count = 1)`;
+  }
+  
 }

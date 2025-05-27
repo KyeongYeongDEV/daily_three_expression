@@ -1,7 +1,15 @@
-import { AiService } from './ai.service';
+import { AiService } from './service/ai.service';
+import { QdrantAdapter } from './adapter/out/qdrant.adapter';
 export declare class AiController {
     private readonly aiService;
-    constructor(aiService: AiService);
+    private readonly qdrant;
+    constructor(aiService: AiService, qdrant: QdrantAdapter);
     testGenerate(): Promise<void>;
+    syncAllExpressionsToQdrant(): Promise<{
+        message: string;
+    }>;
     generateUniqueExpressions(): Promise<void>;
+    deleteAllExpressionsFromQdrant(): Promise<{
+        message: string;
+    }>;
 }

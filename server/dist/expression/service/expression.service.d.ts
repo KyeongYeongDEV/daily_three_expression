@@ -12,4 +12,5 @@ export declare class ExpressionService {
     getThreeExpressionsByStartIdAndCategory(id: number, category: string): Promise<ExpressionListResponse>;
     getDeliveriedExpressionsByUid(id: number): Promise<ExpressionListResponse>;
     createNewExpression(input: ExpressionEntity): Promise<ExpressionEntity>;
+    saveExpressionBlackList(expression: string): Promise<string>;
 }

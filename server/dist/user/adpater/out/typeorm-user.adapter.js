@@ -22,17 +22,24 @@ let TypeOrmUserAdapter = class TypeOrmUserAdapter {
     constructor(userRepository) {
         this.userRepository = userRepository;
     }
-    findUserInfoByEmail(email) {
+    async findAllUsersEmail() {
+        const results = await this.userRepository
+            .createQueryBuilder('user')
+            .select('user.email', 'email')
+            .getRawMany();
+        return results.map(result => result.email);
+    }
+    async findUserInfoByEmail(email) {
         return this.userRepository.createQueryBuilder('user')
             .where('user.email = :email', { email })
             .getOne();
     }
-    findUserByEmail(email) {
+    async findUserByEmail(email) {
         return this.userRepository.createQueryBuilder('user')
             .where('user.email = :email', { email })
             .getOne();
     }
-    findUserByUid(u_id) {
+    async findUserByUid(u_id) {
         return this.userRepository.createQueryBuilder('user')
             .select([
             'user.u_id',
@@ -41,7 +48,7 @@ let TypeOrmUserAdapter = class TypeOrmUserAdapter {
             .where('user.u_id = :u_id', { u_id })
             .getOne();
     }
-    saveUser(user) {
+    async saveUser(user) {
         return this.userRepository.save(user);
     }
 };

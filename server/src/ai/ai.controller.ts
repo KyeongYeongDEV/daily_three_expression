@@ -1,10 +1,16 @@
 // src/ai/ai.controller.ts
-import { Controller, Get, Post, Query } from '@nestjs/common';
-import { AiService } from './ai.service';
+import { Controller, Delete, Get, Inject, Post, Query } from '@nestjs/common';
+import { AiService } from './service/ai.service';
+
+import { QdrantAdapter } from './adapter/out/qdrant.adapter';
 
 @Controller('ai')
 export class AiController {
-  constructor(private readonly aiService: AiService) {}
+  constructor(
+    private readonly aiService: AiService,
+    @Inject('QdrantPort')
+    private readonly qdrant: QdrantAdapter, 
+  ) {}
 
   @Get('test')
   async testGenerate() {
@@ -13,8 +19,20 @@ export class AiController {
     //return { expressions: result };
   }
 
+  @Post('save/all/expressions')
+  async syncAllExpressionsToQdrant() {
+    this.qdrant.syncAllExpressionsToQdrant();
+    return { message: '모든 표현식이 Qdrant에 동기화되었습니다.' };
+  }
+
   @Post('generate')
   async generateUniqueExpressions() {
     //TODO 
+  }
+
+  @Delete('all/expressions')
+  async deleteAllExpressionsFromQdrant() {
+    await this.qdrant.deleteAllPoints();
+    return { message: '모든 표현식이 Qdrant에서 삭제되었습니다.' };
   }
 }
