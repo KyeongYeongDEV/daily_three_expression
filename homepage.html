@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>회원가입 - 이메일 인증</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      padding: 40px;
+      max-width: 400px;
+      margin: auto;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #999;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+
+  </style>
+</head>
+<body>
+  <h2>회원가입</h2>
+
+  <label for="email">이메일 주소</label>
+  <input type="email" id="email" placeholder="example@email.com" required>
+  <button onclick="sendVerificationCode()">인증 코드 보내기</button>
+
+  <label for="code">인증 코드</label>
+  <input type="text" id="code" placeholder="6자리 코드 입력">
+  <button onclick="verifyCode()">코드 확인</button>
+
+  <p id="resultMsg"></p>
+
+  <script>
+    let verificationCode = null;
+
+    function sendVerificationCode() {
+      const email = document.getElementById('email').value;
+      if (!email) {
+        alert('이메일을 입력해주세요!');
+        return;
+      }
+
+      // 간단한 코드 생성 (실제에선 백엔드에서 처리) 
+      verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      console.log(`📩 발송된 인증 코드 (테스트용): ${verificationCode}`);
+
+      alert(`인증 코드가 ${email}으로 전송되었습니다 (테스트: 콘솔 확인).`);
+    }
+
+    function verifyCode() {
+      const code = document.getElementById('code').value;
+      const resultMsg = document.getElementById('resultMsg');
+
+      if (!verificationCode) {
+        resultMsg.textContent = '먼저 인증 코드를 보내주세요.';
+        resultMsg.className = 'error';
+        return;
+      }
+
+      if (code === verificationCode) {
+        resultMsg.textContent = '✅ 인증 성공!';
+        resultMsg.className = 'success';
+      } else {
+        resultMsg.textContent = '❌ 인증 실패. 다시 시도해주세요.';
+        resultMsg.className = 'error';
+      }
+    }
+  </script>
+</body>
+</html>
