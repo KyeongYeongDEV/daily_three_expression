@@ -20,10 +20,12 @@ const user_service_1 = require("../../user/service/user.service");
 let AuthService = class AuthService {
     redisPort;
     jwtPort;
+    sendMailPort;
     userService;
-    constructor(redisPort, jwtPort, userService) {
+    constructor(redisPort, jwtPort, sendMailPort, userService) {
         this.redisPort = redisPort;
         this.jwtPort = jwtPort;
+        this.sendMailPort = sendMailPort;
         this.userService = userService;
     }
     async createToken(u_id, email) {
@@ -109,12 +111,56 @@ let AuthService = class AuthService {
             return response_helper_1.ResponseHelper.fail('로그인 실패');
         }
     }
+    generateOneDigit() {
+        return Math.floor(Math.random() * 10);
+    }
+    generateVerificationCode() {
+        let code = '';
+        for (let i = 0; i < 6; i++) {
+            code += this.generateOneDigit().toString();
+        }
+        return code;
+    }
+    async sendEmailVerificationCode(email) {
+        try {
+            const code = this.generateVerificationCode();
+            const isSendEmailVerificationCode = await this.sendMailPort.sendEmailVerificationCode(email, code);
+            if (!isSendEmailVerificationCode) {
+                throw new Error('이메일 인증 코드 전송 실패');
+            }
+            await this.redisPort.saveEmailVerificationCode(email, code);
+            console.log(`이메일 인증 코드가 ${email}로 전송되었습니다: ${code}`);
+            return "이메일 인증 코드가 전송되었습니다";
+        }
+        catch (error) {
+            console.error('[sendEmailVerificationCode]', error);
+            throw new Error('이메일 인증 코드 전송 중 에러가 발생했습니다');
+        }
+    }
+    async verifyEmailCode(email, code) {
+        try {
+            const savedCode = await this.redisPort.getEmailVerificationCode(email);
+            if (!savedCode) {
+                throw new Error('이메일 인증 코드가 존재하지 않습니다.');
+            }
+            if (savedCode !== code) {
+                throw new Error('이메일 인증 코드가 일치하지 않습니다.');
+            }
+            await this.redisPort.deleteEmailVerificationCode(email);
+            return '이메일 인증에 성공했습니다.';
+        }
+        catch (error) {
+            console.error('[verifyEmailCode]', error);
+            return '이메일 인증 코드 검증 중 에러가 발생했습니다.';
+        }
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)('RedisPort')),
     __param(1, (0, common_1.Inject)('JwtPort')),
-    __metadata("design:paramtypes", [Object, Object, user_service_1.UserService])
+    __param(2, (0, common_1.Inject)('SendMailPort')),
+    __metadata("design:paramtypes", [Object, Object, Object, user_service_1.UserService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

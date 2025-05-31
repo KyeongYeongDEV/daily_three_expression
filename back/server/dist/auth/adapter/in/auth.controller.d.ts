@@ -12,4 +12,11 @@ export declare class AuthController {
     }>;
     logout(req: any): Promise<import("../../dto/response.dto").LogoutResponse>;
     reissue({ email, refreshToken }: ReissueDto): Promise<import("../../dto/response.dto").CreateTokenResponse>;
+    verifyToken({ email }: {
+        email: string;
+    }): Promise<string>;
+    verifyCode({ email, code }: {
+        email: string;
+        code: string;
+    }): Promise<string>;
 }

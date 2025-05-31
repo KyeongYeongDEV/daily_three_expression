@@ -27,4 +27,14 @@ export class AuthController {
   async reissue(@Body() { email, refreshToken }: ReissueDto) {
     return await this.authService.reissue( email, refreshToken );
   }
+
+  @Post('email/code/send')
+  async verifyToken(@Body(){ email } : { email: string }) {
+    return this.authService.sendEmailVerificationCode(email);
+  }
+
+  @Post('email/code/verify')
+  async verifyCode(@Body() { email, code }: { email: string, code: string }) {
+    return this.authService.verifyEmailCode(email, code);
+  }
 }  

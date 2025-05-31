@@ -6,7 +6,7 @@ import { UserPort } from '../../port/user.port';
 import { UserExistDTO } from '../../dto/response.dto';
 
 @Injectable()
-export class TypeOrmUserAdapter implements UserPort {
+export class UserAdapter implements UserPort {
   constructor(
     @InjectRepository( UserEntity )
     private readonly userRepository: Repository<UserEntity>,

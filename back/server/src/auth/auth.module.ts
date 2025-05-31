@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthService } from './service/auth.service';
 import { AuthController } from './adapter/in/auth.controller';
 import { jwtConfig } from 'src/common/config/jwt.config';
@@ -10,6 +10,8 @@ import { RedisConfigModule } from 'src/common/config/config.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MailerAdapter } from 'src/batch/adapter/out/mailer.adapter';
+import { BatchModule } from 'src/batch/batch.module';
 
 
 @Module({
@@ -19,6 +21,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       inject: [ConfigService],
       useFactory: jwtConfig,
     }),
+    forwardRef(() => BatchModule),
     RedisConfigModule,
     UserModule,
     PassportModule,

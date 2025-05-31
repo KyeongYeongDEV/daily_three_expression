@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '../../domain/user.entity';
 import { UserPort } from '../../port/user.port';
 import { UserExistDTO } from '../../dto/response.dto';
-export declare class TypeOrmUserAdapter implements UserPort {
+export declare class UserAdapter implements UserPort {
     private readonly userRepository;
     constructor(userRepository: Repository<UserEntity>);
     findAllUsersEmail(): Promise<string[]>;

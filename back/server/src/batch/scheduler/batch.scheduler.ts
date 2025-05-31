@@ -15,9 +15,9 @@ export class BatchMailScheduler {
   //   await this.batchService.sendTestEmails();
   // }
 
-  @Cron('0/2 * * * *') //  @Cron('* 3 * * * *')매일 새벽 3시
-  async handle() {
-    console.log('✅ Batch Expression Generation started');
-    await this.expressionGenerator.runExpressionGenerationBatch();
-  }
+  // @Cron('0/2 * * * *') //  @Cron('* 3 * * * *')매일 새벽 3시
+  // async handle() {
+  //   console.log('✅ Batch Expression Generation started');
+  //   await this.expressionGenerator.runExpressionGenerationBatch();
+  // }
 }

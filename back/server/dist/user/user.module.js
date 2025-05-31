@@ -12,7 +12,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const user_controller_1 = require("./adpater/in/user.controller");
 const user_service_1 = require("./service/user.service");
 const user_entity_1 = require("./domain/user.entity");
-const typeorm_user_adapter_1 = require("./adpater/out/typeorm-user.adapter");
+const user_adapter_1 = require("./adpater/out/user.adapter");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
@@ -22,10 +22,10 @@ exports.UserModule = UserModule = __decorate([
         controllers: [user_controller_1.UserController],
         providers: [
             user_service_1.UserService,
-            typeorm_user_adapter_1.TypeOrmUserAdapter,
+            user_adapter_1.UserAdapter,
             {
                 provide: 'UserPort',
-                useExisting: typeorm_user_adapter_1.TypeOrmUserAdapter,
+                useExisting: user_adapter_1.UserAdapter,
             },
         ],
         exports: [user_service_1.UserService],

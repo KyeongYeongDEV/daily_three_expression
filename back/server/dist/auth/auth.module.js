@@ -19,6 +19,7 @@ const config_module_1 = require("../common/config/config.module");
 const jwt_strategy_1 = require("./strategy/jwt.strategy");
 const passport_1 = require("@nestjs/passport");
 const config_1 = require("@nestjs/config");
+const batch_module_1 = require("../batch/batch.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -30,6 +31,7 @@ exports.AuthModule = AuthModule = __decorate([
                 inject: [config_1.ConfigService],
                 useFactory: jwt_config_1.jwtConfig,
             }),
+            (0, common_1.forwardRef)(() => batch_module_1.BatchModule),
             config_module_1.RedisConfigModule,
             user_module_1.UserModule,
             passport_1.PassportModule,

@@ -3,17 +3,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from './adpater/in/user.controller';
 import { UserService } from './service/user.service';
 import { UserEntity } from './domain/user.entity';
-import { TypeOrmUserAdapter } from './adpater/out/typeorm-user.adapter';
+import { UserAdapter } from './adpater/out/user.adapter';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity])],
   controllers: [UserController],
   providers: [
     UserService,
-    TypeOrmUserAdapter,
+    UserAdapter,
     {
       provide: 'UserPort',
-      useExisting: TypeOrmUserAdapter,
+      useExisting: UserAdapter,
     },
   ],
   exports: [UserService],

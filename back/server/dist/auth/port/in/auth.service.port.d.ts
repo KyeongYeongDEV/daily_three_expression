@@ -5,4 +5,6 @@ export interface AuthServicePort {
     verifyToken(token: string): Promise<VerifyTokenResponse>;
     getEmailFromToken(token: string): Promise<EmailResponse>;
     logout(email: string): Promise<LogoutResponse>;
+    sendEmailVerificationCode(email: string): Promise<string>;
+    verifyEmailCode(email: string, code: string): Promise<string>;
 }

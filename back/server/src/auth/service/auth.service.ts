@@ -124,21 +124,41 @@ export class AuthService implements AuthServicePort {
     return code;
   }
 
-  async sendEmailVerificationCode(email: string): Promise<void>{
+  async sendEmailVerificationCode(email: string): Promise<string>{
     try {
       const code = this.generateVerificationCode();
+      const isSendEmailVerificationCode =  await this.sendMailPort.sendEmailVerificationCode(email, code);
+      if(!isSendEmailVerificationCode) {
+        throw new Error('이메일 인증 코드 전송 실패');
+      }
 
-
+      await this.redisPort.saveEmailVerificationCode(email, code);  
+      console.log(`이메일 인증 코드가 ${email}로 전송되었습니다: ${code}`);
+      return "이메일 인증 코드가 전송되었습니다";
     } catch (error) {
-
+      console.error('[sendEmailVerificationCode]', error);
+      throw new Error('이메일 인증 코드 전송 중 에러가 발생했습니다');
     }
   }
 
-  async verifyEmailCode(email: string, code: string): Promise<boolean>{
+  async verifyEmailCode(email: string, code: string): Promise<string>{
     try {
+      const savedCode = await this.redisPort.getEmailVerificationCode(email);
+      
+      if (!savedCode) {
+        throw new Error('이메일 인증 코드가 존재하지 않습니다.');
+      }
 
+      if (savedCode !== code) {
+        throw new Error('이메일 인증 코드가 일치하지 않습니다.');
+      }
+
+      await this.redisPort.deleteEmailVerificationCode(email);
+
+      return '이메일 인증에 성공했습니다.';
     } catch (error) {
-
+      console.error('[verifyEmailCode]', error);
+      return '이메일 인증 코드 검증 중 에러가 발생했습니다.';
     }
   }
 }

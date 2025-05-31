@@ -15,41 +15,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BatchMailService = void 0;
 const common_1 = require("@nestjs/common");
 let BatchMailService = class BatchMailService {
-    expressionPort;
-    userPort;
     mailSender;
-    constructor(expressionPort, userPort, mailSender) {
-        this.expressionPort = expressionPort;
-        this.userPort = userPort;
+    constructor(mailSender) {
         this.mailSender = mailSender;
     }
     async sendTestEmails() {
-        const users = await this.userPort.findAllUsersEmail();
-        const expressions = await this.expressionPort.findThreeExpressionsByStartId(1);
-        const html = `
-    <h3>🔥 오늘의 표현</h3>
-    <ul>
-      ${expressions
-            .map((e) => `
-            <li><b>${e.expression}</b> - ${e.translation_expression}</li>
-            <li>${e.example1} - ${e.translation_example1}</li>
-            <li>${e.example2} - ${e.translation_example2}</li>
-            <br/>
-          `)
-            .join('')}
-    </ul>
-  `;
-        for (const user of users) {
-            await this.mailSender.send(user, '오늘의 표현 3개입니다!', html);
+        try {
+            await this.mailSender.sendExpression();
+        }
+        catch (error) {
+            console.error('Error sending test emails:', error);
+            throw new Error('Failed to send test emails');
         }
     }
 };
 exports.BatchMailService = BatchMailService;
 exports.BatchMailService = BatchMailService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)('ExpressionPort')),
-    __param(1, (0, common_1.Inject)('UserPort')),
-    __param(2, (0, common_1.Inject)('SendMailPort')),
-    __metadata("design:paramtypes", [Object, Object, Object])
+    __param(0, (0, common_1.Inject)('SendMailPort')),
+    __metadata("design:paramtypes", [Object])
 ], BatchMailService);
 //# sourceMappingURL=batch.service.js.map

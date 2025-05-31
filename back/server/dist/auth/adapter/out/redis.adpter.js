@@ -20,6 +20,18 @@ let RedisAdapter = class RedisAdapter {
     constructor(redisClient) {
         this.redisClient = redisClient;
     }
+    async saveEmailVerificationCode(email, code) {
+        const key = `verify:${email}`;
+        await this.redisClient.set(key, code, 'EX', 60);
+    }
+    async getEmailVerificationCode(email) {
+        const key = `verify:${email}`;
+        return await this.redisClient.get(key);
+    }
+    async deleteEmailVerificationCode(email) {
+        const key = `verify:${email}`;
+        await this.redisClient.del(key);
+    }
     async saveRefreshToken(email, refreshToken) {
         await this.redisClient.set(`refresh:${email}`, refreshToken, 'EX', 60 * 60 * 24 * 7);
     }

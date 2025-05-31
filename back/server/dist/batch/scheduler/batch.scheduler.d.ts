@@ -4,5 +4,4 @@ export declare class BatchMailScheduler {
     private readonly batchService;
     private readonly expressionGenerator;
     constructor(batchService: BatchMailService, expressionGenerator: ExpressionGenerationService);
-    handle(): Promise<void>;
 }

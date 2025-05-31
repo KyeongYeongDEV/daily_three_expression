@@ -31,6 +31,12 @@ let AuthController = class AuthController {
     async reissue({ email, refreshToken }) {
         return await this.authService.reissue(email, refreshToken);
     }
+    async verifyToken({ email }) {
+        return this.authService.sendEmailVerificationCode(email);
+    }
+    async verifyCode({ email, code }) {
+        return this.authService.verifyEmailCode(email, code);
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -56,6 +62,20 @@ __decorate([
     __metadata("design:paramtypes", [auth_dto_1.ReissueDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "reissue", null);
+__decorate([
+    (0, common_1.Post)('email/code/send'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyToken", null);
+__decorate([
+    (0, common_1.Post)('email/code/verify'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyCode", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

@@ -15,7 +15,7 @@ const batch_scheduler_1 = require("./scheduler/batch.scheduler");
 const user_entity_1 = require("../user/domain/user.entity");
 const expression_entity_1 = require("../expression/domain/expression.entity");
 const expression_adapter_1 = require("../expression/adapter/out/expression.adapter");
-const typeorm_user_adapter_1 = require("../user/adpater/out/typeorm-user.adapter");
+const user_adapter_1 = require("../user/adpater/out/user.adapter");
 const ai_module_1 = require("../ai/ai.module");
 const expression_module_1 = require("../expression/expression.module");
 let BatchModule = class BatchModule {
@@ -38,13 +38,19 @@ exports.BatchModule = BatchModule = __decorate([
             },
             {
                 provide: 'UserPort',
-                useClass: typeorm_user_adapter_1.TypeOrmUserAdapter,
+                useClass: user_adapter_1.UserAdapter,
             },
             {
                 provide: 'SendMailPort',
                 useClass: mailer_adapter_1.MailerAdapter,
             },
         ],
+        exports: [
+            {
+                provide: 'SendMailPort',
+                useClass: mailer_adapter_1.MailerAdapter,
+            },
+        ]
     })
 ], BatchModule);
 //# sourceMappingURL=batch.module.js.map

@@ -6,7 +6,7 @@ import { BatchMailScheduler } from './scheduler/batch.scheduler';
 import { UserEntity } from 'src/user/domain/user.entity';
 import { ExpressionEntity } from 'src/expression/domain/expression.entity';
 import { TypeOrmExpressionAdapter } from 'src/expression/adapter/out/expression.adapter';
-import { TypeOrmUserAdapter } from 'src/user/adpater/out/typeorm-user.adapter';
+import { UserAdapter } from 'src/user/adpater/out/user.adapter';
 import { AiModule } from 'src/ai/ai.module';
 import { ExpressionModule } from 'src/expression/expression.module';
 
@@ -26,12 +26,18 @@ import { ExpressionModule } from 'src/expression/expression.module';
     },
     {
       provide: 'UserPort',
-      useClass: TypeOrmUserAdapter,
+      useClass: UserAdapter,
     },
     {
       provide: 'SendMailPort',
       useClass: MailerAdapter,
     },
   ],
+  exports: [
+    {
+      provide: 'SendMailPort',
+      useClass: MailerAdapter,
+    },
+  ]
 })
 export class BatchModule {}

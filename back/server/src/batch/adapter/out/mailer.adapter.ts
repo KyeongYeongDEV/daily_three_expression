@@ -52,24 +52,33 @@ export class MailerAdapter implements SendMailPort {
     `;
 
     for (const user of users) {
-      await this.mailSender.sendEmail(
-        user,
-        '오늘의 표현 3개입니다!',
-        html
-      );
+      const info = await this.transporter.sendMail({
+        from: `"Daily Expression!" <${this.configService.get('MAIL_USER')}>`,
+        to: user,
+        subject: '오늘의 표현 3개입니다!',
+        html,
+      });
+      console.log(`✅ Email sent: ${user}`, info.messageId);
     }
   }
   
 
-  async sendCode(to: string): Promise<void> {
+  async sendEmailVerificationCode(to: string, code: string): Promise<boolean> {
+    const html = `
+      <h2>이메일 인증 코드</h2>
+      <p>아래 코드를 입력해주세요:</p>
+      <div style="font-size: 24px; font-weight: bold; color: #007bff;">${code}</div>
+    `;
+  
     const info = await this.transporter.sendMail({
-      from: `"Daily Expression!" <${this.configService.get('MAIL_USER')}>`, // 발신자 이메일
-      to, // 디비로 조회할 것
-      subject,// 제목
+      from: `"Daily Expression!" <${this.configService.get('MAIL_USER')}>`,
+      to,
+      subject: '이메일 인증 코드입니다',
       html,
     });
-
+  
     console.log('✅ Email sent:', info.messageId);
-  }
 
+    return info.accepted.length > 0; // 성공적으로 전송되었는지 확인
+  }
 }

@@ -5,11 +5,13 @@ import { JwtPort } from '../port/out/jwt.port';
 import { UserService } from 'src/user/service/user.service';
 import { LoginDto } from '../dto/auth.dto';
 import { Response } from 'express';
+import { SendMailPort } from 'src/batch/port/out/send-mail.port';
 export declare class AuthService implements AuthServicePort {
     private readonly redisPort;
     private readonly jwtPort;
+    private readonly sendMailPort;
     private readonly userService;
-    constructor(redisPort: RedisPort, jwtPort: JwtPort, userService: UserService);
+    constructor(redisPort: RedisPort, jwtPort: JwtPort, sendMailPort: SendMailPort, userService: UserService);
     createToken(u_id: number, email: string): Promise<CreateTokenResponse>;
     verifyToken(token: string): Promise<VerifyTokenResponse>;
     reissue(email: string, refreshToken: string): Promise<CreateTokenResponse>;
@@ -21,4 +23,8 @@ export declare class AuthService implements AuthServicePort {
         message: string;
         data: any;
     }>;
+    private generateOneDigit;
+    private generateVerificationCode;
+    sendEmailVerificationCode(email: string): Promise<string>;
+    verifyEmailCode(email: string, code: string): Promise<string>;
 }
