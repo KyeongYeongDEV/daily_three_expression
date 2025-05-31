@@ -22,7 +22,7 @@ let RedisAdapter = class RedisAdapter {
     }
     async saveEmailVerificationCode(email, code) {
         const key = `verify:${email}`;
-        await this.redisClient.set(key, code, 'EX', 60);
+        await this.redisClient.set(key, code, 'EX', 60 * 2);
     }
     async getEmailVerificationCode(email) {
         const key = `verify:${email}`;
@@ -30,6 +30,20 @@ let RedisAdapter = class RedisAdapter {
     }
     async deleteEmailVerificationCode(email) {
         const key = `verify:${email}`;
+        await this.redisClient.del(key);
+    }
+    async saveVerifiedEmail(email) {
+        const key = `isVerifiedEmail:${email}`;
+        await this.redisClient.set(key, 'true', 'EX', 60 * 30);
+    }
+    async isVerifiedEmail(email) {
+        const key = `isVerifiedEmail:${email}`;
+        console.log(`인증된 이메일인지 확인 : ${email} : `, key);
+        return await this.redisClient.get(key) === 'true';
+    }
+    async deleteVerifiedEmail(email) {
+        const key = `isVerifiedEmail:${email}`;
+        console.log(`인증된 이메일 삭제 : ${email} : `, key);
         await this.redisClient.del(key);
     }
     async saveRefreshToken(email, refreshToken) {

@@ -147,6 +147,7 @@ let AuthService = class AuthService {
                 throw new Error('이메일 인증 코드가 일치하지 않습니다.');
             }
             await this.redisPort.deleteEmailVerificationCode(email);
+            await this.redisPort.saveVerifiedEmail(email);
             return '이메일 인증에 성공했습니다.';
         }
         catch (error) {

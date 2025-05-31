@@ -18,8 +18,10 @@ const user_entity_1 = require("../domain/user.entity");
 const response_helper_1 = require("../../common/helpers/response.helper");
 let UserService = class UserService {
     userPort;
-    constructor(userPort) {
+    redisPort;
+    constructor(userPort, redisPort) {
         this.userPort = userPort;
+        this.redisPort = redisPort;
     }
     async getUserInfoByUid(u_id) {
         const user = await this.userPort.findUserByUid(u_id);
@@ -47,11 +49,16 @@ let UserService = class UserService {
             if (await this.isExistsUserByEmail(userRegisterRequestDto.email)) {
                 throw new Error('이미 존재하는 회원입니다');
             }
+            const isVerifiedEmail = await this.redisPort.isVerifiedEmail(userRegisterRequestDto.email);
+            if (!isVerifiedEmail) {
+                throw new Error('이메일 인증이 필요합니다');
+            }
             const user = this.mapToUserEntity(userRegisterRequestDto);
             const result = await this.userPort.saveUser(user);
             if (!result) {
                 throw new Error('사용자 정보 저장 실패');
             }
+            await this.redisPort.deleteVerifiedEmail(userRegisterRequestDto.email);
             return response_helper_1.ResponseHelper.success(result, '회원가입에 성공했습니다');
         }
         catch (error) {
@@ -96,6 +103,7 @@ exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)('UserPort')),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)('RedisPort')),
+    __metadata("design:paramtypes", [Object, Object])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

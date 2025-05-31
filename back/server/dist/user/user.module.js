@@ -13,19 +13,29 @@ const user_controller_1 = require("./adpater/in/user.controller");
 const user_service_1 = require("./service/user.service");
 const user_entity_1 = require("./domain/user.entity");
 const user_adapter_1 = require("./adpater/out/user.adapter");
+const redis_adpter_1 = require("../auth/adapter/out/redis.adpter");
+const config_module_1 = require("../common/config/config.module");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
 exports.UserModule = UserModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([user_entity_1.UserEntity])],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([user_entity_1.UserEntity]),
+            config_module_1.RedisConfigModule
+        ],
         controllers: [user_controller_1.UserController],
         providers: [
             user_service_1.UserService,
             user_adapter_1.UserAdapter,
+            redis_adpter_1.RedisAdapter,
             {
                 provide: 'UserPort',
                 useExisting: user_adapter_1.UserAdapter,
+            },
+            {
+                provide: 'RedisPort',
+                useExisting: redis_adpter_1.RedisAdapter,
             },
         ],
         exports: [user_service_1.UserService],

@@ -134,6 +134,7 @@ export class AuthService implements AuthServicePort {
 
       await this.redisPort.saveEmailVerificationCode(email, code);  
       console.log(`이메일 인증 코드가 ${email}로 전송되었습니다: ${code}`);
+
       return "이메일 인증 코드가 전송되었습니다";
     } catch (error) {
       console.error('[sendEmailVerificationCode]', error);
@@ -154,6 +155,7 @@ export class AuthService implements AuthServicePort {
       }
 
       await this.redisPort.deleteEmailVerificationCode(email);
+      await this.redisPort.saveVerifiedEmail(email);
 
       return '이메일 인증에 성공했습니다.';
     } catch (error) {

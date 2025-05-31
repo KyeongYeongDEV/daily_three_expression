@@ -5,12 +5,15 @@ import { UserInfoResponse } from 'src/common/types/response.type';
 import { ResponseHelper } from 'src/common/helpers/response.helper';
 import { UserExistDTO } from '../dto/response.dto';
 import { UserRegisterRequestDto, UserEmailRequestDto, UserVerifiedUpdateRequestDto } from '../dto/request.dto';
+import { RedisPort } from 'src/auth/port/out/redis.port';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject('UserPort')
     private readonly userPort: UserPort,
+    @Inject('RedisPort')
+    private readonly redisPort : RedisPort,
   ) {}
 
   async getUserInfoByUid(u_id : number) : Promise<UserEntity> {
@@ -41,10 +44,16 @@ export class UserService {
     return user;
   }
 
+  // TODO : 회원가입하는 데 시간이 오래 걸림 -> 개선하기
   async registerUser(userRegisterRequestDto: UserRegisterRequestDto): Promise<UserInfoResponse> {
     try {
       if(await this.isExistsUserByEmail(userRegisterRequestDto.email)){
         throw new Error('이미 존재하는 회원입니다');
+      }
+
+      const isVerifiedEmail= await this.redisPort.isVerifiedEmail(userRegisterRequestDto.email);
+      if(!isVerifiedEmail){
+        throw new Error('이메일 인증이 필요합니다');
       }
       
       const user : UserEntity = this.mapToUserEntity(userRegisterRequestDto);
@@ -52,7 +61,9 @@ export class UserService {
       if(!result){
         throw new Error('사용자 정보 저장 실패');
       }
-
+      
+      await this.redisPort.deleteVerifiedEmail(userRegisterRequestDto.email);
+      
       return ResponseHelper.success(result, '회원가입에 성공했습니다');
     } catch (error) {
       console.error('[registerUser] ', error);
