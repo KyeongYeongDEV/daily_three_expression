@@ -2,7 +2,7 @@ import { HttpService } from "@nestjs/axios";
 import { Inject, Injectable } from "@nestjs/common";
 import { firstValueFrom } from "rxjs";
 import { QdrantPort } from "src/ai/port/out/qdrant.port";
-import { AiService } from "src/ai/service/ai.service";
+import { OpenAiService } from "src/ai/service/openAi.service";
 import { ExpressionPort } from "src/expression/port/expression.port";
 import { ExpressionEntity } from "src/expression/domain/expression.entity";
 
@@ -12,7 +12,7 @@ export class QdrantAdapter implements QdrantPort {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly aiService: AiService,
+    private readonly aiService: OpenAiService,
     @Inject('ExpressionPort')
     private readonly expressionPort: ExpressionPort,
   ) {}

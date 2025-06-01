@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpressionGenerationService = void 0;
 const common_1 = require("@nestjs/common");
-const ai_service_1 = require("../../ai/service/ai.service");
+const openAi_service_1 = require("../../ai/service/openAi.service");
 let ExpressionGenerationService = class ExpressionGenerationService {
     aiService;
     expressionPort;
@@ -61,6 +61,6 @@ exports.ExpressionGenerationService = ExpressionGenerationService = __decorate([
     (0, common_1.Injectable)(),
     __param(1, (0, common_1.Inject)('ExpressionPort')),
     __param(2, (0, common_1.Inject)('QdrantPort')),
-    __metadata("design:paramtypes", [ai_service_1.AiService, Object, Object])
+    __metadata("design:paramtypes", [openAi_service_1.OpenAiService, Object, Object])
 ], ExpressionGenerationService);
 //# sourceMappingURL=expression-generation.service.js.map

@@ -1,12 +1,12 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { AiService } from "../../ai/service/ai.service";
+import { OpenAiService } from "../../ai/service/openAi.service";
 import { ExpressionPort } from "src/expression/port/expression.port";
 import { QdrantPort } from "../../ai/port/out/qdrant.port";
 
 @Injectable()
 export class ExpressionGenerationService {
   constructor(
-    private readonly aiService: AiService, // TODO OpenaiPort로 변경할 것
+    private readonly aiService: OpenAiService, // TODO OpenaiPort로 변경할 것
     @Inject('ExpressionPort') 
     private readonly expressionPort: ExpressionPort,
     @Inject('QdrantPort')
