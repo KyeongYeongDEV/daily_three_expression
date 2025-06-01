@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
-import { AdminModule } from './admin/admin.module';
 import { AiModule } from './ai/ai.module';
 import { BatchModule } from './batch/batch.module';
 import { ExpressionModule } from './expression/expression.module';
@@ -50,7 +49,6 @@ import { RedisConfig } from './common/config/redis.config';
       }),
     }),
     UserModule,
-    AdminModule,
     AiModule,
     BatchModule,
     ExpressionModule,

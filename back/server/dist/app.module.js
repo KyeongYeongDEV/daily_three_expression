@@ -12,7 +12,6 @@ const config_1 = require("@nestjs/config");
 const ioredis_1 = require("@nestjs-modules/ioredis");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_module_1 = require("./user/user.module");
-const admin_module_1 = require("./admin/admin.module");
 const ai_module_1 = require("./ai/ai.module");
 const batch_module_1 = require("./batch/batch.module");
 const expression_module_1 = require("./expression/expression.module");
@@ -60,7 +59,6 @@ exports.AppModule = AppModule = __decorate([
                 }),
             }),
             user_module_1.UserModule,
-            admin_module_1.AdminModule,
             ai_module_1.AiModule,
             batch_module_1.BatchModule,
             expression_module_1.ExpressionModule,
