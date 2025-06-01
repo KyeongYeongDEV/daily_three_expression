@@ -11,10 +11,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiController = void 0;
 const common_1 = require("@nestjs/common");
-const ai_service_1 = require("./service/ai.service");
+const openAi_service_1 = require("./service/openAi.service");
 const qdrant_adapter_1 = require("./adapter/out/qdrant.adapter");
 let AiController = class AiController {
     aiService;
@@ -64,7 +65,6 @@ __decorate([
 exports.AiController = AiController = __decorate([
     (0, common_1.Controller)('ai'),
     __param(1, (0, common_1.Inject)('QdrantPort')),
-    __metadata("design:paramtypes", [ai_service_1.AiService,
-        qdrant_adapter_1.QdrantAdapter])
+    __metadata("design:paramtypes", [typeof (_a = typeof openAi_service_1.AiService !== "undefined" && openAi_service_1.AiService) === "function" ? _a : Object, qdrant_adapter_1.QdrantAdapter])
 ], AiController);
 //# sourceMappingURL=ai.controller.js.map

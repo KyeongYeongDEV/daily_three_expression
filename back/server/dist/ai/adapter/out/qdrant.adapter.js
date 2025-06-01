@@ -16,7 +16,7 @@ exports.QdrantAdapter = void 0;
 const axios_1 = require("@nestjs/axios");
 const common_1 = require("@nestjs/common");
 const rxjs_1 = require("rxjs");
-const ai_service_1 = require("../../service/ai.service");
+const openAi_service_1 = require("../../service/openAi.service");
 let QdrantAdapter = class QdrantAdapter {
     httpService;
     aiService;
@@ -102,6 +102,6 @@ exports.QdrantAdapter = QdrantAdapter = __decorate([
     (0, common_1.Injectable)(),
     __param(2, (0, common_1.Inject)('ExpressionPort')),
     __metadata("design:paramtypes", [axios_1.HttpService,
-        ai_service_1.AiService, Object])
+        openAi_service_1.OpenAiService, Object])
 ], QdrantAdapter);
 //# sourceMappingURL=qdrant.adapter.js.map

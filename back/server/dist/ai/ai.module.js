@@ -8,8 +8,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiModule = void 0;
 const common_1 = require("@nestjs/common");
-const ai_controller_1 = require("./ai.controller");
-const ai_service_1 = require("./service/ai.service");
+const ai_controller_1 = require("./adapter/In/ai.controller");
+const openAi_service_1 = require("./service/openAi.service");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const expression_entity_1 = require("../expression/domain/expression.entity");
@@ -34,7 +34,7 @@ exports.AiModule = AiModule = __decorate([
         ],
         controllers: [ai_controller_1.AiController],
         providers: [
-            ai_service_1.AiService,
+            openAi_service_1.OpenAiService,
             qdrant_adapter_1.QdrantAdapter,
             {
                 provide: 'QdrantPort',
@@ -46,7 +46,7 @@ exports.AiModule = AiModule = __decorate([
             },
         ],
         exports: [
-            ai_service_1.AiService,
+            openAi_service_1.OpenAiService,
             {
                 provide: 'QdrantPort',
                 useClass: qdrant_adapter_1.QdrantAdapter,

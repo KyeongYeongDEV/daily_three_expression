@@ -12,12 +12,12 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AiService = void 0;
+exports.OpenAiService = void 0;
 const common_1 = require("@nestjs/common");
 const openai_1 = require("openai");
 const config_1 = require("@nestjs/config");
 const openAI_helper_1 = require("../../common/helpers/openAI.helper");
-let AiService = class AiService {
+let OpenAiService = class OpenAiService {
     expressionPort;
     configService;
     openAi;
@@ -82,10 +82,10 @@ let AiService = class AiService {
         }
     }
 };
-exports.AiService = AiService;
-exports.AiService = AiService = __decorate([
+exports.OpenAiService = OpenAiService;
+exports.OpenAiService = OpenAiService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)('ExpressionPort')),
     __metadata("design:paramtypes", [Object, config_1.ConfigService])
-], AiService);
-//# sourceMappingURL=ai.service.js.map
+], OpenAiService);
+//# sourceMappingURL=openAi.service.js.map

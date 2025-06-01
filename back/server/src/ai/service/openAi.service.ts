@@ -6,7 +6,7 @@ import { OpenAiPort } from '../port/out/openai.port';
 import { ExpressionPort } from 'src/expression/port/expression.port';
 
 @Injectable()
-export class AiService implements OpenAiPort {
+export class OpenAiService implements OpenAiPort {
   private openAi: OpenAI;
 
   constructor(

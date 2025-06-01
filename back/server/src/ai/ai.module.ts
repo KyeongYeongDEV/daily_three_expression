@@ -1,6 +1,6 @@
 import { forwardRef, Module } from "@nestjs/common";
-import { AiController } from "./ai.controller";
-import { AiService } from "./service/ai.service";
+import { AiController } from "./adapter/In/ai.controller";
+import { OpenAiService } from "./service/openAi.service";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from '@nestjs/typeorm'; 
 import { ExpressionEntity } from "../expression/domain/expression.entity";
@@ -22,7 +22,7 @@ import { ExpressionBlackListEntity } from "src/expression/domain/expression-blac
   ],
   controllers : [AiController],
   providers : [
-    AiService,
+    OpenAiService,
     // TODO AiService를 OpenaiAdapter로 변경할 것,
     // {
     //   provide: 'OpenaiPort',
@@ -39,7 +39,7 @@ import { ExpressionBlackListEntity } from "src/expression/domain/expression-blac
     },
   ],
   exports : [
-    AiService,
+    OpenAiService,
     {
       provide: 'QdrantPort',
       useClass: QdrantAdapter,

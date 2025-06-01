@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { OpenAiPort } from '../port/out/openai.port';
 import { ExpressionPort } from 'src/expression/port/expression.port';
-export declare class AiService implements OpenAiPort {
+export declare class OpenAiService implements OpenAiPort {
     private readonly expressionPort;
     private readonly configService;
     private openAi;
