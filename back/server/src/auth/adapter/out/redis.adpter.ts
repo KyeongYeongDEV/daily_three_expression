@@ -11,7 +11,7 @@ export class RedisAdapter implements RedisPort {
 
   async saveEmailVerificationCode(email: string, code : string): Promise<void> {
     const key = `verify:${email}`;
-    await this.redisClient.set(key, code, 'EX', 60 * 2); // 2분
+    await this.redisClient.set(key, code, 'EX', 60 * 10); // 10분
   }
 
   async getEmailVerificationCode(email: string): Promise<string | null> {
