@@ -11,10 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OpenAiService = void 0;
 const common_1 = require("@nestjs/common");
-const openai_1 = require("openai");
+const openai_1 = __importDefault(require("openai"));
 const config_1 = require("@nestjs/config");
 const openAI_helper_1 = require("../../common/helpers/openAI.helper");
 let OpenAiService = class OpenAiService {
