@@ -25,7 +25,7 @@ let RedisAdapter = class RedisAdapter {
     }
     async saveEmailVerificationCode(email, code) {
         const key = `verify:${email}`;
-        await this.redisClient.set(key, code, 'EX', 60 * 2);
+        await this.redisClient.set(key, code, 'EX', 60 * 10);
     }
     async getEmailVerificationCode(email) {
         const key = `verify:${email}`;
