@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BatchMailScheduler = void 0;
 const common_1 = require("@nestjs/common");
+const schedule_1 = require("@nestjs/schedule");
 const batch_service_1 = require("../service/batch.service");
 const expression_generation_service_1 = require("../../expression/service/expression-generation.service");
 let BatchMailScheduler = class BatchMailScheduler {
@@ -20,8 +21,17 @@ let BatchMailScheduler = class BatchMailScheduler {
         this.batchService = batchService;
         this.expressionGenerator = expressionGenerator;
     }
+    async handleCron() {
+        await this.batchService.sendTestEmails();
+    }
 };
 exports.BatchMailScheduler = BatchMailScheduler;
+__decorate([
+    (0, schedule_1.Cron)('*/1 * * * *'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], BatchMailScheduler.prototype, "handleCron", null);
 exports.BatchMailScheduler = BatchMailScheduler = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [batch_service_1.BatchMailService,
