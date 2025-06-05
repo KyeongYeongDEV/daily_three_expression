@@ -8,16 +8,18 @@ import { EXPRESSION_PORT } from './port/expression.port';
 import { EXPRESSION_DELIVERY_PORT } from './port/expression-delivery.port';
 
 import { TypeOrmExpressionAdapter } from './adapter/out/expression.adapter';
-import { TypeOrmExpressionDeliveryAdapter } from './adapter/out/expression-delivery.adapter';
+import { ExpressionDeliveryAdapter } from './adapter/out/expression-delivery.adapter';
 import { AiModule } from 'src/ai/ai.module';
 import { ExpressionGenerationService } from './service/expression-generation.service';
 import { ExpressionBlackListEntity } from './domain/expression-black-list.entity';
+import { ExpressionDeliveryEntity } from './domain/expression-delivery.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       ExpressionEntity,
       ExpressionBlackListEntity,
+      ExpressionDeliveryEntity
     ]),
     forwardRef(() => AiModule),
   ],
@@ -26,14 +28,14 @@ import { ExpressionBlackListEntity } from './domain/expression-black-list.entity
     ExpressionService,
     ExpressionGenerationService,
     TypeOrmExpressionAdapter,
-    TypeOrmExpressionDeliveryAdapter,
+    ExpressionDeliveryAdapter,
     {
       provide: EXPRESSION_PORT,
       useExisting: TypeOrmExpressionAdapter,
     },
     {
       provide: EXPRESSION_DELIVERY_PORT,
-      useExisting: TypeOrmExpressionDeliveryAdapter,
+      useExisting: ExpressionDeliveryAdapter,
     },
   ],
   exports: [

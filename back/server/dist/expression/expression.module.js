@@ -19,6 +19,7 @@ const expression_delivery_adapter_1 = require("./adapter/out/expression-delivery
 const ai_module_1 = require("../ai/ai.module");
 const expression_generation_service_1 = require("./service/expression-generation.service");
 const expression_black_list_entity_1 = require("./domain/expression-black-list.entity");
+const expression_delivery_entity_1 = require("./domain/expression-delivery.entity");
 let ExpressionModule = class ExpressionModule {
 };
 exports.ExpressionModule = ExpressionModule;
@@ -28,6 +29,7 @@ exports.ExpressionModule = ExpressionModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([
                 expression_entity_1.ExpressionEntity,
                 expression_black_list_entity_1.ExpressionBlackListEntity,
+                expression_delivery_entity_1.ExpressionDeliveryEntity
             ]),
             (0, common_1.forwardRef)(() => ai_module_1.AiModule),
         ],
@@ -36,14 +38,14 @@ exports.ExpressionModule = ExpressionModule = __decorate([
             expression_service_1.ExpressionService,
             expression_generation_service_1.ExpressionGenerationService,
             expression_adapter_1.TypeOrmExpressionAdapter,
-            expression_delivery_adapter_1.TypeOrmExpressionDeliveryAdapter,
+            expression_delivery_adapter_1.ExpressionDeliveryAdapter,
             {
                 provide: expression_port_1.EXPRESSION_PORT,
                 useExisting: expression_adapter_1.TypeOrmExpressionAdapter,
             },
             {
                 provide: expression_delivery_port_1.EXPRESSION_DELIVERY_PORT,
-                useExisting: expression_delivery_adapter_1.TypeOrmExpressionDeliveryAdapter,
+                useExisting: expression_delivery_adapter_1.ExpressionDeliveryAdapter,
             },
         ],
         exports: [

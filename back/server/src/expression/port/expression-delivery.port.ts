@@ -4,4 +4,5 @@ export const EXPRESSION_DELIVERY_PORT = Symbol('ExpressionDeliveryPort');
 
 export interface ExpressionDeliveryPort {
   findDeliveriedExpressionsByUid(id: number): Promise<ExpressionResponseDto[]>;
+  findStartExpressionId(startDay : Date, yesterday : Date) : Promise<number>;
 }

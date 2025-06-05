@@ -1,8 +1,10 @@
-import { DataSource } from 'typeorm';
+import { Repository } from 'typeorm';
 import { ExpressionDeliveryPort } from '../../port/expression-delivery.port';
 import { ExpressionResponseDto } from '../../dto/response.dto';
-export declare class TypeOrmExpressionDeliveryAdapter implements ExpressionDeliveryPort {
-    private readonly datasource;
-    constructor(datasource: DataSource);
+import { ExpressionDeliveryEntity } from 'src/expression/domain/expression-delivery.entity';
+export declare class ExpressionDeliveryAdapter implements ExpressionDeliveryPort {
+    private readonly expressionDeliveryRepository;
+    constructor(expressionDeliveryRepository: Repository<ExpressionDeliveryEntity>);
     findDeliveriedExpressionsByUid(u_id: number): Promise<ExpressionResponseDto[]>;
+    findStartExpressionId(today: Date, yesterday: Date): Promise<number>;
 }

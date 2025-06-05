@@ -8,28 +8,45 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TypeOrmExpressionDeliveryAdapter = void 0;
+exports.ExpressionDeliveryAdapter = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
-const response_dto_1 = require("../../dto/response.dto");
-let TypeOrmExpressionDeliveryAdapter = class TypeOrmExpressionDeliveryAdapter {
-    datasource;
-    constructor(datasource) {
-        this.datasource = datasource;
+const expression_delivery_entity_1 = require("../../domain/expression-delivery.entity");
+const typeorm_2 = require("@nestjs/typeorm");
+let ExpressionDeliveryAdapter = class ExpressionDeliveryAdapter {
+    expressionDeliveryRepository;
+    constructor(expressionDeliveryRepository) {
+        this.expressionDeliveryRepository = expressionDeliveryRepository;
     }
     async findDeliveriedExpressionsByUid(u_id) {
-        return await this.datasource
-            .getRepository(response_dto_1.ExpressionResponseDto)
-            .createQueryBuilder('expression')
-            .innerJoin('expression.deliveries', 'delivery')
-            .where('delivery.user.u_id = :u_id', { u_id })
+        const deliveredExpressions = await this.expressionDeliveryRepository
+            .createQueryBuilder('delivery')
+            .innerJoinAndSelect('delivery.expression', 'expression')
+            .innerJoin('delivery.user', 'user')
+            .where('user.u_id = :u_id', { u_id })
             .getMany();
+        return deliveredExpressions.map(delivery => delivery.expression);
+    }
+    async findStartExpressionId(today, yesterday) {
+        const result = await this.expressionDeliveryRepository
+            .createQueryBuilder('delivery')
+            .select('delivery.e_id', 'e_id')
+            .where('delivery.transmitted_at >= :yesterdayStart', { yesterdayStart: yesterday })
+            .andWhere('delivery.transmitted_at < :todayStart', { todayStart: today })
+            .andWhere('delivery.delivery_status = :status', { status: 'success' })
+            .orderBy('delivery.id', 'ASC')
+            .getRawOne();
+        return result ? result.e_id : 0;
     }
 };
-exports.TypeOrmExpressionDeliveryAdapter = TypeOrmExpressionDeliveryAdapter;
-exports.TypeOrmExpressionDeliveryAdapter = TypeOrmExpressionDeliveryAdapter = __decorate([
+exports.ExpressionDeliveryAdapter = ExpressionDeliveryAdapter;
+exports.ExpressionDeliveryAdapter = ExpressionDeliveryAdapter = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeorm_1.DataSource])
-], TypeOrmExpressionDeliveryAdapter);
+    __param(0, (0, typeorm_2.InjectRepository)(expression_delivery_entity_1.ExpressionDeliveryEntity)),
+    __metadata("design:paramtypes", [typeorm_1.Repository])
+], ExpressionDeliveryAdapter);
 //# sourceMappingURL=expression-delivery.adapter.js.map
