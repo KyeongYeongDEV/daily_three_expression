@@ -31,6 +31,7 @@ export class MailerAdapter implements SendMailPort {
 
   async sendExpression(): Promise<void> {
     const users: string[] = await this.userPort.findAllUsersEmail();
+    //const startEId : number = await this.expressionPort.findStartExpressionId();
     const expressions = await this.expressionPort.findThreeExpressionsByStartId(1);
 
     const html = `
