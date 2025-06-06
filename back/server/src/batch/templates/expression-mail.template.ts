@@ -47,7 +47,6 @@ export function buildExpressionMailTemplate(expressions: ExpressionResponseDto[]
       <!-- Call to Action -->
       <div style="text-align: center; margin: 40px 0 30px 0;">
         <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px;">
-          <h3 style="margin: 0 0 12px 0; color: #1f2937; font-size: 18px;">💡 더 많은 영어 표현이 필요하신가요?</h3>
           <p style="margin: 0 0 20px 0; color: #6b7280; font-size: 14px;">건의사항이나 학습하고 싶은 표현을 알려주세요!</p>
           <a href="https://little-spectrum-92b.notion.site/1f281d8a13f08072b5eed89fec38b6a6?pvs=105" target="_blank"
             style="display: inline-block; padding: 14px 28px; background: linear-gradient(135deg, #84CCFF, #6BB8FF); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; box-shadow: 0 4px 12px rgba(132, 204, 255, 0.3); transition: all 0.3s ease;">
