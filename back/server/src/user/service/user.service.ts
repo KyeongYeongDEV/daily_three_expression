@@ -47,27 +47,29 @@ export class UserService {
   // TODO : 회원가입하는 데 시간이 오래 걸림 -> 개선하기
   async registerUser(userRegisterRequestDto: UserRegisterRequestDto): Promise<UserInfoResponse> {
     try {
-      if(await this.isExistsUserByEmail(userRegisterRequestDto.email)){
-        throw new Error('이미 존재하는 회원입니다');
+      const { email } = userRegisterRequestDto;
+  
+      if (await this.isExistsUserByEmail(email)) {
+        return ResponseHelper.fail('이미 존재하는 회원입니다.', 400);
       }
-
-      const isVerifiedEmail= await this.redisPort.isVerifiedEmail(userRegisterRequestDto.email);
-      if(!isVerifiedEmail){
-        throw new Error('이메일 인증이 필요합니다');
+  
+      const isVerified = await this.redisPort.isVerifiedEmail(email);
+      if (!isVerified) {
+        return ResponseHelper.fail('이메일 인증이 필요합니다.', 400);
       }
-      
-      const user : UserEntity = this.mapToUserEntity(userRegisterRequestDto);
-      const result : UserEntity | null= await this.userPort.saveUser(user);
-      if(!result){
-        throw new Error('사용자 정보 저장 실패');
+  
+      const user = this.mapToUserEntity(userRegisterRequestDto);
+      const saved = await this.userPort.saveUser(user);
+      if (!saved) {
+        return ResponseHelper.fail('사용자 정보 저장 실패', 500);
       }
-      
-      await this.redisPort.deleteVerifiedEmail(userRegisterRequestDto.email);
-      
-      return ResponseHelper.success(result, '회원가입에 성공했습니다');
+  
+      await this.redisPort.deleteVerifiedEmail(email);
+  
+      return ResponseHelper.success(saved, '회원가입에 성공했습니다');
     } catch (error) {
       console.error('[registerUser] ', error);
-      return ResponseHelper.fail('회원가입에 실패했습니다', 400);
+      return ResponseHelper.fail('회원가입에 실패했습니다', 500);
     }
   }
 
