@@ -23,18 +23,16 @@ export class ExpressionDeliveryAdapter implements ExpressionDeliveryPort {
     return result.map(delivery => delivery.expression as ExpressionResponseDto);
   }
   
-  async findStartExpressionId(today : Date, yesterday : Date): Promise<number> {
-  const result = await this.expressionDeliveryRepository
-  .createQueryBuilder('delivery')
-  .select('delivery.e_id', 'e_id')
-  .where('DATE(delivery.transmitted_at) = DATE(:yesterday)', { yesterday })
-  .andWhere('delivery.delivery_status = :status', { status: 'success' })
-  .orderBy('delivery.ue_id', 'ASC')
-  .getRawOne();
-
-    
-    return result ? result.e_id : 9;
+  async findStartExpressionId(): Promise<number> {
+    const result = await this.expressionDeliveryRepository
+      .createQueryBuilder('delivery')
+      .select('MAX(delivery.e_id)', 'max_e_id')
+      .where('delivery.delivery_status = :status', { status: 'success' })
+      .getRawOne();
+  
+    return result?.max_e_id ?? 9;
   }
+  
 
   async saveExpressionDeliveried(u_id: number, e_id: number, deliveryStatus: DeliveryStatus): Promise<void> {
     await this.expressionDeliveryRepository.save({

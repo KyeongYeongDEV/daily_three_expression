@@ -52,7 +52,7 @@ export class MailerAdapter implements SendMailPort {
     const users: UserEmailType[] = await this.userPort.findAllUsersEmail();
 
     const { today, yesterday } = this.getYesterdayAndStart();
-    const startEid : number = await this.expressionDeliveryPort.findStartExpressionId(today, yesterday);
+    const startEid : number = await this.expressionDeliveryPort.findStartExpressionId();
 
     const expressions : ExpressionResponseDto[] = await this.expressionPort.findThreeExpressionsByStartId(startEid);
 

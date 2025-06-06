@@ -84,7 +84,7 @@ let MailerAdapter = class MailerAdapter {
     async sendExpression() {
         const users = await this.userPort.findAllUsersEmail();
         const { today, yesterday } = this.getYesterdayAndStart();
-        const startEid = await this.expressionDeliveryPort.findStartExpressionId(today, yesterday);
+        const startEid = await this.expressionDeliveryPort.findStartExpressionId();
         const expressions = await this.expressionPort.findThreeExpressionsByStartId(startEid);
         const html = (0, expression_mail_template_1.buildExpressionMailTemplate)(expressions);
         const todayLastDliveriedId = startEid + 3;

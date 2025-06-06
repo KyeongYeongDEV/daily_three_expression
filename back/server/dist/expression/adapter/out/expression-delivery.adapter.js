@@ -31,15 +31,13 @@ let ExpressionDeliveryAdapter = class ExpressionDeliveryAdapter {
             .getMany();
         return result.map(delivery => delivery.expression);
     }
-    async findStartExpressionId(today, yesterday) {
+    async findStartExpressionId() {
         const result = await this.expressionDeliveryRepository
             .createQueryBuilder('delivery')
-            .select('delivery.e_id', 'e_id')
-            .where('DATE(delivery.transmitted_at) = DATE(:yesterday)', { yesterday })
-            .andWhere('delivery.delivery_status = :status', { status: 'success' })
-            .orderBy('delivery.ue_id', 'ASC')
+            .select('MAX(delivery.e_id)', 'max_e_id')
+            .where('delivery.delivery_status = :status', { status: 'success' })
             .getRawOne();
-        return result ? result.e_id : 9;
+        return result?.max_e_id ?? 9;
     }
     async saveExpressionDeliveried(u_id, e_id, deliveryStatus) {
         await this.expressionDeliveryRepository.save({

@@ -21,7 +21,7 @@ export class ExpressionDeliveryService {
   async findStartExpressionId() {
     try {
       const {today, yesterday} = this.getYesterdayAndStart();
-      const result = await this.expressionDeliveryPort.findStartExpressionId(today, yesterday);
+      const result = await this.expressionDeliveryPort.findStartExpressionId();
 
       if (result === 0) {
         throw new Error('[findStartExpressionId] 조회된 표현이 없습니다.');
