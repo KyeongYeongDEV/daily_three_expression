@@ -26,6 +26,7 @@ let UserAdapter = class UserAdapter {
         const results = await this.userRepository
             .createQueryBuilder('user')
             .select(['user.u_id', 'user.email'])
+            .where('user.is_email_subscribed = true')
             .getRawMany();
         return results.map(result => ({
             u_id: result.user_u_id,

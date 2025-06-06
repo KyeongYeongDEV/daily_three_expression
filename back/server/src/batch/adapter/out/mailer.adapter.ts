@@ -50,6 +50,7 @@ export class MailerAdapter implements SendMailPort {
     
     const { today, yesterday } = this.getYesterdayAndStart();
     const startEid : number = await this.expressionDeliveryPort.findStartExpressionId(today, yesterday) | 9;
+    // TODO e_id가 꼭 규칙적으로 없을 수도 있어서 이것을 고려한 e_id 가져오는 로직 필요
     const expressions = await this.expressionPort.findThreeExpressionsByStartId(startEid + 1);
 
     const html = `

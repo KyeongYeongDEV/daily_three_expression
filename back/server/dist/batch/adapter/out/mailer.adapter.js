@@ -176,9 +176,10 @@ let MailerAdapter = class MailerAdapter {
     </div>
   `;
         const todayLastDliveriedId = startEid + 3;
+        const mailSender = this.configService.get('MAIL_USER');
         for (const user of users) {
             const info = await this.transporter.sendMail({
-                from: `"하삼영"`,
+                from: `"하삼영" ${mailSender}`,
                 to: user.email,
                 subject: '[하삼영] 오늘의 표현 3개입니다!',
                 html,
