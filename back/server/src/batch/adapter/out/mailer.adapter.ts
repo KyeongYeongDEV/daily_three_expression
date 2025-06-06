@@ -7,8 +7,8 @@ import { UserPort } from 'src/user/port/user.port';
 import { ExpressionDeliveryPort } from 'src/expression/port/expression-delivery.port';
 import { UserEmailType } from 'src/common/types/user.type';
 import { ExpressionResponseDto } from 'src/expression/dto/response.dto';
-import { buildExpressionMailTemplate } from 'src/batch/templates/expression-mail.template';
-import { buildVerificationCodeTemplate } from 'src/batch/templates/verify-code.template';
+import { buildExpressionMailTemplate } from '../../templates/expression-mail.template';
+import { buildVerificationCodeTemplate } from '../../templates/verify-code.template';
 
 
 // TODO service로 분리하기
