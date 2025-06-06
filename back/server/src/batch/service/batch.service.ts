@@ -8,7 +8,7 @@ export class BatchMailService {
     private readonly mailSender: SendMailPort,
   ) {}
 
-  async sendTestEmails(): Promise<void> {
+  async sendEmails(): Promise<void> {
     try {
       await this.mailSender.sendExpression();
     } catch (error) { 
