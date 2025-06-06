@@ -1,47 +1,255 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
-import { Mail, Clock, Users, Star, CheckCircle, Menu, X } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Mail, Clock, Star, CheckCircle, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import api from "@/lib/api"
+import type { UserRegisterRequestDto } from "@/types/api.types"
 
 export default function HomePage() {
-  const [email, setEmail] = useState("")
   const [isSubscribed, setIsSubscribed] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [email, setEmail] = useState("")
+  const [verificationCode, setVerificationCode] = useState("")
+  const [isCodeSent, setIsCodeSent] = useState(false)
+  const [isCodeVerified, setIsCodeVerified] = useState(false)
+  const [error, setError] = useState("")
+  const [successMessage, setSuccessMessage] = useState("")
+  const [timeRemaining, setTimeRemaining] = useState(600) // 10분 = 600초
+  const [timerActive, setTimerActive] = useState(false)
 
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email) return
+  // 타이머 관리
+  useEffect(() => {
+    let timer: NodeJS.Timeout | null = null
+
+    if (timerActive && timeRemaining > 0) {
+      timer = setInterval(() => {
+        setTimeRemaining((prev) => prev - 1)
+      }, 1000)
+    } else if (timeRemaining === 0 && isCodeSent && !isCodeVerified) {
+      // 시간이 만료되면 인증 코드 재요청 필요
+      setError("인증 코드가 만료되었습니다. 새로운 코드를 요청해주세요.")
+      setIsCodeSent(false)
+    }
+
+    return () => {
+      if (timer) clearInterval(timer)
+    }
+  }, [timerActive, timeRemaining, isCodeSent, isCodeVerified])
+
+  // 타이머 포맷팅 (분:초)
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60)
+    const remainingSeconds = seconds % 60
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`
+  }
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
+
+  const openSubscribeModal = () => {
+    setIsModalOpen(true)
+    setEmail("")
+    setVerificationCode("")
+    setIsCodeSent(false)
+    setIsCodeVerified(false)
+    setError("")
+    setSuccessMessage("")
+    setTimerActive(false)
+    setTimeRemaining(600)
+  }
+
+  const handleSendVerification = async () => {
+    if (!email) {
+      setError("이메일을 입력해주세요.")
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setError("유효한 이메일 주소를 입력해주세요.")
+      return
+    }
 
     setIsLoading(true)
+    setError("")
+    setSuccessMessage("")
 
     try {
-      const response = await fetch("/api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      })
+      console.log("API 요청 시작:", `${process.env.NEXT_PUBLIC_API_URL}/auth/email/code/send`)
 
-      if (response.ok) {
-        setIsSubscribed(true)
-        setEmail("")
+      const response = await api.post("/auth/email/code/send", { email })
+
+      console.log("API 응답:", response)
+      console.log("응답 데이터:", response.data)
+      console.log("응답 상태:", response.status)
+
+      // 응답 상태가 200-299 범위이면 성공으로 처리
+      if (response.status >= 200 && response.status < 300) {
+        setIsCodeSent(true)
+        setSuccessMessage("인증 코드가 전송되었습니다. 이메일을 확인해주세요.")
+        // 타이머 시작
+        setTimeRemaining(600) // 10분으로 리셋
+        setTimerActive(true)
       } else {
-        alert("구독 중 오류가 발생했습니다. 다시 시도해주세요.")
+        setError("인증 코드 전송에 실패했습니다.")
       }
-    } catch (error) {
-      alert("구독 중 오류가 발생했습니다. 다시 시도해주세요.")
+    } catch (error: any) {
+      console.error("이메일 인증 코드 전송 실패:", error)
+      console.error("에러 응답:", error.response)
+      console.error("에러 상태:", error.response?.status)
+      console.error("에러 데이터:", error.response?.data)
+
+      if (error.code === "ERR_NETWORK") {
+        setError("백엔드 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.")
+      } else if (error.response?.status === 0) {
+        setError("네트워크 연결을 확인해주세요. CORS 설정이 필요할 수 있습니다.")
+      } else if (error.response?.status >= 400 && error.response?.status < 500) {
+        // 백엔드에서 발생하는 구체적인 에러 메시지 처리 (이미 가입된 이메일 체크 제거)
+        const errorMessage = error.response?.data?.message || error.message
+
+        if (errorMessage.includes("이메일 인증 코드 전송 실패")) {
+          setError("이메일 전송에 실패했습니다. 잠시 후 다시 시도해주세요.")
+        } else if (errorMessage.includes("이메일 인증 코드 전송 중 에러")) {
+          setError("서버에서 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+        } else {
+          setError(errorMessage || "요청 처리 중 오류가 발생했습니다.")
+        }
+      } else if (error.response?.status >= 500) {
+        // 5xx 에러는 서버 에러
+        setError("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+      } else {
+        setError("네트워크 오류가 발생했습니다. 다시 시도해주세요.")
+      }
     } finally {
       setIsLoading(false)
     }
   }
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
+  const handleVerifyCode = async () => {
+    if (!verificationCode) {
+      setError("인증 코드를 입력해주세요.")
+      return
+    }
+
+    setIsLoading(true)
+    setError("")
+    setSuccessMessage("")
+
+    try {
+      const response = await api.post("/auth/email/code/verify", {
+        email,
+        code: verificationCode,
+      })
+
+      console.log("인증 확인 응답:", response)
+
+      // 응답 상태가 200-299 범위이면 성공으로 처리
+      if (response.status >= 200 && response.status < 300) {
+        setIsCodeVerified(true)
+        setSuccessMessage("이메일 인증이 완료되었습니다.")
+        // 인증 완료 시 타이머 중지
+        setTimerActive(false)
+      } else {
+        setError("인증 코드가 올바르지 않습니다.")
+      }
+    } catch (error: any) {
+      console.error("이메일 인증 코드 확인 실패:", error)
+
+      if (error.code === "ERR_NETWORK") {
+        setError("백엔드 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.")
+      } else if (error.response?.status === 400) {
+        const errorMessage = error.response?.data?.message || error.message
+        if (errorMessage.includes("인증 코드") && errorMessage.includes("올바르지 않")) {
+          setError("인증 코드가 올바르지 않습니다.")
+        } else if (errorMessage.includes("만료")) {
+          setError("인증 코드가 만료되었습니다. 새로운 코드를 요청해주세요.")
+          setIsCodeSent(false)
+          setTimerActive(false)
+        } else {
+          setError("인증 코드가 올바르지 않거나 만료되었습니다.")
+        }
+      } else {
+        setError(error.response?.data?.message || "네트워크 오류가 발생했습니다. 다시 시도해주세요.")
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleSubscribe = async () => {
+    setIsLoading(true)
+    setError("")
+    setSuccessMessage("")
+
+    try {
+      // 백엔드 DTO에 맞게 수정: 이메일 인증 완료 + 구독 = 둘 다 true
+      const userRegisterRequestDto: UserRegisterRequestDto = {
+        email,
+        is_email_verified: true, // 이메일 인증 완료
+        is_email_subscribed: true, // 구독 신청
+      }
+
+      console.log("회원가입 요청 데이터:", userRegisterRequestDto)
+
+      const response = await api.post("/user/signup", userRegisterRequestDto)
+
+      console.log("구독 응답:", response)
+
+      // 응답 상태가 200-299 범위이면 성공으로 처리
+      if (response.status >= 200 && response.status < 300) {
+        setIsSubscribed(true)
+        setSuccessMessage("구독이 완료되었습니다! 내일 아침 6시부터 패턴 영어를 받아보세요.")
+        // 모달은 성공 메시지를 보여준 후 자동으로 닫힘
+        setTimeout(() => {
+          setIsModalOpen(false)
+        }, 2000)
+      } else {
+        setError("구독 처리 중 오류가 발생했습니다.")
+      }
+    } catch (error: any) {
+      console.error("사용자 등록 실패:", error)
+      console.error("에러 응답:", error.response)
+
+      if (error.code === "ERR_NETWORK") {
+        setError("백엔드 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.")
+      } else if (error.response?.status === 400) {
+        // 400 에러는 이미 가입된 회원으로 처리
+        setError("이미 구독중인 이메일입니다.")
+      } else {
+        const errorMessage = error.response?.data?.message || error.message
+
+        // 백엔드에서 발생하는 구체적인 에러 메시지 처리
+        if (errorMessage.includes("이미 존재하는 회원")) {
+          setError("이미 구독중인 이메일입니다.")
+        } else if (errorMessage.includes("회원가입에 실패했습니다")) {
+          setError("이미 구독중인 이메일입니다.")
+        } else if (errorMessage.includes("이메일 인증이 필요합니다")) {
+          setError("이메일 인증이 만료되었습니다. 인증 코드를 다시 요청해주세요.")
+          // 인증 상태 초기화
+          setIsCodeVerified(false)
+          setIsCodeSent(false)
+          setVerificationCode("")
+          setTimerActive(false)
+        } else if (errorMessage.includes("사용자 정보 저장 실패")) {
+          setError("서버에서 정보 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+        } else if (error.response?.status === 409) {
+          setError("이미 구독중인 이메일입니다.")
+        } else if (error.response?.status >= 500) {
+          setError("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+        } else {
+          setError(errorMessage || "네트워크 오류가 발생했습니다. 다시 시도해주세요.")
+        }
+      }
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -59,10 +267,12 @@ export default function HomePage() {
             <a href="#features" className="text-gray-600 hover:text-[#84CCFF] transition-colors">
               서비스 소개
             </a>
-            <a href="#testimonials" className="text-gray-600 hover:text-[#84CCFF] transition-colors">
-              후기
+            <a href="#sample-content" className="text-gray-600 hover:text-[#84CCFF] transition-colors">
+              샘플 콘텐츠
             </a>
-            <Button className="bg-[#84CCFF] hover:bg-[#6BB8FF] text-white">무료 구독하기</Button>
+            <Button className="bg-[#84CCFF] hover:bg-[#6BB8FF] text-white" onClick={openSubscribeModal}>
+              무료 구독하기
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -86,13 +296,21 @@ export default function HomePage() {
                 서비스 소개
               </a>
               <a
-                href="#testimonials"
+                href="#sample-content"
                 className="text-gray-600 hover:text-[#84CCFF] transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                후기
+                샘플 콘텐츠
               </a>
-              <Button className="bg-[#84CCFF] hover:bg-[#6BB8FF] text-white w-full sm:w-auto">무료 구독하기</Button>
+              <Button
+                className="bg-[#84CCFF] hover:bg-[#6BB8FF] text-white w-full sm:w-auto"
+                onClick={() => {
+                  setIsMobileMenuOpen(false)
+                  openSubscribeModal()
+                }}
+              >
+                무료 구독하기
+              </Button>
             </div>
           </div>
         )}
@@ -130,34 +348,14 @@ export default function HomePage() {
                 <Mail className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-[#84CCFF]" />
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">매일 아침 6시</h3>
-              <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">패턴 영어 3문장을 메일로 보내드립니다</p>
+              <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8">패턴 영어 3문장을 메일로 보내드립니다</p>
 
-              {!isSubscribed ? (
-                <form onSubmit={handleSubscribe} className="space-y-3 sm:space-y-4">
-                  <Input
-                    type="email"
-                    placeholder="이메일 주소를 입력하세요"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="text-center"
-                    required
-                  />
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-[#84CCFF] hover:bg-[#6BB8FF] text-white py-2 sm:py-3 text-base sm:text-lg font-semibold"
-                  >
-                    {isLoading ? "구독 중..." : "무료로 시작하기"}
-                  </Button>
-                </form>
-              ) : (
-                <div className="text-center">
-                  <CheckCircle className="w-10 h-10 sm:w-12 sm:h-12 text-green-500 mx-auto mb-2" />
-                  <p className="text-green-600 font-semibold text-sm sm:text-base">
-                    구독 완료! 내일 아침부터 받아보세요 📧
-                  </p>
-                </div>
-              )}
+              <Button
+                onClick={openSubscribeModal}
+                className="w-full bg-[#84CCFF] hover:bg-[#6BB8FF] text-white py-2 sm:py-3 text-base sm:text-lg font-semibold"
+              >
+                무료로 시작하기
+              </Button>
             </CardContent>
           </Card>
 
@@ -213,7 +411,7 @@ export default function HomePage() {
       </section>
 
       {/* Sample Content */}
-      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-r from-[#84CCFF]/10 to-blue-50">
+      <section id="sample-content" className="py-12 sm:py-16 md:py-20 bg-gradient-to-r from-[#84CCFF]/10 to-blue-50">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-gray-800 mb-8 sm:mb-12 md:mb-16 px-2">
             이런 내용을 받아보세요!
@@ -284,55 +482,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section id="testimonials" className="py-12 sm:py-16 md:py-20 bg-white">
-        <div className="container mx-auto px-4 text-center">
-          <div className="max-w-4xl mx-auto">
-            <Users className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 text-[#84CCFF] mx-auto mb-6 sm:mb-8" />
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4 sm:mb-6 px-2">
-              이미 <span className="text-[#84CCFF]">1,247명</span>이 함께하고 있어요!
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 mb-8 sm:mb-10 md:mb-12 px-2">
-              매일 꾸준히 영어 실력을 늘려가는 사람들의 이야기
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mt-8 sm:mt-12 md:mt-16">
-              <Card className="text-left shadow-lg border border-gray-100">
-                <CardContent className="p-6 sm:p-8">
-                  <div className="flex items-center mb-3 sm:mb-4">
-                    <div className="flex text-yellow-400">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base md:text-lg leading-relaxed">
-                    "출근길에 딱 3문장씩 보니까 부담 없고 좋아요. 한 달 만에 영어 말하기가 늘었어요!"
-                  </p>
-                  <p className="text-xs sm:text-sm text-gray-500 font-medium">- 직장인 김○○님</p>
-                </CardContent>
-              </Card>
-
-              <Card className="text-left shadow-lg border border-gray-100">
-                <CardContent className="p-6 sm:p-8">
-                  <div className="flex items-center mb-3 sm:mb-4">
-                    <div className="flex text-yellow-400">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base md:text-lg leading-relaxed">
-                    "매일 아침 6시에 오는 메일이 하루를 시작하는 좋은 루틴이 되었어요. 추천합니다!"
-                  </p>
-                  <p className="text-xs sm:text-sm text-gray-500 font-medium">- 대학생 이○○님</p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
       <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-r from-[#84CCFF] to-blue-400 text-white">
         <div className="container mx-auto px-4 text-center">
@@ -343,23 +492,12 @@ export default function HomePage() {
 
           {!isSubscribed ? (
             <div className="max-w-md mx-auto px-4">
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <Input
-                  type="email"
-                  placeholder="이메일 주소"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 text-gray-800"
-                  required
-                />
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="bg-white text-[#84CCFF] hover:bg-gray-100 px-6 sm:px-8 font-semibold"
-                >
-                  {isLoading ? "구독 중..." : "구독하기"}
-                </Button>
-              </form>
+              <Button
+                onClick={openSubscribeModal}
+                className="bg-white text-[#84CCFF] hover:bg-gray-100 px-8 py-3 font-semibold text-lg rounded-lg shadow-lg hover:shadow-xl"
+              >
+                구독하기
+              </Button>
             </div>
           ) : (
             <div className="text-center px-4">
@@ -387,6 +525,126 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Subscription Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl font-bold">하삼영 구독하기</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            {error && (
+              <div className="bg-red-50 text-red-600 p-3 rounded-md mb-4 text-sm border border-red-200">{error}</div>
+            )}
+
+            {successMessage && (
+              <div className="bg-green-50 text-green-600 p-3 rounded-md mb-4 text-sm border border-green-200">
+                {successMessage}
+              </div>
+            )}
+
+            {isSubscribed ? (
+              <div className="text-center py-6">
+                <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                <p className="text-xl font-semibold text-gray-800 mb-2">구독 완료!</p>
+                <p className="text-gray-600">내일 아침 6시에 첫 번째 메일을 받아보세요.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {!isCodeVerified ? (
+                  <>
+                    <div className="space-y-2">
+                      <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                        이메일 주소
+                      </label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="example@email.com"
+                          disabled={isCodeSent || isLoading}
+                          className="flex-1"
+                        />
+                        {!isCodeSent && (
+                          <Button
+                            onClick={handleSendVerification}
+                            disabled={isLoading}
+                            className="bg-[#84CCFF] hover:bg-[#6BB8FF] text-white"
+                          >
+                            인증 코드 보내기
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    {isCodeSent && (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label htmlFor="verificationCode" className="text-sm font-medium text-gray-700">
+                            인증 코드
+                          </label>
+                          <div className="flex items-center">
+                            <Clock className="w-4 h-4 text-gray-500 mr-1" />
+                            <span
+                              className={`text-sm font-medium ${timeRemaining < 60 ? "text-red-500" : "text-gray-500"}`}
+                            >
+                              {formatTime(timeRemaining)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Input
+                            id="verificationCode"
+                            type="text"
+                            value={verificationCode}
+                            onChange={(e) => setVerificationCode(e.target.value)}
+                            placeholder="인증 코드 입력"
+                            disabled={isLoading || timeRemaining === 0}
+                            className="flex-1"
+                          />
+                          <Button
+                            onClick={handleVerifyCode}
+                            disabled={isLoading || timeRemaining === 0}
+                            className="bg-[#84CCFF] hover:bg-[#6BB8FF] text-white"
+                          >
+                            인증 코드 확인
+                          </Button>
+                        </div>
+                        <div className="flex justify-between items-center mt-1">
+                          <p className="text-xs text-gray-500">이메일로 전송된 6자리 인증 코드를 입력해주세요.</p>
+                          <button
+                            onClick={handleSendVerification}
+                            disabled={isLoading || (timerActive && timeRemaining > 540)} // 9분 이상 남았을 때는 재전송 비활성화
+                            className={`text-xs ${
+                              isLoading || (timerActive && timeRemaining > 540)
+                                ? "text-gray-400"
+                                : "text-[#84CCFF] hover:underline"
+                            }`}
+                          >
+                            코드 재전송
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="space-y-4">
+                    <Button
+                      onClick={handleSubscribe}
+                      disabled={isLoading}
+                      className="bg-[#84CCFF] hover:bg-[#6BB8FF] text-white w-full"
+                    >
+                      구독하기
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
