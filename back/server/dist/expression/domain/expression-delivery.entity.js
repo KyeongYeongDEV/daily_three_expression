@@ -17,6 +17,8 @@ let ExpressionDeliveryEntity = class ExpressionDeliveryEntity {
     ue_id;
     transmitted_at;
     delivery_status;
+    u_id;
+    e_id;
     user;
     expression;
 };
@@ -26,13 +28,21 @@ __decorate([
     __metadata("design:type", Number)
 ], ExpressionDeliveryEntity.prototype, "ue_id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'date' }),
+    (0, typeorm_1.Column)({ type: 'timestamp' }),
     __metadata("design:type", Date)
 ], ExpressionDeliveryEntity.prototype, "transmitted_at", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'enum', enum: ['success', 'failed', 'pending'], default: 'pending' }),
     __metadata("design:type", String)
 ], ExpressionDeliveryEntity.prototype, "delivery_status", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], ExpressionDeliveryEntity.prototype, "u_id", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", Number)
+], ExpressionDeliveryEntity.prototype, "e_id", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.UserEntity, (user) => user.deliveries),
     (0, typeorm_1.JoinColumn)({ name: 'u_id' }),

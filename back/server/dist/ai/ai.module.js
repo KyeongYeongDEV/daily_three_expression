@@ -42,7 +42,7 @@ exports.AiModule = AiModule = __decorate([
             },
             {
                 provide: 'ExpressionPort',
-                useClass: expression_adapter_1.TypeOrmExpressionAdapter,
+                useClass: expression_adapter_1.ExpressionAdapter,
             },
         ],
         exports: [
@@ -53,7 +53,7 @@ exports.AiModule = AiModule = __decorate([
             },
             {
                 provide: 'ExpressionPort',
-                useClass: expression_adapter_1.TypeOrmExpressionAdapter,
+                useClass: expression_adapter_1.ExpressionAdapter,
             },
         ]
     })

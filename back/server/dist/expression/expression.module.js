@@ -37,11 +37,11 @@ exports.ExpressionModule = ExpressionModule = __decorate([
         providers: [
             expression_service_1.ExpressionService,
             expression_generation_service_1.ExpressionGenerationService,
-            expression_adapter_1.TypeOrmExpressionAdapter,
+            expression_adapter_1.ExpressionAdapter,
             expression_delivery_adapter_1.ExpressionDeliveryAdapter,
             {
                 provide: expression_port_1.EXPRESSION_PORT,
-                useExisting: expression_adapter_1.TypeOrmExpressionAdapter,
+                useExisting: expression_adapter_1.ExpressionAdapter,
             },
             {
                 provide: expression_delivery_port_1.EXPRESSION_DELIVERY_PORT,
@@ -51,8 +51,10 @@ exports.ExpressionModule = ExpressionModule = __decorate([
         exports: [
             expression_service_1.ExpressionService,
             expression_generation_service_1.ExpressionGenerationService,
-            expression_adapter_1.TypeOrmExpressionAdapter,
+            expression_adapter_1.ExpressionAdapter,
+            expression_delivery_adapter_1.ExpressionDeliveryAdapter,
             expression_port_1.EXPRESSION_PORT,
+            expression_delivery_port_1.EXPRESSION_DELIVERY_PORT,
         ],
     })
 ], ExpressionModule);

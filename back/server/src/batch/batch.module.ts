@@ -5,10 +5,11 @@ import { MailerAdapter } from './adapter/out/mailer.adapter';
 import { BatchMailScheduler } from './scheduler/batch.scheduler';
 import { UserEntity } from 'src/user/domain/user.entity';
 import { ExpressionEntity } from 'src/expression/domain/expression.entity';
-import { TypeOrmExpressionAdapter } from 'src/expression/adapter/out/expression.adapter';
+import { ExpressionAdapter } from 'src/expression/adapter/out/expression.adapter';
 import { UserAdapter } from 'src/user/adpater/out/user.adapter';
 import { AiModule } from 'src/ai/ai.module';
 import { ExpressionModule } from 'src/expression/expression.module';
+import { ExpressionDeliveryAdapter } from 'src/expression/adapter/out/expression-delivery.adapter';
 
 @Module({
   imports: [
@@ -22,7 +23,11 @@ import { ExpressionModule } from 'src/expression/expression.module';
     BatchMailScheduler, 
     {
       provide: 'ExpressionPort',
-      useExisting: TypeOrmExpressionAdapter,
+      useExisting: ExpressionAdapter,
+    },
+    {
+      provide: 'ExpressionDeliveryPort',
+      useExisting: ExpressionDeliveryAdapter,
     },
     {
       provide: 'UserPort',

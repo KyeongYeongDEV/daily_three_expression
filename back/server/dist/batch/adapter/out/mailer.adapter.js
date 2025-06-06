@@ -52,11 +52,13 @@ const config_1 = require("@nestjs/config");
 let MailerAdapter = class MailerAdapter {
     configService;
     expressionPort;
+    expressionDeliveryPort;
     userPort;
     transporter;
-    constructor(configService, expressionPort, userPort) {
+    constructor(configService, expressionPort, expressionDeliveryPort, userPort) {
         this.configService = configService;
         this.expressionPort = expressionPort;
+        this.expressionDeliveryPort = expressionDeliveryPort;
         this.userPort = userPort;
         this.transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -70,9 +72,18 @@ let MailerAdapter = class MailerAdapter {
             rateLimit: 5,
         });
     }
+    getYesterdayAndStart() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        return { today, yesterday };
+    }
     async sendExpression() {
         const users = await this.userPort.findAllUsersEmail();
-        const expressions = await this.expressionPort.findThreeExpressionsByStartId(1);
+        const { today, yesterday } = this.getYesterdayAndStart();
+        const startEid = await this.expressionDeliveryPort.findStartExpressionId(today, yesterday) | 9;
+        const expressions = await this.expressionPort.findThreeExpressionsByStartId(startEid + 1);
         const html = `
     <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: auto; padding: 20px; background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
       
@@ -164,13 +175,15 @@ let MailerAdapter = class MailerAdapter {
       </div>
     </div>
   `;
+        const todayLastDliveriedId = startEid + 3;
         for (const user of users) {
             const info = await this.transporter.sendMail({
-                from: `"하삼영" <${this.configService.get('MAIL_USER')}>`,
-                to: user,
+                from: `"하삼영"`,
+                to: user.email,
                 subject: '[하삼영] 오늘의 표현 3개입니다!',
                 html,
             });
+            await this.expressionDeliveryPort.saveExpressionDeliveried(user.u_id, todayLastDliveriedId, 'success');
             console.log(`✅ Email sent to ${user}:`, info.messageId);
         }
     }
@@ -199,7 +212,8 @@ exports.MailerAdapter = MailerAdapter;
 exports.MailerAdapter = MailerAdapter = __decorate([
     (0, common_1.Injectable)(),
     __param(1, (0, common_1.Inject)('ExpressionPort')),
-    __param(2, (0, common_1.Inject)('UserPort')),
-    __metadata("design:paramtypes", [config_1.ConfigService, Object, Object])
+    __param(2, (0, common_1.Inject)('ExpressionDeliveryPort')),
+    __param(3, (0, common_1.Inject)('UserPort')),
+    __metadata("design:paramtypes", [config_1.ConfigService, Object, Object, Object])
 ], MailerAdapter);
 //# sourceMappingURL=mailer.adapter.js.map

@@ -4,7 +4,11 @@ import { ConfigService } from '@nestjs/config';
 import { SendMailPort } from 'src/batch/port/out/send-mail.port';
 import { ExpressionPort } from 'src/expression/port/expression.port';
 import { UserPort } from 'src/user/port/user.port';
+import { ExpressionDeliveryPort } from 'src/expression/port/expression-delivery.port';
+import { UserEmailType } from 'src/common/types/user.type';
 
+
+// TODO service로 분리하기
 @Injectable()
 export class MailerAdapter implements SendMailPort {
   private transporter: nodemailer.Transporter;
@@ -13,6 +17,8 @@ export class MailerAdapter implements SendMailPort {
     private readonly configService: ConfigService,
     @Inject('ExpressionPort')
     private readonly expressionPort: ExpressionPort,
+    @Inject('ExpressionDeliveryPort')
+    private readonly expressionDeliveryPort: ExpressionDeliveryPort,
     @Inject('UserPort')
     private readonly userPort: UserPort,
   ) {
@@ -29,10 +35,22 @@ export class MailerAdapter implements SendMailPort {
     });
   }
 
+  private getYesterdayAndStart() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); 
+
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    
+    return { today, yesterday };
+  } 
+// TODO HTML 따로 파일로 분리하기
   async sendExpression(): Promise<void> {
-    const users: string[] = await this.userPort.findAllUsersEmail();
-    //const startEId : number = await this.expressionPort.findStartExpressionId();
-    const expressions = await this.expressionPort.findThreeExpressionsByStartId(1);
+    const users: UserEmailType[] = await this.userPort.findAllUsersEmail();
+    
+    const { today, yesterday } = this.getYesterdayAndStart();
+    const startEid : number = await this.expressionDeliveryPort.findStartExpressionId(today, yesterday) | 9;
+    const expressions = await this.expressionPort.findThreeExpressionsByStartId(startEid + 1);
 
     const html = `
     <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: auto; padding: 20px; background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
@@ -126,14 +144,18 @@ export class MailerAdapter implements SendMailPort {
     </div>
   `;
   
-
+    const todayLastDliveriedId = startEid + 3;
+    const mailSender= this.configService.get('MAIL_USER');
     for (const user of users) {
       const info = await this.transporter.sendMail({
-        from: `"하삼영" <${this.configService.get('MAIL_USER')}>`,
-        to: user,
+        from: `"하삼영" ${mailSender}`,
+        to: user.email,
         subject: '[하삼영] 오늘의 표현 3개입니다!',
         html,
       });
+
+      await this.expressionDeliveryPort.saveExpressionDeliveried(user.u_id, todayLastDliveriedId, 'success');
+      
       console.log(`✅ Email sent to ${user}:`, info.messageId);
     }
   }

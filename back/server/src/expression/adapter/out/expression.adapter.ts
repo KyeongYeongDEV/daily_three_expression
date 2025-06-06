@@ -7,7 +7,7 @@ import { ExpressionResponseDto } from '../../dto/response.dto';
 import { ExpressionBlackListEntity } from 'src/expression/domain/expression-black-list.entity';
 
 @Injectable()
-export class TypeOrmExpressionAdapter implements ExpressionPort {
+export class ExpressionAdapter implements ExpressionPort {
   constructor(
     @InjectRepository(ExpressionEntity)
     private readonly expressionRepository: Repository<ExpressionEntity>,

@@ -15,11 +15,17 @@ export class ExpressionDeliveryEntity {
   @PrimaryGeneratedColumn()
   ue_id: number;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'timestamp' })
   transmitted_at: Date;
 
   @Column({ type: 'enum', enum: ['success', 'failed', 'pending'], default: 'pending' })
   delivery_status: DeliveryStatus;
+
+  @Column()
+  u_id: number; 
+  
+  @Column()
+  e_id: number; 
 
   @ManyToOne(() => UserEntity, (user) => user.deliveries)
   @JoinColumn({ name: 'u_id' })

@@ -7,7 +7,7 @@ import { ExpressionEntity } from './domain/expression.entity';
 import { EXPRESSION_PORT } from './port/expression.port';
 import { EXPRESSION_DELIVERY_PORT } from './port/expression-delivery.port';
 
-import { TypeOrmExpressionAdapter } from './adapter/out/expression.adapter';
+import { ExpressionAdapter } from './adapter/out/expression.adapter';
 import { ExpressionDeliveryAdapter } from './adapter/out/expression-delivery.adapter';
 import { AiModule } from 'src/ai/ai.module';
 import { ExpressionGenerationService } from './service/expression-generation.service';
@@ -27,11 +27,11 @@ import { ExpressionDeliveryEntity } from './domain/expression-delivery.entity';
   providers: [
     ExpressionService,
     ExpressionGenerationService,
-    TypeOrmExpressionAdapter,
+    ExpressionAdapter,
     ExpressionDeliveryAdapter,
     {
       provide: EXPRESSION_PORT,
-      useExisting: TypeOrmExpressionAdapter,
+      useExisting: ExpressionAdapter,
     },
     {
       provide: EXPRESSION_DELIVERY_PORT,
@@ -41,8 +41,10 @@ import { ExpressionDeliveryEntity } from './domain/expression-delivery.entity';
   exports: [
     ExpressionService,
     ExpressionGenerationService,
-    TypeOrmExpressionAdapter,
+    ExpressionAdapter,
+    ExpressionDeliveryAdapter,
     EXPRESSION_PORT,
+    EXPRESSION_DELIVERY_PORT,
   ],
 })
 export class ExpressionModule {}

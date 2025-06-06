@@ -18,6 +18,7 @@ const expression_adapter_1 = require("../expression/adapter/out/expression.adapt
 const user_adapter_1 = require("../user/adpater/out/user.adapter");
 const ai_module_1 = require("../ai/ai.module");
 const expression_module_1 = require("../expression/expression.module");
+const expression_delivery_adapter_1 = require("../expression/adapter/out/expression-delivery.adapter");
 let BatchModule = class BatchModule {
 };
 exports.BatchModule = BatchModule;
@@ -34,7 +35,11 @@ exports.BatchModule = BatchModule = __decorate([
             batch_scheduler_1.BatchMailScheduler,
             {
                 provide: 'ExpressionPort',
-                useExisting: expression_adapter_1.TypeOrmExpressionAdapter,
+                useExisting: expression_adapter_1.ExpressionAdapter,
+            },
+            {
+                provide: 'ExpressionDeliveryPort',
+                useExisting: expression_delivery_adapter_1.ExpressionDeliveryAdapter,
             },
             {
                 provide: 'UserPort',

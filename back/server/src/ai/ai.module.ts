@@ -6,7 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExpressionEntity } from "../expression/domain/expression.entity";
 import { QdrantAdapter } from "./adapter/out/qdrant.adapter";
 import { HttpModule } from "@nestjs/axios";
-import { TypeOrmExpressionAdapter } from "src/expression/adapter/out/expression.adapter";
+import { ExpressionAdapter } from "src/expression/adapter/out/expression.adapter";
 import { ExpressionModule } from "src/expression/expression.module";
 import { ExpressionBlackListEntity } from "src/expression/domain/expression-black-list.entity";
 
@@ -35,7 +35,7 @@ import { ExpressionBlackListEntity } from "src/expression/domain/expression-blac
     },
     {
       provide: 'ExpressionPort',
-      useClass: TypeOrmExpressionAdapter,
+      useClass: ExpressionAdapter,
     },
   ],
   exports : [
@@ -46,7 +46,7 @@ import { ExpressionBlackListEntity } from "src/expression/domain/expression-blac
     },
     {
       provide: 'ExpressionPort',
-      useClass: TypeOrmExpressionAdapter,
+      useClass: ExpressionAdapter,
     },
   ]
 })

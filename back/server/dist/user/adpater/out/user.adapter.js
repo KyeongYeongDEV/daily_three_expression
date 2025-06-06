@@ -25,9 +25,12 @@ let UserAdapter = class UserAdapter {
     async findAllUsersEmail() {
         const results = await this.userRepository
             .createQueryBuilder('user')
-            .select('user.email', 'email')
+            .select(['user.u_id', 'user.email'])
             .getRawMany();
-        return results.map(result => result.email);
+        return results.map(result => ({
+            u_id: result.user_u_id,
+            email: result.user_email
+        }));
     }
     async findUserInfoByEmail(email) {
         return this.userRepository.createQueryBuilder('user')

@@ -12,13 +12,13 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TypeOrmExpressionAdapter = void 0;
+exports.ExpressionAdapter = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const expression_entity_1 = require("../../domain/expression.entity");
 const expression_black_list_entity_1 = require("../../domain/expression-black-list.entity");
-let TypeOrmExpressionAdapter = class TypeOrmExpressionAdapter {
+let ExpressionAdapter = class ExpressionAdapter {
     expressionRepository;
     expressionBlackListRepository;
     constructor(expressionRepository, expressionBlackListRepository) {
@@ -88,12 +88,12 @@ let TypeOrmExpressionAdapter = class TypeOrmExpressionAdapter {
         return entity;
     }
 };
-exports.TypeOrmExpressionAdapter = TypeOrmExpressionAdapter;
-exports.TypeOrmExpressionAdapter = TypeOrmExpressionAdapter = __decorate([
+exports.ExpressionAdapter = ExpressionAdapter;
+exports.ExpressionAdapter = ExpressionAdapter = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(expression_entity_1.ExpressionEntity)),
     __param(1, (0, typeorm_1.InjectRepository)(expression_black_list_entity_1.ExpressionBlackListEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository])
-], TypeOrmExpressionAdapter);
+], ExpressionAdapter);
 //# sourceMappingURL=expression.adapter.js.map

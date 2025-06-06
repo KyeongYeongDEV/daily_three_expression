@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '../../domain/user.entity';
 import { UserPort } from '../../port/user.port';
 import { UserExistDTO } from '../../dto/response.dto';
+import { UserEmailType } from 'src/common/types/user.type';
 
 @Injectable()
 export class UserAdapter implements UserPort {
@@ -12,13 +13,16 @@ export class UserAdapter implements UserPort {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async findAllUsersEmail(): Promise<string[]> {
+  async findAllUsersEmail(): Promise<UserEmailType[]> {
     const results = await this.userRepository
-    .createQueryBuilder('user')
-    .select('user.email', 'email')
-    .getRawMany();
-
-  return results.map(result => result.email);
+      .createQueryBuilder('user')
+      .select(['user.u_id', 'user.email'])
+      .getRawMany();
+  
+    return results.map(result => ({
+      u_id: result.user_u_id,
+      email: result.user_email
+    }));
   }
 
   async findUserInfoByEmail( email: string ): Promise<UserEntity | null> {
