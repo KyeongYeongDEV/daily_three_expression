@@ -142,25 +142,26 @@ export class AuthService implements AuthServicePort {
     }
   }
 
-  async verifyEmailCode(email: string, code: string): Promise<string>{
+  //TODO 반환 수정
+  async verifyEmailCode(email: string, code: string): Promise<ResponseHelper>{
     try {
       const savedCode = await this.redisPort.getEmailVerificationCode(email);
-      
+  
       if (!savedCode) {
-        throw new Error('이메일 인증 코드가 존재하지 않습니다.');
+        return ResponseHelper.fail('이메일 인증 코드가 존재하지 않습니다.', 400);
       }
-
+  
       if (savedCode !== code) {
-        throw new Error('이메일 인증 코드가 일치하지 않습니다.');
+        return ResponseHelper.fail('이메일 인증 코드가 일치하지 않습니다.', 400);
       }
-
+  
       await this.redisPort.deleteEmailVerificationCode(email);
       await this.redisPort.saveVerifiedEmail(email);
-
-      return '이메일 인증에 성공했습니다.';
+  
+      return ResponseHelper.success(null, '이메일 인증에 성공했습니다.');
     } catch (error) {
       console.error('[verifyEmailCode]', error);
-      return '이메일 인증 코드 검증 중 에러가 발생했습니다.';
+      return ResponseHelper.fail('이메일 인증 코드 검증 중 에러가 발생했습니다.', 500);
     }
   }
 }
