@@ -23,24 +23,23 @@ let ExpressionDeliveryAdapter = class ExpressionDeliveryAdapter {
         this.expressionDeliveryRepository = expressionDeliveryRepository;
     }
     async findDeliveriedExpressionsByUid(u_id) {
-        const deliveredExpressions = await this.expressionDeliveryRepository
+        const result = await this.expressionDeliveryRepository
             .createQueryBuilder('delivery')
             .innerJoinAndSelect('delivery.expression', 'expression')
             .innerJoin('delivery.user', 'user')
             .where('user.u_id = :u_id', { u_id })
             .getMany();
-        return deliveredExpressions.map(delivery => delivery.expression);
+        return result.map(delivery => delivery.expression);
     }
     async findStartExpressionId(today, yesterday) {
         const result = await this.expressionDeliveryRepository
             .createQueryBuilder('delivery')
             .select('delivery.e_id', 'e_id')
-            .where('delivery.transmitted_at >= :yesterdayStart', { yesterdayStart: yesterday })
-            .andWhere('delivery.transmitted_at < :todayStart', { todayStart: today })
+            .where('DATE(delivery.transmitted_at) = DATE(:yesterday)', { yesterday })
             .andWhere('delivery.delivery_status = :status', { status: 'success' })
             .orderBy('delivery.ue_id', 'ASC')
             .getRawOne();
-        return result ? result.e_id : 0;
+        return result ? result.e_id : 9;
     }
     async saveExpressionDeliveried(u_id, e_id, deliveryStatus) {
         await this.expressionDeliveryRepository.save({

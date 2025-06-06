@@ -36,7 +36,7 @@ let ExpressionAdapter = class ExpressionAdapter {
     }
     async findThreeExpressionsByStartIdAndCategory(startId, category) {
         return this.expressionRepository.createQueryBuilder('expression')
-            .where('expression.e_id >= :startId', { startId })
+            .where('expression.e_id > :startId', { startId })
             .andWhere('expression.category = :category', { category })
             .orderBy('expression.e_id', 'ASC')
             .limit(3)
@@ -44,7 +44,7 @@ let ExpressionAdapter = class ExpressionAdapter {
     }
     async findThreeExpressionsByStartId(startId) {
         return this.expressionRepository.createQueryBuilder('expression')
-            .where('expression.e_id >= :startId', { startId })
+            .where('expression.e_id > :startId', { startId })
             .orderBy('expression.e_id', 'ASC')
             .limit(3)
             .getMany();

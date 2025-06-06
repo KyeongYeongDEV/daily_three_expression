@@ -77,13 +77,15 @@ let MailerAdapter = class MailerAdapter {
         today.setHours(0, 0, 0, 0);
         const yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().slice(0, 10);
         return { today, yesterday };
     }
     async sendExpression() {
         const users = await this.userPort.findAllUsersEmail();
         const { today, yesterday } = this.getYesterdayAndStart();
-        const startEid = await this.expressionDeliveryPort.findStartExpressionId(today, yesterday) | 9;
-        const expressions = await this.expressionPort.findThreeExpressionsByStartId(startEid + 1);
+        const startEid = await this.expressionDeliveryPort.findStartExpressionId(today, yesterday);
+        console.log('startEid:', startEid);
+        const expressions = await this.expressionPort.findThreeExpressionsByStartId(startEid);
         const html = `
     <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: auto; padding: 20px; background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
       

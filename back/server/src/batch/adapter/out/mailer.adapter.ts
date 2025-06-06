@@ -47,11 +47,11 @@ export class MailerAdapter implements SendMailPort {
 // TODO HTML 따로 파일로 분리하기
   async sendExpression(): Promise<void> {
     const users: UserEmailType[] = await this.userPort.findAllUsersEmail();
-    
+
     const { today, yesterday } = this.getYesterdayAndStart();
-    const startEid : number = await this.expressionDeliveryPort.findStartExpressionId(today, yesterday) | 9;
-    // TODO e_id가 꼭 규칙적으로 없을 수도 있어서 이것을 고려한 e_id 가져오는 로직 필요
-    const expressions = await this.expressionPort.findThreeExpressionsByStartId(startEid + 1);
+    const startEid : number = await this.expressionDeliveryPort.findStartExpressionId(today, yesterday);
+
+    const expressions = await this.expressionPort.findThreeExpressionsByStartId(startEid);
 
     const html = `
     <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: auto; padding: 20px; background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">

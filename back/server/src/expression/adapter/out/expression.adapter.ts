@@ -29,7 +29,7 @@ export class ExpressionAdapter implements ExpressionPort {
 
   async findThreeExpressionsByStartIdAndCategory(startId: number, category: string): Promise<ExpressionResponseDto[]> {
     return this.expressionRepository.createQueryBuilder('expression')
-      .where('expression.e_id >= :startId', { startId })
+      .where('expression.e_id > :startId', { startId })
       .andWhere('expression.category = :category', { category })
       .orderBy('expression.e_id', 'ASC')
       .limit(3)
@@ -38,7 +38,7 @@ export class ExpressionAdapter implements ExpressionPort {
 
   async findThreeExpressionsByStartId(startId: number): Promise<ExpressionResponseDto[]> {
     return this.expressionRepository.createQueryBuilder('expression')
-      .where('expression.e_id >= :startId', { startId })
+      .where('expression.e_id > :startId', { startId })
       .orderBy('expression.e_id', 'ASC')
       .limit(3)
       .getMany();
