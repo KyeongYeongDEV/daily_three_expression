@@ -70,51 +70,47 @@ export default function HomePage() {
       setError("이메일을 입력해주세요.")
       return
     }
-
+  
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
       setError("유효한 이메일 주소를 입력해주세요.")
       return
     }
-
+  
     setIsLoading(true)
     setError("")
     setSuccessMessage("")
-
+  
     try {
       console.log("API 요청 시작:", `${process.env.NEXT_PUBLIC_API_URL}/auth/email/code/send`)
-
+  
       const response = await api.post("/auth/email/code/send", { email })
-
+  
       console.log("API 응답:", response)
       console.log("응답 데이터:", response.data)
       console.log("응답 상태:", response.status)
-
-      // 응답 상태가 200-299 범위이면 성공으로 처리
+  
       if (response.status >= 200 && response.status < 300) {
         setIsCodeSent(true)
         setSuccessMessage("인증 코드가 전송되었습니다. 이메일을 확인해주세요.")
-        // 타이머 시작
-        setTimeRemaining(600) // 10분으로 리셋
+        setTimeRemaining(600)
         setTimerActive(true)
       } else {
         setError("인증 코드 전송에 실패했습니다.")
       }
     } catch (error: any) {
       console.error("이메일 인증 코드 전송 실패:", error)
-      console.error("에러 응답:", error.response)
-      console.error("에러 상태:", error.response?.status)
-      console.error("에러 데이터:", error.response?.data)
-
+      const errorMessage = error.response?.data?.message || error.message
+  
       if (error.code === "ERR_NETWORK") {
         setError("백엔드 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.")
       } else if (error.response?.status === 0) {
         setError("네트워크 연결을 확인해주세요. CORS 설정이 필요할 수 있습니다.")
       } else if (error.response?.status >= 400 && error.response?.status < 500) {
-        // 백엔드에서 발생하는 구체적인 에러 메시지 처리 (이미 가입된 이메일 체크 제거)
-        const errorMessage = error.response?.data?.message || error.message
-
-        if (errorMessage.includes("이메일 인증 코드 전송 실패")) {
+        // 🔧 여기서 에러 메시지 판별 추가
+        if (errorMessage.includes("이미 존재하는 회원")) {
+          setError("이미 가입된 이메일입니다.")
+        } else if (errorMessage.includes("이메일 인증 코드 전송 실패")) {
           setError("이메일 전송에 실패했습니다. 잠시 후 다시 시도해주세요.")
         } else if (errorMessage.includes("이메일 인증 코드 전송 중 에러")) {
           setError("서버에서 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
@@ -122,7 +118,6 @@ export default function HomePage() {
           setError(errorMessage || "요청 처리 중 오류가 발생했습니다.")
         }
       } else if (error.response?.status >= 500) {
-        // 5xx 에러는 서버 에러
         setError("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
       } else {
         setError("네트워크 오류가 발생했습니다. 다시 시도해주세요.")
@@ -131,49 +126,50 @@ export default function HomePage() {
       setIsLoading(false)
     }
   }
+  
 
   const handleVerifyCode = async () => {
     if (!verificationCode) {
       setError("인증 코드를 입력해주세요.")
       return
     }
-
+  
     setIsLoading(true)
     setError("")
     setSuccessMessage("")
-
+  
     try {
       const response = await api.post("/auth/email/code/verify", {
         email,
         code: verificationCode,
       })
-
+  
       console.log("인증 확인 응답:", response)
-
-      // 응답 상태가 200-299 범위이면 성공으로 처리
-      if (response.status >= 200 && response.status < 300) {
+  
+      // ✅ 백엔드 구조에 맞춰 success 필드 기준으로 판별
+      if (response.data?.success) {
         setIsCodeVerified(true)
         setSuccessMessage("이메일 인증이 완료되었습니다.")
-        // 인증 완료 시 타이머 중지
-        setTimerActive(false)
+        setTimerActive(false) // 인증 완료 시 타이머 종료
       } else {
-        setError("인증 코드가 올바르지 않습니다.")
+        setError(response.data?.message || "인증에 실패했습니다.")
       }
     } catch (error: any) {
       console.error("이메일 인증 코드 확인 실패:", error)
-
+  
       if (error.code === "ERR_NETWORK") {
         setError("백엔드 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.")
       } else if (error.response?.status === 400) {
         const errorMessage = error.response?.data?.message || error.message
-        if (errorMessage.includes("인증 코드") && errorMessage.includes("올바르지 않")) {
+  
+        if (errorMessage.includes("인증 코드") && errorMessage.includes("일치하지")) {
           setError("인증 코드가 올바르지 않습니다.")
         } else if (errorMessage.includes("만료")) {
           setError("인증 코드가 만료되었습니다. 새로운 코드를 요청해주세요.")
           setIsCodeSent(false)
           setTimerActive(false)
         } else {
-          setError("인증 코드가 올바르지 않거나 만료되었습니다.")
+          setError(errorMessage)
         }
       } else {
         setError(error.response?.data?.message || "네트워크 오류가 발생했습니다. 다시 시도해주세요.")
@@ -182,75 +178,73 @@ export default function HomePage() {
       setIsLoading(false)
     }
   }
+  
 
   const handleSubscribe = async () => {
-    setIsLoading(true)
-    setError("")
-    setSuccessMessage("")
-
+    if (!email) {
+      setError("이메일을 입력해주세요.");
+      return;
+    }
+  
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("유효한 이메일 주소를 입력해주세요.");
+      return;
+    }
+  
+    setIsLoading(true);
+    setError("");
+    setSuccessMessage("");
+  
     try {
-      // 백엔드 DTO에 맞게 수정: 이메일 인증 완료 + 구독 = 둘 다 true
-      const userRegisterRequestDto: UserRegisterRequestDto = {
+      const response = await api.post("/user/signup", {
         email,
-        is_email_verified: true, // 이메일 인증 완료
-        is_email_subscribed: true, // 구독 신청
-      }
-
-      console.log("회원가입 요청 데이터:", userRegisterRequestDto)
-
-      const response = await api.post("/user/signup", userRegisterRequestDto)
-
-      console.log("구독 응답:", response)
-
-      // 응답 상태가 200-299 범위이면 성공으로 처리
-      if (response.status >= 200 && response.status < 300) {
-        setIsSubscribed(true)
-        setSuccessMessage("구독이 완료되었습니다! 내일 아침 6시부터 패턴 영어를 받아보세요.")
-        // 모달은 성공 메시지를 보여준 후 자동으로 닫힘
-        setTimeout(() => {
-          setIsModalOpen(false)
-        }, 2000)
+        is_email_verified: true,
+        is_email_subscribed: true,
+      });
+  
+      if (response.data.success) {
+        setSuccessMessage("구독이 완료되었습니다! 매일 영어 표현을 보내드릴게요.");
+        setIsSubscribed(true);
+        setTimeout(() => setIsModalOpen(false), 2000);
       } else {
-        setError("구독 처리 중 오류가 발생했습니다.")
-      }
-    } catch (error: any) {
-      console.error("사용자 등록 실패:", error)
-      console.error("에러 응답:", error.response)
-
-      if (error.code === "ERR_NETWORK") {
-        setError("백엔드 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.")
-      } else if (error.response?.status === 400) {
-        // 400 에러는 이미 가입된 회원으로 처리
-        setError("이미 구독중인 이메일입니다.")
-      } else {
-        const errorMessage = error.response?.data?.message || error.message
-
-        // 백엔드에서 발생하는 구체적인 에러 메시지 처리
-        if (errorMessage.includes("이미 존재하는 회원")) {
-          setError("이미 구독중인 이메일입니다.")
-        } else if (errorMessage.includes("회원가입에 실패했습니다")) {
-          setError("이미 구독중인 이메일입니다.")
-        } else if (errorMessage.includes("이메일 인증이 필요합니다")) {
-          setError("이메일 인증이 만료되었습니다. 인증 코드를 다시 요청해주세요.")
-          // 인증 상태 초기화
-          setIsCodeVerified(false)
-          setIsCodeSent(false)
-          setVerificationCode("")
-          setTimerActive(false)
-        } else if (errorMessage.includes("사용자 정보 저장 실패")) {
-          setError("서버에서 정보 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
-        } else if (error.response?.status === 409) {
-          setError("이미 구독중인 이메일입니다.")
-        } else if (error.response?.status >= 500) {
-          setError("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+        if (response.data.message.includes("이미 존재하는 회원")) {
+          setError("이미 구독된 이메일입니다.");
+        } else if (response.data.message.includes("이메일 인증이 필요")) {
+          setError("이메일 인증을 먼저 완료해주세요.");
         } else {
-          setError(errorMessage || "네트워크 오류가 발생했습니다. 다시 시도해주세요.")
+          setError(response.data.message || "구독 처리 중 문제가 발생했습니다.");
         }
       }
+    } catch (error: any) {
+      console.error("사용자 등록 실패:", error);
+  
+      const errorMessage = error.response?.data?.message || error.message;
+  
+      if (error.code === "ERR_NETWORK") {
+        setError("백엔드 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.");
+      } else if (error.response?.status === 400) {
+        if (errorMessage.includes("이미 존재하는 회원")) {
+          setError("이미 구독중인 이메일입니다.");
+        } else if (errorMessage.includes("이메일 인증이 필요합니다")) {
+          setError("이메일 인증이 만료되었습니다. 인증 코드를 다시 요청해주세요.");
+          setIsCodeVerified(false);
+          setIsCodeSent(false);
+          setVerificationCode("");
+          setTimerActive(false);
+        } else {
+          setError(errorMessage || "요청 처리 중 오류가 발생했습니다.");
+        }
+      } else if (error.response?.status >= 500) {
+        setError("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+      } else {
+        setError(errorMessage || "알 수 없는 오류가 발생했습니다.");
+      }
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
