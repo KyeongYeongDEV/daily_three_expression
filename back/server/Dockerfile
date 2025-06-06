@@ -10,4 +10,6 @@ RUN npm install --production
 COPY dist ./dist
 COPY .env .env
 
+COPY templates ./templates
+
 CMD ["node", "dist/main"]
