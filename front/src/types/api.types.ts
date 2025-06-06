@@ -24,8 +24,14 @@ export interface LoginDto {
   password: string
 }
 
+// 백엔드 DTO에 맞게 수정
 export interface UserRegisterRequestDto {
   email: string
-  is_email_verified: true, 
-  is_email_subscribed: true, 
+  is_email_subscribed: boolean
+  is_email_verified: boolean
+}
+
+// 이메일 요청 DTO
+export interface UserEmailRequestDto {
+  email: string
 }
