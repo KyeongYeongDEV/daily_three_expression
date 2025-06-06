@@ -19,7 +19,7 @@ let BatchMailService = class BatchMailService {
     constructor(mailSender) {
         this.mailSender = mailSender;
     }
-    async sendTestEmails() {
+    async sendEmails() {
         try {
             await this.mailSender.sendExpression();
         }

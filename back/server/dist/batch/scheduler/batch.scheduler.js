@@ -22,12 +22,12 @@ let BatchMailScheduler = class BatchMailScheduler {
         this.expressionGenerator = expressionGenerator;
     }
     async handleCron() {
-        await this.batchService.sendTestEmails();
+        await this.batchService.sendEmails();
     }
 };
 exports.BatchMailScheduler = BatchMailScheduler;
 __decorate([
-    (0, schedule_1.Cron)('*/1 * * * *'),
+    (0, schedule_1.Cron)('0 6 * * 1-5'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
