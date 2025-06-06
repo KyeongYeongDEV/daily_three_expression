@@ -7,9 +7,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --production
 
-COPY dist ./dist
-COPY .env .env
+# 🔽 전체 소스 복사
+COPY . .
 
-COPY src/batch/templates ./src/batch/templates
+# 🔽 Nest 빌드 실행 (nest-cli.json 기준으로 asset 복사 포함)
+RUN npm run build
+
+# 🔽 환경변수 복사
+COPY .env .env
 
 CMD ["node", "dist/main"]
