@@ -1,12 +1,12 @@
-FROM node:18
+FROM node:18-alpine
 
 ENV NODE_OPTIONS="--experimental-global-webcrypto"
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --production
-RUN npm install -g @nestjs/cli
+
+RUN npm ci 
 
 COPY . .
 
