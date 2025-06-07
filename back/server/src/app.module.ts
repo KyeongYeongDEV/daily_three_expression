@@ -18,6 +18,7 @@ import { typeOrmConfig } from './common/config/mysql.config';
 import { jwtConfig } from './common/config/jwt.config';
 import { RedisConfig } from './common/config/redis.config';
 import { BullModule } from '@nestjs/bull';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -66,7 +67,7 @@ import { BullModule } from '@nestjs/bull';
     AuthModule,
   ],
   providers: [RedisConfig],
-  controllers: [],
+  controllers: [AppController],
   exports : ['REDIS']
 })
 export class AppModule {}
