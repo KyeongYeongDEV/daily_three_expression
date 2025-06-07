@@ -9,7 +9,7 @@ import { error } from 'console';
 import { UserService } from 'src/user/service/user.service';
 import { LoginDto } from '../dto/auth.dto';
 import { Response } from 'express';
-import { SendMailPort } from 'src/batch/port/out/send-mail.port';
+import { SendMailPort } from 'src/mailer/port/out/send-mail.port';
 
 @Injectable()
 export class AuthService implements AuthServicePort {

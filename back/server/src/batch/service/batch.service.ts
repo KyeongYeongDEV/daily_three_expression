@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { SendMailPort } from '../port/out/send-mail.port';
+import { SendMailPort } from '../../mailer/port/out/send-mail.port';
 
 @Injectable()
 export class BatchMailService {

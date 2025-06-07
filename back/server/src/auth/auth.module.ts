@@ -10,7 +10,7 @@ import { RedisConfigModule } from 'src/common/config/config.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MailerAdapter } from 'src/batch/adapter/out/mailer.adapter';
+import { MailerAdapter } from 'src/mailer/adapter/out/mailer.adapter';
 import { BatchModule } from 'src/batch/batch.module';
 
 

@@ -17,6 +17,7 @@ import { ExpressionDeliveryEntity } from './expression/domain/expression-deliver
 import { typeOrmConfig } from './common/config/mysql.config';
 import { jwtConfig } from './common/config/jwt.config';
 import { RedisConfig } from './common/config/redis.config';
+import { BullModule } from '@nestjs/bull';
 
 @Module({
   imports: [
@@ -45,6 +46,16 @@ import { RedisConfig } from './common/config/redis.config';
         options: {
           host: configService.get<string>('REDIS_HOST') || 'localhost',
           port: parseInt(configService.get<string>('REDIS_PORT') || '6379', 10),
+        },
+      }),
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('REDIS_HOST'),
+          port: +configService.get('REDIS_PORT'),
         },
       }),
     }),
