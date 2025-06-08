@@ -5,6 +5,8 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    environment:
+      - TZ=Asia/Seoul
     volumes:
       - ./redis_data:/data
 
@@ -15,6 +17,8 @@ services:
     ports:
       - "6333:6333"
       - "6334:6334"
+    environment:
+      - TZ=Asia/Seoul
     volumes:
       - ./qdrant_data:/qdrant/storage
 
@@ -28,6 +32,8 @@ services:
       - "8000:8000"
     env_file:
       - ./server/.env
+    environment:
+      - TZ=Asia/Seoul
     depends_on:
       - redis
       - qdrant
