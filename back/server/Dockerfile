@@ -1,6 +1,10 @@
 FROM node:18-alpine
 
-RUN apk add --no-cache tzdata
+# 시간 설정
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
+    echo "Asia/Seoul" > /etc/timezone
+
 ENV TZ=Asia/Seoul
 ENV NODE_OPTIONS="--experimental-global-webcrypto"
 
