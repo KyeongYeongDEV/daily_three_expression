@@ -6,6 +6,8 @@ RUN apt-get update && \
     dpkg-reconfigure -f noninteractive tzdata
 
 ENV TZ=Asia/Seoul
+ENV LANG=ko_KR.UTF-8
+ENV LC_ALL=ko_KR.UTF-8
 ENV NODE_OPTIONS="--experimental-global-webcrypto"
 
 WORKDIR /app
@@ -16,7 +18,4 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# .env는 docker-compose에서 불러오면 COPY 생략 가능
-COPY .env .env
-
-CMD ["node", "dist/main"]
+CMD ["env", "TZ=Asia/Seoul", "node", "dist/main"]
