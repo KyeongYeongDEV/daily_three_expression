@@ -37,7 +37,7 @@ jobs:
         run: |
           docker push ${{ steps.login-ecr.outputs.registry }}/dailyexpression:latest
 
-            - name: SSH into EC2 and restart container
+      - name: SSH into EC2 and restart container
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
