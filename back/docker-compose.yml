@@ -1,3 +1,4 @@
+version: "3"
 services:
   redis:
     image: redis:7
@@ -23,9 +24,7 @@ services:
       - ./qdrant_data:/qdrant/storage
 
   server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: 123403344015.dkr.ecr.ap-northeast-2.amazonaws.com/dailyexpression:latest
     container_name: nest-server
     restart: always
     ports:
