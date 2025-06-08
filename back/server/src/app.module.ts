@@ -48,7 +48,7 @@ import { AppController } from './app.controller';
           host: configService.get<string>('REDIS_HOST') || 'localhost',
           port: parseInt(configService.get<string>('REDIS_PORT') || '6379', 10),
         },
-      }),
+      }), 
     }),
     BullModule.forRootAsync({
       imports: [ConfigModule],
