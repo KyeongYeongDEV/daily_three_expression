@@ -37,7 +37,7 @@ jobs:
         run: |
           docker push ${{ steps.login-ecr.outputs.registry }}/dailyexpression:latest
 
-      - name: SSH into EC2 and restart container
+      - name: SSH into EC2 and restart with docker-compose
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -46,19 +46,16 @@ jobs:
           script: |
             set -e
 
-            # 올바른 경로에 .env 생성
+            # .env 업데이트
             echo "${{ secrets.ENV_PROD }}" > ~/daily_three_expression/back/server/.env
 
-            # 기존 컨테이너가 존재하면 중지 및 제거
-            if [ "$(docker ps -aq -f name=dailyexpression)" ]; then
-              docker stop dailyexpression || true
-              docker rm dailyexpression || true
-            fi
+            cd ~/daily_three_expression/back
 
-            # 최신 이미지 pull 및 실행
+            # 기존 서버 중단
+            docker-compose -f server/docker-compose.yml down || true
+
+            # 최신 이미지 pull
             docker pull ${{ steps.login-ecr.outputs.registry }}/dailyexpression:latest
 
-            docker run -d --name dailyexpression \
-              --env-file ~/daily_three_expression/back/server/.env \
-              -p 8000:8000 \
-              ${{ steps.login-ecr.outputs.registry }}/dailyexpression:latest
+            # 서버 재실행
+            docker-compose -f server/docker-compose.yml up -d
