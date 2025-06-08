@@ -48,11 +48,10 @@ jobs:
             mkdir -p ~/dailyexpression
             echo "${{ secrets.ENV_PROD }}" > ~/dailyexpression/.env
 
-            # 포트 8000을 사용 중인 컨테이너 제거
-            CONTAINER_ID=$(docker ps -q --filter "publish=8000")
-            if [ -n "$CONTAINER_ID" ]; then
-              docker stop "$CONTAINER_ID"
-              docker rm "$CONTAINER_ID"
+            # 기존 이름의 컨테이너가 존재하면 제거
+            if [ "$(docker ps -aq -f name=dailyexpression)" ]; then
+              docker stop dailyexpression || true
+              docker rm dailyexpression || true
             fi
 
             docker pull ${{ steps.login-ecr.outputs.registry }}/dailyexpression:latest
