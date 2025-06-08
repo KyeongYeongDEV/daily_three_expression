@@ -37,21 +37,24 @@ jobs:
         run: |
           docker push ${{ steps.login-ecr.outputs.registry }}/dailyexpression:latest
 
-      - name: SSH into EC2 and restart container
+            - name: SSH into EC2 and restart container
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
+            set -e
             mkdir -p ~/dailyexpression
             echo "${{ secrets.ENV_PROD }}" > ~/dailyexpression/.env
 
-            aws ecr get-login-password --region ap-northeast-2 | \
-            docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}
+            # 포트 8000을 사용 중인 컨테이너 제거
+            CONTAINER_ID=$(docker ps -q --filter "publish=8000")
+            if [ -n "$CONTAINER_ID" ]; then
+              docker stop "$CONTAINER_ID"
+              docker rm "$CONTAINER_ID"
+            fi
 
-            docker stop dailyexpression || true
-            docker rm dailyexpression || true
             docker pull ${{ steps.login-ecr.outputs.registry }}/dailyexpression:latest
 
             docker run -d --name dailyexpression \
