@@ -8,7 +8,7 @@ export function buildExpressionMailTemplate(expressions: ExpressionResponseDto[]
       <!-- Header -->
       <div style="text-align: center; margin-bottom: 30px;">
         <div style="background: linear-gradient(135deg, #84CCFF, #6BB8FF); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-          <h2 style="margin: 0; font-size: 24px; font-weight: bold;">오늘의 패턴 영어 (${new Date().toLocaleDateString('ko-KR')})</h2>
+          <h2 style="margin: 0; font-size: 24px; font-weight: bold;">📧 오늘의 패턴 영어 (${new Date().toLocaleDateString('ko-KR')})</h2>
           <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">하루 3개의 실용적인 영어 표현</p>
         </div>
       </div>
