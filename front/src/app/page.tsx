@@ -7,7 +7,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import api from "@/lib/api"
-import type { UserRegisterRequestDto } from "@/types/api.types"
 
 export default function HomePage() {
   const [isSubscribed, setIsSubscribed] = useState(false)
@@ -20,7 +19,7 @@ export default function HomePage() {
   const [isCodeVerified, setIsCodeVerified] = useState(false)
   const [error, setError] = useState("")
   const [successMessage, setSuccessMessage] = useState("")
-  const [timeRemaining, setTimeRemaining] = useState(600) // 10분 = 600초
+  const [timeRemaining, setTimeRemaining] = useState(120) //2분
   const [timerActive, setTimerActive] = useState(false)
 
   // 타이머 관리
@@ -62,7 +61,7 @@ export default function HomePage() {
     setError("")
     setSuccessMessage("")
     setTimerActive(false)
-    setTimeRemaining(600)
+    setTimeRemaining(120)
   }
 
   const handleSendVerification = async () => {
@@ -93,7 +92,7 @@ export default function HomePage() {
       if (response.status >= 200 && response.status < 300) {
         setIsCodeSent(true)
         setSuccessMessage("인증 코드가 전송되었습니다. 이메일을 확인해주세요.")
-        setTimeRemaining(600)
+        setTimeRemaining(120)
         setTimerActive(true)
       } else {
         setError("인증 코드 전송에 실패했습니다.")
