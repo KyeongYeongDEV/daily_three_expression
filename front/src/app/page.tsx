@@ -7,7 +7,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import api from "@/lib/api"
-import type { UserRegisterRequestDto } from "@/types/api.types"
 
 export default function HomePage() {
   const [isSubscribed, setIsSubscribed] = useState(false)
@@ -20,7 +19,7 @@ export default function HomePage() {
   const [isCodeVerified, setIsCodeVerified] = useState(false)
   const [error, setError] = useState("")
   const [successMessage, setSuccessMessage] = useState("")
-  const [timeRemaining, setTimeRemaining] = useState(600) // 10분 = 600초
+  const [timeRemaining, setTimeRemaining] = useState(120) //2분
   const [timerActive, setTimerActive] = useState(false)
 
   // 타이머 관리
