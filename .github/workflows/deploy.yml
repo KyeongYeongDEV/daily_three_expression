@@ -37,6 +37,7 @@ jobs:
         run: |
           docker push ${{ steps.login-ecr.outputs.registry }}/dailyexpression:latest
 
+      # SSH into EC2 and deploy with docker-compose
       - name: SSH into EC2 and deploy with docker-compose
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -45,6 +46,10 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             set -e
+
+            # ECR 로그인 추가
+            aws ecr get-login-password --region ap-northeast-2 \
+              | docker login --username AWS --password-stdin 123403344015.dkr.ecr.ap-northeast-2.amazonaws.com
 
             # 정확한 위치로 이동
             cd ~/daily_three_expression/back/server
@@ -56,7 +61,7 @@ jobs:
             docker-compose down || true
 
             # 최신 이미지 pull
-            docker pull ${{ steps.login-ecr.outputs.registry }}/dailyexpression:latest
+            docker pull 123403344015.dkr.ecr.ap-northeast-2.amazonaws.com/dailyexpression:latest
 
             # 재실행
             docker-compose up -d
