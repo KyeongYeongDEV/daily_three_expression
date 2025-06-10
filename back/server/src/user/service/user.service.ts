@@ -65,7 +65,8 @@ export class UserService {
       }
   
       await this.redisPort.deleteVerifiedEmail(email);
-  
+      
+      console.log(`[회원가입] ${email} 회원가입 성공!`);
       return ResponseHelper.success(saved, '회원가입에 성공했습니다');
     } catch (error) {
       console.error('[registerUser] ', error);
