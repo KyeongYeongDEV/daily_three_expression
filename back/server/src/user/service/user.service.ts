@@ -64,7 +64,9 @@ export class UserService {
         return ResponseHelper.fail('사용자 정보 저장 실패', 500);
       }
   
-      await this.redisPort.deleteVerifiedEmail(email);
+      this.redisPort.deleteVerifiedEmail(email).catch((err) => {
+        console.error(`[Redis 삭제 실패] ${email}`, err);
+      });      
       
       console.log(`[회원가입] ${email} 회원가입 성공!`);
       return ResponseHelper.success(saved, '회원가입에 성공했습니다');
