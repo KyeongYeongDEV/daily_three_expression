@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
+  CreateDateColumn,
 } from 'typeorm';
 import { ExpressionDeliveryEntity } from '../../expression/domain/expression-delivery.entity';
 
@@ -20,10 +21,10 @@ export class UserEntity {
   @Column({ default: true })
   is_email_subscribed: boolean;
 
-  @Column({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 
-  @Column({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 
   @OneToMany(() => ExpressionDeliveryEntity, (delivery) => delivery.user)

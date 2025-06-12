@@ -33,14 +33,10 @@ export class UserService {
   }
 
   private mapToUserEntity(dto: UserRegisterRequestDto): UserEntity {
-    const current = new Date();
-
     const user = new UserEntity();
     user.email = dto.email;
     user.is_email_verified = dto.is_email_verified;
     user.is_email_subscribed = dto.is_email_subscribed;
-    user.created_at = current;
-    user.updated_at = current;
     
     return user;
   }
@@ -57,7 +53,7 @@ export class UserService {
     const user = this.mapToUserEntity(userRegisterRequestDto);
   
     try {
-      const saved = await this.userPort.saveUser(user); // 이메일 UNIQUE로 충돌 검출
+      const saved = await this.userPort.saveUser(user); 
       this.redisPort.deleteVerifiedEmail(email).catch((err) => {
         console.error(`[Redis 삭제 실패] ${email}`, err);
       });
