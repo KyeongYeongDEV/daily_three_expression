@@ -14,10 +14,10 @@ export class UserEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column({ default: false })
+  @Column({ default: true })
   is_email_verified: boolean;
 
-  @Column({ default: false })
+  @Column({ default: true })
   is_email_subscribed: boolean;
 
   @Column({ type: 'timestamp' })
