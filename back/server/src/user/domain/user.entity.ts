@@ -3,6 +3,8 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { ExpressionDeliveryEntity } from '../../expression/domain/expression-delivery.entity';
 
@@ -11,19 +13,19 @@ export class UserEntity {
   @PrimaryGeneratedColumn()
   u_id: number;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
 
-  @Column({ default: false })
+  @Column({ default: true })
   is_email_verified: boolean;
 
-  @Column({ default: false })
+  @Column({ default: true })
   is_email_subscribed: boolean;
 
-  @Column({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 
-  @Column({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 
   @OneToMany(() => ExpressionDeliveryEntity, (delivery) => delivery.user)

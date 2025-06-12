@@ -6,6 +6,7 @@ import { ResponseHelper } from 'src/common/helpers/response.helper';
 import { UserExistDTO } from '../dto/response.dto';
 import { UserRegisterRequestDto, UserEmailRequestDto, UserVerifiedUpdateRequestDto } from '../dto/request.dto';
 import { RedisPort } from 'src/auth/port/out/redis.port';
+import { isDuplicateKeyError } from 'src/common/utils/db-error.util';
 
 @Injectable()
 export class UserService {
@@ -32,47 +33,38 @@ export class UserService {
   }
 
   private mapToUserEntity(dto: UserRegisterRequestDto): UserEntity {
-    const current = new Date();
-
     const user = new UserEntity();
     user.email = dto.email;
     user.is_email_verified = dto.is_email_verified;
     user.is_email_subscribed = dto.is_email_subscribed;
-    user.created_at = current;
-    user.updated_at = current;
     
     return user;
   }
 
   // TODO : 회원가입하는 데 시간이 오래 걸림 -> 개선하기
   async registerUser(userRegisterRequestDto: UserRegisterRequestDto): Promise<UserInfoResponse> {
-    try {
-      const { email } = userRegisterRequestDto;
+    const { email } = userRegisterRequestDto;
   
-      if (await this.isExistsUserByEmail(email)) {
+    const isVerified = await this.redisPort.isVerifiedEmail(email);
+    if (!isVerified) {
+      return ResponseHelper.fail('이메일 인증이 필요합니다.', 400);
+    }
+  
+    const user = this.mapToUserEntity(userRegisterRequestDto);
+  
+    try {
+      const saved = await this.userPort.saveUser(user); 
+  
+      return ResponseHelper.success(saved, '회원가입에 성공했습니다');
+    } catch (err) {
+      if (isDuplicateKeyError(err)) {
         return ResponseHelper.fail('이미 존재하는 회원입니다.', 400);
       }
-  
-      const isVerified = await this.redisPort.isVerifiedEmail(email);
-      if (!isVerified) {
-        return ResponseHelper.fail('이메일 인증이 필요합니다.', 400);
-      }
-  
-      const user = this.mapToUserEntity(userRegisterRequestDto);
-      const saved = await this.userPort.saveUser(user);
-      if (!saved) {
-        return ResponseHelper.fail('사용자 정보 저장 실패', 500);
-      }
-  
-      await this.redisPort.deleteVerifiedEmail(email);
-      
-      console.log(`[회원가입] ${email} 회원가입 성공!`);
-      return ResponseHelper.success(saved, '회원가입에 성공했습니다');
-    } catch (error) {
-      console.error('[registerUser] ', error);
+      console.error('[registerUser] ', err);
       return ResponseHelper.fail('회원가입에 실패했습니다', 500);
     }
   }
+  
 
   async getUserInfoByEmail(userEmailRequestDto: UserEmailRequestDto): Promise<UserInfoResponse> {
     try {
