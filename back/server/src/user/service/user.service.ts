@@ -6,6 +6,7 @@ import { ResponseHelper } from 'src/common/helpers/response.helper';
 import { UserExistDTO } from '../dto/response.dto';
 import { UserRegisterRequestDto, UserEmailRequestDto, UserVerifiedUpdateRequestDto } from '../dto/request.dto';
 import { RedisPort } from 'src/auth/port/out/redis.port';
+import { isDuplicateKeyError } from 'src/common/utils/db-error.util';
 
 @Injectable()
 export class UserService {
@@ -46,35 +47,31 @@ export class UserService {
 
   // TODO : 회원가입하는 데 시간이 오래 걸림 -> 개선하기
   async registerUser(userRegisterRequestDto: UserRegisterRequestDto): Promise<UserInfoResponse> {
+    const { email } = userRegisterRequestDto;
+  
+    const isVerified = await this.redisPort.isVerifiedEmail(email);
+    if (!isVerified) {
+      return ResponseHelper.fail('이메일 인증이 필요합니다.', 400);
+    }
+  
+    const user = this.mapToUserEntity(userRegisterRequestDto);
+  
     try {
-      const { email } = userRegisterRequestDto;
-  
-      if (await this.isExistsUserByEmail(email)) {
-        return ResponseHelper.fail('이미 존재하는 회원입니다.', 400);
-      }
-  
-      const isVerified = await this.redisPort.isVerifiedEmail(email);
-      if (!isVerified) {
-        return ResponseHelper.fail('이메일 인증이 필요합니다.', 400);
-      }
-  
-      const user = this.mapToUserEntity(userRegisterRequestDto);
-      const saved = await this.userPort.saveUser(user);
-      if (!saved) {
-        return ResponseHelper.fail('사용자 정보 저장 실패', 500);
-      }
-  
+      const saved = await this.userPort.saveUser(user); // 이메일 UNIQUE로 충돌 검출
       this.redisPort.deleteVerifiedEmail(email).catch((err) => {
         console.error(`[Redis 삭제 실패] ${email}`, err);
-      });      
-      
-      console.log(`[회원가입] ${email} 회원가입 성공!`);
+      });
+  
       return ResponseHelper.success(saved, '회원가입에 성공했습니다');
-    } catch (error) {
-      console.error('[registerUser] ', error);
+    } catch (err) {
+      if (isDuplicateKeyError(err)) {
+        return ResponseHelper.fail('이미 존재하는 회원입니다.', 400);
+      }
+      console.error('[registerUser] ', err);
       return ResponseHelper.fail('회원가입에 실패했습니다', 500);
     }
   }
+  
 
   async getUserInfoByEmail(userEmailRequestDto: UserEmailRequestDto): Promise<UserInfoResponse> {
     try {
