@@ -54,9 +54,6 @@ export class UserService {
   
     try {
       const saved = await this.userPort.saveUser(user); 
-      this.redisPort.deleteVerifiedEmail(email).catch((err) => {
-        console.error(`[Redis 삭제 실패] ${email}`, err);
-      });
   
       return ResponseHelper.success(saved, '회원가입에 성공했습니다');
     } catch (err) {

@@ -26,7 +26,7 @@ export class RedisAdapter implements RedisPort {
 
   async saveVerifiedEmail(email: string): Promise<void> {
     const key = `isVerifiedEmail:${email}`;
-    await this.redisClient.set(key, 'true', 'EX', 60 * 30); // 30분 유효
+    await this.redisClient.set(key, 'true', 'EX', 60); // 1분 유효
   }
 
   async isVerifiedEmail(email: string): Promise<boolean> {

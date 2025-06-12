@@ -4,6 +4,7 @@ import {
   Column,
   OneToMany,
   CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { ExpressionDeliveryEntity } from '../../expression/domain/expression-delivery.entity';
 
