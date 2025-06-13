@@ -44,16 +44,20 @@ export class EmailProcessor {
   @Process('send-expression')
   async handleSendExpressionEmail(job: Job<{ to: string; html: string; u_id: number; deliveredId: number }>) {
     const { to, html, u_id, deliveredId } = job.data;
+    
+    try {
+      const info = await this.transporter.sendMail({
+        from: `"하삼영" <${this.configService.get('MAIL_USER')}>`,
+        to,
+        subject: '[하삼영] 오늘의 표현 3개입니다!',
+        html,
+      });
 
-    const info = await this.transporter.sendMail({
-      from: `"하삼영" <${this.configService.get('MAIL_USER')}>`,
-      to,
-      subject: '[하삼영] 오늘의 표현 3개입니다!',
-      html,
-    });
+      console.log(`[표현 전송 프로세스] ✅ 표현 이메일 전송 완료 → ${to}:`, info.messageId);
 
-    console.log(`[표현 전송 프로세스] ✅ 표현 이메일 전송 완료 → ${to}:`, info.messageId);
-
-    await this.expressionDeliveryPort.saveExpressionDeliveried(u_id, deliveredId, 'success');
+      await this.expressionDeliveryPort.saveExpressionDeliveried(u_id, deliveredId, 'success');
+    } catch (error) {
+      console.error(`[표현 전송 프로세스] ❌ 표현 이메일 전송 실패 → ${to}:`, error);
+    }
   }
 }

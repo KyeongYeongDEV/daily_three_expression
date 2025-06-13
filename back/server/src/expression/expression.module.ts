@@ -13,6 +13,8 @@ import { AiModule } from 'src/ai/ai.module';
 import { ExpressionGenerationService } from './service/expression-generation.service';
 import { ExpressionBlackListEntity } from './domain/expression-black-list.entity';
 import { ExpressionDeliveryEntity } from './domain/expression-delivery.entity';
+import { ExpressionDeliveryController } from './adapter/in/expression-delivery.controller';
+import { ExpressionDeliveryService } from './service/expression-delivery.service';
 
 @Module({
   imports: [
@@ -23,11 +25,12 @@ import { ExpressionDeliveryEntity } from './domain/expression-delivery.entity';
     ]),
     forwardRef(() => AiModule),
   ],
-  controllers: [ExpressionController],
+  controllers: [ExpressionController, ExpressionDeliveryController],
   providers: [
     ExpressionService,
     ExpressionGenerationService,
     ExpressionAdapter,
+    ExpressionDeliveryService,
     ExpressionDeliveryAdapter,
     {
       provide: EXPRESSION_PORT,
