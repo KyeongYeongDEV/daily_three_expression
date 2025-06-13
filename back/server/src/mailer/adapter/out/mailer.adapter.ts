@@ -40,12 +40,11 @@ export class MailerAdapter implements SendMailPort {
   async sendExpression(): Promise<void> {
     try {
       const users: UserEmailType[] = await this.userPort.findAllUsersEmail();
-  
       const startEid: number = await this.expressionDeliveryPort.findStartExpressionId();
       const expressions: ExpressionResponseDto[] = await this.expressionPort.findThreeExpressionsByStartId(startEid);
   
       const html = buildExpressionMailTemplate(expressions);
-      const todayLastDliveriedId = startEid + 3;
+      const todayLastDliveriedId = expressions[2].e_id;
   
       for (const user of users) {
         await this.emailQueue.add('send-expression', {

@@ -10,6 +10,7 @@ export class BatchMailScheduler {
     private readonly expressionGenerator: ExpressionGenerationService,
   ) {}
 
+  //@Cron('* * * * *') // 매 분마다 실행 (테스트용)
   @Cron('0 6 * * 1-5') // 평일(월~금) 새벽 6시마다
   async handleCron() {
     await this.batchService.sendEmails();

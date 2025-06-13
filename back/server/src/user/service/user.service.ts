@@ -41,7 +41,6 @@ export class UserService {
     return user;
   }
 
-  // TODO : 회원가입하는 데 시간이 오래 걸림 -> 개선하기
   async registerUser(userRegisterRequestDto: UserRegisterRequestDto): Promise<UserInfoResponse> {
     const { email } = userRegisterRequestDto;
   
