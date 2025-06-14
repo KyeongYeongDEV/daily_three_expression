@@ -14,7 +14,7 @@ import { ExpressionEntity } from './expression/domain/expression.entity';
 import { UserEntity } from './user/domain/user.entity';
 import { ExpressionDeliveryEntity } from './expression/domain/expression-delivery.entity';
 
-import { typeOrmConfig } from './common/config/mysql.config';
+import { postgreConfig } from './common/config/postgre.config';
 import { jwtConfig } from './common/config/jwt.config';
 import { RedisConfig } from './common/config/redis.config';
 import { BullModule } from '@nestjs/bull';
@@ -32,7 +32,7 @@ import { AppController } from './app.controller';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: typeOrmConfig,
+      useFactory: postgreConfig,
     }),
     TypeOrmModule.forFeature([
       ExpressionEntity,

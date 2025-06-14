@@ -57,8 +57,9 @@ export class UserAdapter implements UserPort {
     const now = new Date();
   
     const result = await this.dataSource.query(
-      `INSERT INTO user (email, is_email_verified, is_email_subscribed, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?)`,
+      `INSERT INTO "user" (email, is_email_verified, is_email_subscribed, created_at, updated_at)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING u_id`,
       [
         user.email,
         user.is_email_verified,
