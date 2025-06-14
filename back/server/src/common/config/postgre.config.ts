@@ -23,6 +23,8 @@ export const postgreConfig = async (
     ],
     synchronize: true, // 배포시 false
     logging: true,
-    ssl: false,
+    ssl: {
+      rejectUnauthorized: false, 
+    },
   };
 };
