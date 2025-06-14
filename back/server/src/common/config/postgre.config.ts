@@ -21,7 +21,7 @@ export const postgreConfig = async (
       ExpressionDeliveryEntity,
       ExpressionBlackListEntity,
     ],
-    synchronize: false,
+    synchronize: true, // 배포시 false
     logging: true,
     ssl: configService.get('POSTGRE_SSL') === 'true' ? { rejectUnauthorized: false } : false,
   };
