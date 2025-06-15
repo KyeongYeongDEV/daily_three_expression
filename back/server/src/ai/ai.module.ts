@@ -10,6 +10,7 @@ import { ExpressionAdapter } from "src/expression/adapter/out/expression.adapter
 import { ExpressionModule } from "src/expression/expression.module";
 import { ExpressionBlackListEntity } from "src/expression/domain/expression-black-list.entity";
 
+
 @Module({
   imports : [
     TypeOrmModule.forFeature([
