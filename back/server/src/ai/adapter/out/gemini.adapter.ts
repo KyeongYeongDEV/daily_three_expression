@@ -1,47 +1,65 @@
-import { Injectable } from '@nestjs/common';
-import { GoogleGenerativeAI, GenerativeModel, FunctionCall } from '@google/generative-ai'; // ✨ FunctionCall 타입도 임포트합니다.
-import { IGeminiAdapter } from '../../port/out/gemini.port';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { GoogleGenerativeAI, GenerativeModel, FunctionCallingMode } from '@google/generative-ai';
+import { GeminiPort } from '../../port/out/gemini.port';
 import { geminiTools } from '../../../common/helpers/gemini.helper';
-import { ReturnExpressionsFunctionArgs } from 'src/common/interfaces/expression.interface';
-
-const SYSTEM_INSTRUCTION = `You are an experienced English conversation teacher. Return ONLY a clean valid JSON object for Korean learners with these fields: category, expression, example1, example2, translation_expression, translation_example1, translation_example2. All Korean translations MUST be full natural Korean sentences. Do not include ellipses (...), \\n, \\uXXXX, or explanations. No greetings or preamble.`;
-
-const USER_PROMPT = `Return exactly 5 English pattern expressions using \`returnExpressions\` function. Include: category, expression, example1, example2, translation_expression, translation_example1, translation_example2. All Korean translations must be full, natural sentences. Do NOT use "...", "\\n", or empty fields. Do NOT explain or greet.`;
-
 
 @Injectable()
-export class GeminiAdapter implements IGeminiAdapter {
+export class GeminiAdapter implements GeminiPort, OnModuleInit {
   private model: GenerativeModel;
 
-  constructor() {
-    if (!process.env.GOOGLE_API_KEY) {
-      throw new Error('GOOGLE_API_KEY is not set in environment variables.');
+  constructor(private readonly configService: ConfigService) {}
+
+  onModuleInit() {
+    const apiKey = this.configService.get<string>('GOOGLE_API_KEY');
+    if (!apiKey) {
+      throw new Error('GOOGLE_API_KEY is not configured.');
     }
-    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-    this.model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+
+    this.model = genAI.getGenerativeModel({
+      model: 'gemini-1.5-flash-latest', 
+      tools: geminiTools,
+      toolConfig: {
+        functionCallingConfig: {
+          mode: FunctionCallingMode.ANY, 
+          allowedFunctionNames: ['returnExpressions'], 
+        },
+      },
+    });
   }
 
   async getExpressions(userRequest: string = ''): Promise<any> {
     try {
-      const chat = this.model.startChat({
-        tools: geminiTools,
-        systemInstruction: SYSTEM_INSTRUCTION,
-      });
+      const systemPrompt = this.configService.get<string>('SYSTEM_INSTRUCTION') || '';
+      const userPrompt = this.configService.get<string>('USER_PROMPT') || '';
+      const prompt = `${systemPrompt}\n${userPrompt}${userRequest ? ` ${userRequest}` : ''}`.trim();
 
-      const result = await chat.sendMessage(USER_PROMPT + (userRequest ? ` ${userRequest}` : ''));
+      const result = await this.model.generateContent(prompt);
+      const response = result.response;
 
-      const call = result.response.functionCall();
-      if (call && call.name === 'returnExpressions') {
-        const args = call.args as ReturnExpressionsFunctionArgs;
-        return args.expressions; 
-      } else {
-        const textResponse = result.response.text();
-        console.warn('Gemini did not return a function call. Raw text response:', textResponse);
-        throw new Error('Gemini did not return the expected function call for expressions.');
+      const toolCalls = response.functionCalls();
+      if (!toolCalls || toolCalls.length === 0) {
+        throw new Error('Gemini did not return a function call.');
       }
-    } catch (error) {
-      console.error('Error in GeminiAdapter:', error);
-      throw new Error(`Failed to get expressions from Gemini API: ${error.message}`);
+
+      const firstToolCall = toolCalls[0];
+      if (firstToolCall.name !== 'returnExpressions') {
+        throw new Error(`Unexpected function call: ${firstToolCall.name}`);
+      }
+
+      const args = firstToolCall.args as { expressions: any[] };
+      const expressions = args.expressions;
+      if (!expressions) {
+        throw new Error('Parsed result does not contain expressions field.');
+      }
+
+      return expressions;
+
+    } catch (error: any) {
+      console.error('🔥 Error in GeminiAdapter:', error.response?.data || error.message);
+      throw error; 
     }
   }
 }

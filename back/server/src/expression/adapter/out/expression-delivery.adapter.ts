@@ -36,7 +36,7 @@ export class ExpressionDeliveryAdapter implements ExpressionDeliveryPort {
 
   async saveExpressionDeliveried(u_id: number, e_id: number, deliveryStatus: DeliveryStatus): Promise<void> {
     await this.expressionDeliveryRepository.save({
-      transmitted_at: new Date(),
+
       delivery_status: deliveryStatus,
       u_id: u_id,
       e_id: e_id,

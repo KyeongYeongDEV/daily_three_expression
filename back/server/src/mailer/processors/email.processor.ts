@@ -49,7 +49,7 @@ export class EmailProcessor {
       const info = await this.transporter.sendMail({
         from: `"하삼영" <${this.configService.get('MAIL_USER')}>`,
         to,
-        subject: '[하삼영] 오늘의 표현 3개입니다!)',
+        subject: '[하삼영] 오늘의 표현 3개입니다!',
         html,
       });
 

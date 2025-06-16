@@ -45,7 +45,7 @@ export class ExpressionAdapter implements ExpressionPort {
   }
 
   async saveExpressionBlackList(expression: string): Promise<ExpressionBlackListEntity> {
-    console.log(`🧪 saveExpressionBlackList 호출됨: ${expression}`); // 이거 추가
+    console.log(`🧪 saveExpressionBlackList 호출됨: ${expression}`);
   
     const found = await this.expressionBlackListRepository.findOne({ where: { expression } });
   
