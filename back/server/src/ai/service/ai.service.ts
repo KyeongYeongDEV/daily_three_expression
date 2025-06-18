@@ -29,16 +29,27 @@ export class AiService {
     return entity;
   }
 
+  private includesExpression(example: string, expression: string): boolean {
+    return example.toLowerCase().includes(expression.toLowerCase().replace(/\.\.\.$/, '').trim());
+  }
+
   async generateAndSaveUniqueExpressions(): Promise<string[]> {
     const results: string[] = [];
     let totalSaved = 0;
-
     const blacklist = await this.expressionPort.findTop10BlacklistedExpressions();
 
     while (true) {
       const expressions = await this.geminiPort.getExpressions(blacklist);
 
       for (const exp of expressions) {
+        const isIncluded1 = this.includesExpression(exp.example1, exp.expression);
+        const isIncluded2 = this.includesExpression(exp.example2, exp.expression);
+
+        if (!isIncluded1 || !isIncluded2) {
+          results.push(`❌ 예시 포함 안 됨 → 블랙리스트: ${exp.expression}`);
+          continue;
+        }
+
         const similarity = await this.qdrantPort.searchSimilar(exp.expression);
 
         if (similarity > 0.9) {
@@ -53,7 +64,8 @@ export class AiService {
         results.push(`✅ 저장 완료: ${saved.expression}`);
         totalSaved++;
       }
-      if (totalSaved >= 3) {        
+
+      if (totalSaved >= 3) {
         return results;
       }
 
