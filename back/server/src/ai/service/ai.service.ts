@@ -64,39 +64,46 @@ export class AiService {
       const results: string[] = [];
       let totalSaved = 0;
       const blacklist = await this.expressionPort.findTop10BlacklistedExpressions();
-    
+
       while (true) {
         const expressions = await this.geminiPort.getExpressions(blacklist);
-    
+
         for (const exp of expressions) {
           const isIncluded1 = this.includesExpression(exp.example1, exp.expression);
           const isIncluded2 = this.includesExpression(exp.example2, exp.expression);
-    
+
           if (!isIncluded1 || !isIncluded2) {
             results.push(`❌ 예시 포함 안 됨 → 블랙리스트: ${exp.expression}`);
             continue;
           }
-    
+
           const similarity = await this.qdrantPort.searchSimilar(exp.expression);
-    
-          if (similarity > 0.9) {
+
+          // 중복 필터 강화: 유사도 + 부분 문자열 포함까지
+          const isTextuallyOverlapping = blacklist.some(black =>
+            exp.expression.toLowerCase().replace(/[^a-z]/gi, '').includes(
+              black.toLowerCase().replace(/[^a-z]/gi, '')
+            )
+          );
+
+          if (similarity > 0.95 || isTextuallyOverlapping) {
             const blacklisted = await this.expressionPort.saveExpressionBlackList(exp.expression);
             results.push(`⚠️ 중복 스킵: ${blacklisted.expression}`);
             continue;
           }
-    
+
           const entity = this.toEntity(exp);
           const saved = await this.expressionPort.save(entity);
           await this.qdrantPort.insertEmbedding(saved.e_id, saved.expression);
           results.push(`✅ 저장 완료: ${saved.expression}`);
           totalSaved++;
         }
-    
+
         if (totalSaved >= 3) {
           await this.sendWebhookMessage(results, expressions);
           return results;
         }
-    
+
         console.log(`현재 저장된 수 : ${totalSaved} | 저장된 표현이 부족하여 20초 후 재요청합니다...`);
         await this.delay(20000);
       }
