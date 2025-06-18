@@ -11,6 +11,7 @@ import { ExpressionModule } from "src/expression/expression.module";
 import { ExpressionBlackListEntity } from "src/expression/domain/expression-black-list.entity";
 import { GeminiAdapter } from "./adapter/out/gemini.adapter";
 import { AiService } from "./service/ai.service";
+import { CommonModule } from "src/common/commom.module";
 
 
 @Module({
@@ -21,6 +22,7 @@ import { AiService } from "./service/ai.service";
     ]),
     ConfigModule, 
     HttpModule,
+    CommonModule,
     forwardRef(() => ExpressionModule),
   ],
   controllers : [AiController],
