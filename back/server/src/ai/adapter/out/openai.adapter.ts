@@ -25,7 +25,7 @@ export class OpenaiAdapter implements OpenAiPort {
       let prompt = this.configService.get<string>('OPENAI_PROMPT')!;
   
       // ⬇️ 중복 표현 상위 5개 받아오기
-      const blacklist = await this.expressionPort.findTop5BlacklistedExpressions();
+      const blacklist = await this.expressionPort.findTop10BlacklistedExpressions();
       if (blacklist.length > 0) {
         const exclusions = blacklist.map(exp => `- "${exp}"`).join('\n');
         prompt += `Absolutely avoid using any of the following expressions:\n${exclusions}`;

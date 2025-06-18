@@ -13,7 +13,7 @@ export class AiService {
   ) {}
 
   private async delay(ms: number) {
-    // 지수적 백오프 방식 (Exponential Backoff)적용
+    // 지수적 백오프 방식 (Exponential Backoff) 적용
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
@@ -32,12 +32,15 @@ export class AiService {
   async generateAndSaveUniqueExpressions(): Promise<string[]> {
     const results: string[] = [];
     let totalSaved = 0;
-//TODO 중복 표현 테이블에 중복인 표현 저장하기
+
+    const blacklist = await this.expressionPort.findTop10BlacklistedExpressions();
+
     while (true) {
-      const expressions = await this.geminiPort.getExpressions('');
+      const expressions = await this.geminiPort.getExpressions(blacklist);
 
       for (const exp of expressions) {
         const similarity = await this.qdrantPort.searchSimilar(exp.expression);
+
         if (similarity > 0.9) {
           const blacklisted = await this.expressionPort.saveExpressionBlackList(exp.expression);
           results.push(`⚠️ 중복 스킵: ${blacklisted.expression}`);
@@ -49,14 +52,12 @@ export class AiService {
         await this.qdrantPort.insertEmbedding(saved.e_id, saved.expression);
         results.push(`✅ 저장 완료: ${saved.expression}`);
         totalSaved++;
-
-        if (totalSaved >= 3) {
-          return results;
-        }
+      }
+      if (totalSaved >= 3) {        
+        return results;
       }
 
-      // 3개 미만 저장되었으면 다시 요청
-      console.log('🔁 저장된 표현이 부족하여 20초 후 재요청합니다...');
+      console.log(`현재 저장된 수 : ${totalSaved} | 저장된 표현이 부족하여 20초 후 재요청합니다...`);
       await this.delay(20000);
     }
   }

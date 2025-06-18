@@ -1,3 +1,3 @@
 export interface GeminiPort {
-  getExpressions(userPrompt: string): Promise<any>;
+  getExpressions(blacklist: string[]): Promise<any>;
 }

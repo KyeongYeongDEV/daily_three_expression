@@ -19,22 +19,26 @@ export class GeminiAdapter implements GeminiPort, OnModuleInit {
     const genAI = new GoogleGenerativeAI(apiKey);
 
     this.model = genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash-latest', 
+      model: 'gemini-1.5-flash-latest',
       tools: geminiTools,
       toolConfig: {
         functionCallingConfig: {
-          mode: FunctionCallingMode.ANY, 
-          allowedFunctionNames: ['returnExpressions'], 
+          mode: FunctionCallingMode.ANY,
+          allowedFunctionNames: ['returnExpressions'],
         },
       },
     });
   }
 
-  async getExpressions(userRequest: string = ''): Promise<any> {
+  async getExpressions(blacklist: string[]): Promise<any> {
     try {
       const systemPrompt = this.configService.get<string>('SYSTEM_INSTRUCTION') || '';
       const userPrompt = this.configService.get<string>('USER_PROMPT') || '';
-      const prompt = `${systemPrompt}\n${userPrompt}${userRequest ? ` ${userRequest}` : ''}`.trim();
+      const blacklistText = blacklist.length
+        ? `\nDo NOT include the following expressions:\n${blacklist.map(e => `- ${e}`).join('\n')}`
+        : '';
+
+      const prompt = `${systemPrompt}\n${userPrompt}${blacklistText}`.trim();
 
       const result = await this.model.generateContent(prompt);
       const response = result.response;
@@ -56,10 +60,9 @@ export class GeminiAdapter implements GeminiPort, OnModuleInit {
       }
 
       return expressions;
-
     } catch (error: any) {
       console.error('🔥 Error in GeminiAdapter:', error.response?.data || error.message);
-      throw error; 
+      throw error;
     }
   }
 }

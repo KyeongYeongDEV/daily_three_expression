@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ExpressionEntity } from '../../domain/expression.entity';
-import { EXPRESSION_PORT, ExpressionPort } from '../../port/expression.port';
+import { ExpressionPort } from '../../port/expression.port';
 import { ExpressionResponseDto } from '../../dto/response.dto';
 import { ExpressionBlackListEntity } from 'src/expression/domain/expression-black-list.entity';
 
@@ -45,32 +45,26 @@ export class ExpressionAdapter implements ExpressionPort {
   }
 
   async saveExpressionBlackList(expression: string): Promise<ExpressionBlackListEntity> {
-    console.log(`🧪 saveExpressionBlackList 호출됨: ${expression}`);
-  
-    const found = await this.expressionBlackListRepository.findOne({ where: { expression } });
-  
-    if (found) {
-      found.count += 1;
-      const result = await this.expressionBlackListRepository.save(found);
-      console.log(`🔁 count 증가 완료: ${found.expression} → ${found.count}`);
-      return result;
-    } else {
-      const newEntry = this.expressionBlackListRepository.create({
-        expression,
-        count: 1,
-      });
-      const result = await this.expressionBlackListRepository.save(newEntry);
-      console.log(`🆕 새 표현 저장 완료: ${newEntry.expression}`);
-      return result;
-    }
+    await this.expressionBlackListRepository.query(
+      `
+      INSERT INTO expression_black_list(expression, count)
+      VALUES ($1, 1)
+      ON CONFLICT (expression)
+      DO UPDATE SET count = expression_black_list.count + 1
+      `,
+      [expression]
+    );
+    
+    const updated = await this.expressionBlackListRepository.findOne({ where: { expression } });
+    return updated!;
   }
   
-
-  async findTop5BlacklistedExpressions(): Promise<string[]> {
+  
+  async findTop10BlacklistedExpressions(): Promise<string[]> {
     const records = await this.expressionBlackListRepository
       .createQueryBuilder('blacklist')
       .orderBy('blacklist.count', 'DESC')
-      .limit(5)
+      .limit(10)
       .getMany();
   
     return records.map(record => record.expression);
