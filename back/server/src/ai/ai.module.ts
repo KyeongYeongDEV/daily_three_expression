@@ -1,6 +1,6 @@
 import { forwardRef, Module } from "@nestjs/common";
 import { AiController } from "./adapter/In/ai.controller";
-import { OpenAiService } from "./service/openAi.service";
+import { OpenaiAdapter } from "./adapter/out/openai.adapter"; 
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from '@nestjs/typeorm'; 
 import { ExpressionEntity } from "../expression/domain/expression.entity";
@@ -9,6 +9,10 @@ import { HttpModule } from "@nestjs/axios";
 import { ExpressionAdapter } from "src/expression/adapter/out/expression.adapter";
 import { ExpressionModule } from "src/expression/expression.module";
 import { ExpressionBlackListEntity } from "src/expression/domain/expression-black-list.entity";
+import { GeminiAdapter } from "./adapter/out/gemini.adapter";
+import { AiService } from "./service/ai.service";
+import { CommonModule } from "src/common/commom.module";
+
 
 @Module({
   imports : [
@@ -18,16 +22,14 @@ import { ExpressionBlackListEntity } from "src/expression/domain/expression-blac
     ]),
     ConfigModule, 
     HttpModule,
+    CommonModule,
     forwardRef(() => ExpressionModule),
   ],
   controllers : [AiController],
   providers : [
-    OpenAiService,
-    // TODO AiService를 OpenaiAdapter로 변경할 것,
-    // {
-    //   provide: 'OpenaiPort',
-    //   useClass: OpenaiAdapter,
-    // },
+    OpenaiAdapter,
+    GeminiAdapter,
+    AiService,
     QdrantAdapter,
     {
       provide: 'QdrantPort',
@@ -37,9 +39,18 @@ import { ExpressionBlackListEntity } from "src/expression/domain/expression-blac
       provide: 'ExpressionPort',
       useClass: ExpressionAdapter,
     },
+    {
+      provide: 'GeminiPort',
+      useClass: GeminiAdapter,
+    },  
+    {
+      provide: 'OpenaiPort',
+      useClass: OpenaiAdapter,
+    },   
   ],
   exports : [
-    OpenAiService,
+    OpenaiAdapter,
+    AiService,
     {
       provide: 'QdrantPort',
       useClass: QdrantAdapter,
@@ -48,6 +59,15 @@ import { ExpressionBlackListEntity } from "src/expression/domain/expression-blac
       provide: 'ExpressionPort',
       useClass: ExpressionAdapter,
     },
+    {
+      provide: 'GeminiPort',
+      useClass: GeminiAdapter,
+    },
+        {
+      provide: 'OpenaiPort',
+      useClass: OpenaiAdapter,
+    },
+    
   ]
 })
 export class AiModule{};

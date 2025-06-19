@@ -4,6 +4,7 @@ import {
   Column,
   OneToMany,
   CreateDateColumn,
+  Generated,
 } from 'typeorm';
 import { ExpressionDeliveryEntity } from './expression-delivery.entity';
 
@@ -12,7 +13,8 @@ export class ExpressionEntity {
   @PrimaryGeneratedColumn()
   e_id: number;
 
-  @Column()
+  @Column({ type: 'int' })
+  @Generated('increment')
   expression_number: number;
 
   @Column()

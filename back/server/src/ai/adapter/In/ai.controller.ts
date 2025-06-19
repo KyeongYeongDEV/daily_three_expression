@@ -1,21 +1,24 @@
 // src/ai/ai.controller.ts
 import { Controller, Delete, Get, Inject, Post } from '@nestjs/common';
-import { OpenAiService } from '../../service/openAi.service';
+import { OpenaiAdapter } from '../../adapter/out/openai.adapter';
 import { QdrantAdapter } from '../../adapter/out/qdrant.adapter';
+import { GeminiAdapter } from '../out/gemini.adapter';
+import { AiService } from 'src/ai/service/ai.service';
 
 @Controller('ai')
 export class AiController {
   constructor(
-    private readonly aiService: OpenAiService,
+    private readonly openAiAdapter: OpenaiAdapter,
+    private readonly aiservice : AiService,
     @Inject('QdrantPort')
     private readonly qdrant: QdrantAdapter, 
   ) {}
 
   @Get('test')
   async testGenerate() {
-    //const result = await this.aiService.generateAndSaveIfUnique();
-    //console.log('GPT 응답 결과:', result);
-    //return { expressions: result };
+    const result = await this.aiservice.generateAndSaveUniqueExpressions();
+    console.log('🔥 Gemini 응답 결과:', result);
+    return { expressions: result };
   }
 
   @Post('save/all/expressions')

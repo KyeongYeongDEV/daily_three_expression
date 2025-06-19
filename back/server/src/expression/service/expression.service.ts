@@ -43,7 +43,6 @@ export class ExpressionService {
 
   async getThreeExpressionsByStartId(id : number) : Promise<ExpressionListResponse>{
     try {
-      //TODO 만약에 startId가 마지막 id이거나 마지막 전 id일 경우 3개를 못 가져옴 - 처리하기
       const result : ExpressionResponseDto[] | null =  
         await this.expressionPort.findThreeExpressionsByStartId(id);
       
