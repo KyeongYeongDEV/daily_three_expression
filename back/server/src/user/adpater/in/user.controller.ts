@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import { UserService } from '../../service/user.service';
 import { UserEmailRequestDto, UserRegisterRequestDto, UserVerifiedUpdateRequestDto } from '../../dto/request.dto';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
@@ -8,6 +8,11 @@ import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get('all/emails')
+  async getUserEmail() {
+    return this.userService.getAllUsersEmail();
+  }
 
   @Post('signup')
   async registerUser(@Body() userRegisterRequestDto: UserRegisterRequestDto) {
