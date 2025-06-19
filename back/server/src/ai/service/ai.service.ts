@@ -8,17 +8,16 @@ import { WebhookService } from 'src/common/service/webhook.service';
 @Injectable()
 export class AiService {
   constructor(
-    @Inject('GeminiPort') 
+    @Inject('GeminiPort')
     private readonly geminiPort: GeminiPort,
-    @Inject('QdrantPort') 
+    @Inject('QdrantPort')
     private readonly qdrantPort: QdrantPort,
-    @Inject('ExpressionPort') 
+    @Inject('ExpressionPort')
     private readonly expressionPort: ExpressionPort,
-    private readonly webhookService : WebhookService,
+    private readonly webhookService: WebhookService,
   ) {}
 
   private async delay(ms: number) {
-    // 지수적 백오프 방식 (Exponential Backoff) 적용
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
@@ -35,30 +34,42 @@ export class AiService {
   }
 
   private includesExpression(example: string, expression: string): boolean {
-    return example.toLowerCase().includes(expression.toLowerCase().replace(/\.\.\.$/, '').trim());
+    return example.toLowerCase().includes(expression.toLowerCase().replace(/\.{3}$/, '').trim());
+  }
+
+  private normalizeExpression(expression: string): string {
+    return expression
+      .toLowerCase()
+      .replace(/\.{3}$/, '')
+      .replace(/[^a-z]/g, '')
+      .trim();
+  }
+
+  private wordCount(text: string): number {
+    return text.trim().split(/\s+/).length;
   }
 
   private async sendWebhookMessage(results: string[], expressions: any[]): Promise<void> {
-    try{
+    try {
       const savedExpressions = expressions
-      .filter(e => results.find(msg => msg.includes(e.expression) && msg.includes('✅')))
-      .map(e => `✅ **${e.expression}**
+        .filter(e => results.find(msg => msg.includes(e.expression) && msg.includes('✅')))
+        .map(e => `✅ **${e.expression}**
       - ex1: ${e.example1}
       - ex2: ${e.example2}`)
-      .join('\n\n');
-  
+        .join('\n\n');
+
       const skippedExpressions = results
         .filter(msg => msg.startsWith('⚠️') || msg.startsWith('❌'))
         .join('\n');
-    
+
       const finalMessage = `🔥 Gemini 응답 결과:\n\n${savedExpressions}\n\n${skippedExpressions}`;
-    
+
       await this.webhookService.sendMessage(finalMessage);
-    }catch (error){
+    } catch (error) {
       console.error('Webhook 전송 중 오류 발생:', error);
     }
   }
-  
+
   async generateAndSaveUniqueExpressions(): Promise<string[]> {
     try {
       const results: string[] = [];
@@ -69,6 +80,11 @@ export class AiService {
         const expressions = await this.geminiPort.getExpressions(blacklist);
 
         for (const exp of expressions) {
+          if (exp.expression.length < 10) {
+            results.push(`❌ 표현 너무 짧음 → ${exp.expression}`);
+            continue;
+          }
+
           const isIncluded1 = this.includesExpression(exp.example1, exp.expression);
           const isIncluded2 = this.includesExpression(exp.example2, exp.expression);
 
@@ -77,13 +93,17 @@ export class AiService {
             continue;
           }
 
+          if (this.wordCount(exp.example1) < 6 || this.wordCount(exp.example2) < 6) {
+            results.push(`❌ 예시 문장 너무 짧음 → ${exp.expression}`);
+            continue;
+          }
+
           const similarity = await this.qdrantPort.searchSimilar(exp.expression);
 
-          // 중복 필터 강화: 유사도 + 부분 문자열 포함까지
+          const normalizedExpression = this.normalizeExpression(exp.expression);
           const isTextuallyOverlapping = blacklist.some(black =>
-            exp.expression.toLowerCase().replace(/[^a-z]/gi, '').includes(
-              black.toLowerCase().replace(/[^a-z]/gi, '')
-            )
+            this.normalizeExpression(black).includes(normalizedExpression) ||
+            normalizedExpression.includes(this.normalizeExpression(black))
           );
 
           if (similarity > 0.95 || isTextuallyOverlapping) {
