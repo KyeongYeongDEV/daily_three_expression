@@ -16,15 +16,20 @@ export class EmailProcessor {
     private readonly expressionDeliveryPort: ExpressionDeliveryPort,
   ) {
     this.transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com', 
+      port: 587, 
+      secure: false, 
       auth: {
         user: this.configService.get<string>('MAIL_USER'),
         pass: this.configService.get<string>('MAIL_PASS'),
       },
+      pool: true, 
+      maxConnections: 5, 
+      maxMessages: 100, 
     });
   }
 
-  @Process('send-verification')
+  @Process({ name : 'send-verification', concurrency : 10 })
   async handleSendVerificationEmail(job: Job<{ to: string; code: string }>) {
     const { to, code } = job.data;
     console.log(`[백그라운드] ${to}에게 인증 메일 전송 시작`);
@@ -41,7 +46,7 @@ export class EmailProcessor {
     console.log(`[이메일 인증 전송 프로세스] ✅ 인증 코드 메일 전송 완료:`, info.messageId);
   }
 
-  @Process('send-expression')
+  @Process({name : 'send-expression', concurrency : 10 })
   async handleSendExpressionEmail(job: Job<{ to: string; html: string; u_id: number; deliveredId: number }>) {
     const { to, html, u_id, deliveredId } = job.data;
     

@@ -23,26 +23,11 @@ services:
     volumes:
       - ./qdrant_data:/qdrant/storage
 
-# #로컬용
-#   server:
-#     build:
-#       context: ./server
-#       dockerfile: Dockerfile
-#     container_name: nest-server
-#     restart: always
-#     ports:
-#       - "8000:8000"
-#     env_file:
-#       - ./server/.env
-#     environment:
-#       - TZ=Asia/Seoul
-#     depends_on:
-#       - redis
-#       - qdrant
-
-#서버용
+#로컬용
   server:
-    image: 123403344015.dkr.ecr.ap-northeast-2.amazonaws.com/dailyexpression:latest
+    build:
+      context: ./server
+      dockerfile: Dockerfile
     container_name: nest-server
     restart: always
     ports:
@@ -54,3 +39,18 @@ services:
     depends_on:
       - redis
       - qdrant
+
+# #서버용
+#   server:
+#     image: 123403344015.dkr.ecr.ap-northeast-2.amazonaws.com/dailyexpression:latest
+#     container_name: nest-server
+#     restart: always
+#     ports:
+#       - "8000:8000"
+#     env_file:
+#       - ./server/.env
+#     environment:
+#       - TZ=Asia/Seoul
+#     depends_on:
+#       - redis
+#       - qdrant
