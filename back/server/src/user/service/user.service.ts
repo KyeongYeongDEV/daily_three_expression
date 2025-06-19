@@ -10,6 +10,9 @@ import { isDuplicateKeyError } from 'src/common/utils/db-error.util';
 
 @Injectable()
 export class UserService {
+  findAllUsersEmail() {
+    throw new Error('Method not implemented.');
+  }
   constructor(
     @Inject('UserPort')
     private readonly userPort: UserPort,
@@ -26,6 +29,18 @@ export class UserService {
 
     return user;
   }
+
+  async getAllUsersEmail() : Promise<any> {
+    try{
+      const userEmails  = await this.userPort.findAllUsersEmail();
+
+      return ResponseHelper.success(userEmails, '모든 회원들 이메일 정보 조회에 성공했습니다');
+    } catch (error) {
+      console.error('[getAllUsersEmail] ', error);
+      return ResponseHelper.fail('이메일 조회에 실패했습니다.', 500);
+    }
+  }
+
 
   async isExistsUserByEmail( email : string ) : Promise<boolean> {
     const exists : UserExistDTO | null = await this.userPort.findUserByEmail(email);
