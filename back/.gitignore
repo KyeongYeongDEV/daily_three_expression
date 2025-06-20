@@ -1,2 +1,2 @@
-qdrant_data
-redis_data
+node_modules
+.env
