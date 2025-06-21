@@ -10,6 +10,7 @@ import { ExpressionDeliveryAdapter } from 'src/expression/adapter/out/expression
 import { UserAdapter } from 'src/user/adpater/out/user.adapter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/domain/user.entity';
+import { TestController } from './adapter/in/test.controller';
 
 @Module({
   imports: [
@@ -38,5 +39,8 @@ import { UserEntity } from 'src/user/domain/user.entity';
     },
   ],
   exports: [MailerAdapter],
+  controllers: [
+    TestController,
+  ],
 })
 export class MailerModule {}

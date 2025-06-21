@@ -1,2 +1,5 @@
 node_modules
 .env
+
+qdrant_data
+redis_data

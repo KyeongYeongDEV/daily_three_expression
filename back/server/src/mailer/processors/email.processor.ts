@@ -69,11 +69,8 @@ export class EmailProcessor {
   }
 
   @Process({ name : 'send-verification', concurrency : 10 })
-  async handleSendVerificationEmail(job: Job<{ to: string; code: string }>) {
-    const { to, code } = job.data;
-    //console.log(`[백그라운드] ${to}에게 인증 메일 전송 시작`);
-
-    const html = buildVerificationCodeTemplate(code);
+  async handleSendVerificationEmail(job: Job<{ to: string; html: string }>) {
+    const { to, html } = job.data;
 
     const info = await this.transporter.sendMail({
       from: `"하삼영" <${this.configService.get('MAIL_USER')}>`,
@@ -104,4 +101,24 @@ export class EmailProcessor {
       console.error(`[표현 전송 프로세스] ❌ 표현 이메일 전송 실패 → ${to}:`, error);
     }
   }
+
+  @Process({ name: 'send-expression-test', concurrency: 10 })
+  async testSendExpressionEmail(job: Job<{ to: string; html: string; u_id: number; deliveredId: number }>) {
+    const { to, u_id, deliveredId } = job.data;
+  
+    try {
+      // 메일 전송 시뮬레이션
+      await new Promise(resolve => setTimeout(resolve, 50));
+  
+      // DB 저장 시뮬레이션
+      console.log(`[MOCK] DB 저장 → u_id: ${u_id}, e_id: ${deliveredId}, status: success`);
+  
+      // 진짜 DB에는 쓰지 않음
+      // await this.expressionDeliveryPort.saveExpressionDeliveried(u_id, deliveredId, 'success');
+  
+    } catch (error) {
+      console.error(`[MOCK] 테스트 이메일 처리 실패 → ${to}:`, error);
+    }
+  }
+  
 }
