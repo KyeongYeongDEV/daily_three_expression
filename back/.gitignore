@@ -3,3 +3,4 @@ node_modules
 
 /qdrant_data
 /redis_data
+/redis_conf
