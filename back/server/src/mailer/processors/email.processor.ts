@@ -70,16 +70,20 @@ export class EmailProcessor {
 
   @Process({ name : 'send-verification', concurrency : 10 })
   async handleSendVerificationEmail(job: Job<{ to: string; html: string }>) {
-    const { to, html } = job.data;
+    try {
+      const { to, html } = job.data;
 
-    const info = await this.transporter.sendMail({
-      from: `"하삼영" <${this.configService.get('MAIL_USER')}>`,
-      to,
-      subject: '[하삼영] 이메일 인증 코드입니다.',
-      html,
-    });
+      const info = await this.transporter.sendMail({
+        from: `"하삼영" <${this.configService.get('MAIL_USER')}>`,
+        to,
+        subject: '[하삼영] 이메일 인증 코드입니다.',
+        html,
+      });
 
-    console.log(`[이메일 인증 전송 프로세스] ✅ 인증 코드 메일 전송 완료:`, info.messageId);
+      console.log(`[이메일 인증 전송 프로세스] ✅ 인증 코드 메일 전송 완료:`, info.messageId);
+    } catch (error) {
+      console.error(`[이메일 인증 전송 프로세스] ❌ 인증 코드 메일 전송 실패:`, error);
+    }
   }
 
   @Process({name : 'send-expression', concurrency : 10 })
