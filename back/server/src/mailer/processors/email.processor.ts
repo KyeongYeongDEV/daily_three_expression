@@ -28,26 +28,26 @@ export class EmailProcessor {
       maxMessages: 100, 
     });
     // Nodemailer 이벤트 리스너 등록
-    this.setupNodemailerMonitoring(); // 새로운 메서드 호출
+    //this.setupNodemailerMonitoring(); // 새로운 메서드 호출
   }
 
-  private setupNodemailerMonitoring() {
-    this.transporter.on('idle', () => {
-      // 모든 메시지가 전송되고 트랜스포터가 유휴 상태일 때 발생
-      // console.log('[Nodemailer] Transporter is idle. All messages sent.');
-      // 이 로그는 매우 빈번하게 발생할 수 있으므로 주의해서 사용하세요.
-    });
+  //private setupNodemailerMonitoring() {
+    // this.transporter.on('idle', () => {
+    //   // 모든 메시지가 전송되고 트랜스포터가 유휴 상태일 때 발생
+    //   // console.log('[Nodemailer] Transporter is idle. All messages sent.');
+    //   // 이 로그는 매우 빈번하게 발생할 수 있으므로 주의해서 사용하세요.
+    // });
 
-    this.transporter.on('error', (error: Error) => {
-      // 전송 중 오류 발생 시 발생
-      console.error('[Nodemailer] Transporter error:', error);
-      // 어떤 오류가 발생했는지, 재시도 가능한 오류인지 등을 파악할 수 있습니다.
-    });
+    // this.transporter.on('error', (error: Error) => {
+    //   // 전송 중 오류 발생 시 발생
+    //   console.error('[Nodemailer] Transporter error:', error);
+    //   // 어떤 오류가 발생했는지, 재시도 가능한 오류인지 등을 파악할 수 있습니다.
+    // });
 
-    this.transporter.on('token', (token: any) => {
-      // SMTP 인증 토큰이 새로고침될 때 발생 (OAuth2 사용 시)
-      // console.log('[Nodemailer] New authentication token:', token);
-    });
+    // this.transporter.on('token', (token: any) => {
+    //   // SMTP 인증 토큰이 새로고침될 때 발생 (OAuth2 사용 시)
+    //   // console.log('[Nodemailer] New authentication token:', token);
+    // });
 
     // this.transporter.on('pool', (info: {
     //   type: 'added' | 'removed';
@@ -66,7 +66,7 @@ export class EmailProcessor {
     // Nodemailer 5.x 이하 버전에서는 'pooled' 이벤트가 커넥션이 풀에 추가되었음을 의미했습니다.
     // 따라서 사용하시는 Nodemailer 버전에 따라 이벤트 이름과 파라미터를 확인해주세요.
     // (보통 @nestjs-modules/mailer 등은 최신 Nodemailer를 포함하고 있습니다.)
-  }
+  //}
 
   @Process({ name : 'send-verification', concurrency : 10 })
   async handleSendVerificationEmail(job: Job<{ to: string; html: string }>) {
