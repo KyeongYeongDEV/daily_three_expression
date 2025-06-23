@@ -9,6 +9,7 @@ import { ExpressionResponseDto } from 'src/expression/dto/response.dto';
 import { buildExpressionMailTemplate } from '../../templates/expression-mail.template';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
+import { buildVerificationCodeTemplate } from 'src/mailer/templates/verify-code.template';
 
 
 // TODO service로 분리하기
@@ -27,22 +28,40 @@ export class MailerAdapter implements SendMailPort {
     private readonly emailQueue: Queue,
   ) {}
 
-  private getYesterdayAndStart() {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); 
+  async testSendExpression(): Promise<void> {
+    try {
+      const html = buildVerificationCodeTemplate('123456');
+      const deliveredId = 99999;
+  
+      const TOTAL_TEST_USERS = 1000;
+  
+      for (let i = 1; i <= TOTAL_TEST_USERS; i++) {
+        await this.emailQueue.add('send-expression-test', {
+          to: `test${i}@example.com`,
+          html,
+          u_id: i,
+          deliveredId,
+        });
+        console.log(`📨 테스트 이메일 큐 추가 완료 → test${i}@example.com`);
+      }
 
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-    
-    return { today, yesterday };
-  } 
+      console.log(`✅ 총 ${TOTAL_TEST_USERS}건의 테스트 잡이 큐에 추가되었습니다.`);
+
+    } catch (error) {
+      console.error('❌ 테스트 표현 메일 큐 추가 중 에러 발생:', error);
+    }
+  }
 
   async sendExpression(): Promise<void> {
     try {
       const users: UserEmailType[] = await this.userPort.findAllUsersEmail();
-      //const users = [{u_id : 5, email : 'cky4594709@gmail.com'}];
       const startEid: number = await this.expressionDeliveryPort.findStartExpressionId();
       const expressions: ExpressionResponseDto[] = await this.expressionPort.findThreeExpressionsByStartId(startEid);
+  
+      if (!expressions || expressions.length !== 3) {
+        console.warn('[SKIP] 표현 3개를 정상적으로 불러오지 못했습니다. 메일 전송 중단');
+        return;
+      }
   
       const html = buildExpressionMailTemplate(expressions);
       const todayLastDliveriedId = expressions[2].e_id;
@@ -56,17 +75,18 @@ export class MailerAdapter implements SendMailPort {
         });
         console.log(`✅ ${user.email}로 가는 표현 메일 잡을 큐에 추가했습니다.`);
       }
+  
     } catch (error) {
       console.error('표현 메일 잡을 큐에 추가하는 중 에러 발생:', error);
     }
   }
-  
 
   async sendEmailVerificationCode(to: string, code: string): Promise<boolean> {
     try {
+      const html = buildVerificationCodeTemplate(code)
       await this.emailQueue.add('send-verification', {
         to,
-        code,
+        html,
       });
 
       console.log(`✅ ${to}로 가는 인증 메일 잡을 큐에 추가했습니다.`);

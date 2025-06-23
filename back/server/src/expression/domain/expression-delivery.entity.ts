@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -15,7 +16,7 @@ export class ExpressionDeliveryEntity {
   @PrimaryGeneratedColumn()
   ue_id: number;
 
-  @Column({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp' })
   transmitted_at: Date;
 
   @Column({ type: 'enum', enum: ['success', 'failed', 'pending'], default: 'pending' })
