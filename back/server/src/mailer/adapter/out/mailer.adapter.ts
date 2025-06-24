@@ -60,27 +60,28 @@ export class MailerAdapter implements SendMailPort {
       const users: UserEmailType[] = await this.userPort.findAllUsersEmail();
       const startEid: number = await this.expressionDeliveryPort.findStartExpressionId();
       const expressions: ExpressionResponseDto[] = await this.expressionPort.findThreeExpressionsByStartId(startEid);
-      const todayLastDliveriedId = expressions[2].e_id;
-  
+      
       if (!expressions || expressions.length !== 3) {
         console.warn('[SKIP] 표현 3개를 정상적으로 불러오지 못했습니다. 메일 전송 중단');
         return;
       }
-  
+      
+      const todayLastDliveriedId = expressions[2].e_id;
       const baseUrl = 'https://www.daily-expression.site/unsubscribe';
-      for (const user of users) {
-        const uuidToken : string  = await this.authService.createUuidToken(user.email);
+      await Promise.all(users.map(async (user) => {
+        const uuidToken = await this.authService.createUuidToken(user.email);
         const unsubscribeUrl = `${baseUrl}?email=${user.email}&token=${uuidToken}`;
-        const html = buildExpressionMailTemplate(expressions);
-
+        const html = buildExpressionMailTemplate(expressions, unsubscribeUrl);
+      
         await this.emailQueue.add('send-expression', {
           to: user.email,
           html,
           u_id: user.u_id,
           deliveredId: todayLastDliveriedId,
         });
+      
         console.log(`✅ ${user.email}로 가는 표현 메일 잡을 큐에 추가했습니다.`);
-      }
+      }));
   
     } catch (error) {
       console.error('표현 메일 잡을 큐에 추가하는 중 에러 발생:', error);
