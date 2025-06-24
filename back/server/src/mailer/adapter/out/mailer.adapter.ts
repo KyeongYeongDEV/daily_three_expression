@@ -10,6 +10,7 @@ import { buildExpressionMailTemplate } from '../../templates/expression-mail.tem
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { buildVerificationCodeTemplate } from 'src/mailer/templates/verify-code.template';
+import { AuthService } from 'src/auth/service/auth.service';
 
 
 // TODO service로 분리하기
@@ -24,6 +25,8 @@ export class MailerAdapter implements SendMailPort {
     private readonly expressionDeliveryPort: ExpressionDeliveryPort,
     @Inject('UserPort')
     private readonly userPort: UserPort,
+    @Inject('AuthService')
+    private readonly authService: AuthService,
     @InjectQueue('email') 
     private readonly emailQueue: Queue,
   ) {}
@@ -57,16 +60,19 @@ export class MailerAdapter implements SendMailPort {
       const users: UserEmailType[] = await this.userPort.findAllUsersEmail();
       const startEid: number = await this.expressionDeliveryPort.findStartExpressionId();
       const expressions: ExpressionResponseDto[] = await this.expressionPort.findThreeExpressionsByStartId(startEid);
+      const todayLastDliveriedId = expressions[2].e_id;
   
       if (!expressions || expressions.length !== 3) {
         console.warn('[SKIP] 표현 3개를 정상적으로 불러오지 못했습니다. 메일 전송 중단');
         return;
       }
   
-      const html = buildExpressionMailTemplate(expressions);
-      const todayLastDliveriedId = expressions[2].e_id;
-  
+      const baseUrl = 'https://www.daily-expression.site/unsubscribe';
       for (const user of users) {
+        const uuidToken : string  = await this.authService.createUuidToken(user.email);
+        const unsubscribeUrl = `${baseUrl}?email=${user.email}&token=${uuidToken}`;
+        const html = buildExpressionMailTemplate(expressions);
+
         await this.emailQueue.add('send-expression', {
           to: user.email,
           html,

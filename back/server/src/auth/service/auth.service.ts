@@ -10,6 +10,7 @@ import { UserService } from 'src/user/service/user.service';
 import { LoginDto } from '../dto/auth.dto';
 import { Response } from 'express';
 import { SendMailPort } from 'src/mailer/port/out/send-mail.port';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AuthService implements AuthServicePort {
@@ -164,5 +165,40 @@ export class AuthService implements AuthServicePort {
       return ResponseHelper.fail('이메일 인증 코드 검증 중 서버 에러가 발생했습니다.', 500);
     }
   }
+
+  private generateUuidToken(): string {
+    return randomUUID();
+  }
   
+  async createUuidToken(email: string): Promise<string> {
+    try {
+      const uuidToken = this.generateUuidToken();
+      await this.redisPort.saveUuidToken(email, uuidToken);
+    
+      return uuidToken;
+    } catch (error) {
+      console.error('[createUuidToken]', error);
+      throw new Error('UUID 토큰 생성 중 에러가 발생했습니다');
+    }
+  }
+
+  async verifyUuidToken(email: string, uuidToken: string): Promise<boolean> {
+    try {
+      const savedToken = await this.redisPort.getUuidToken(email);
+      
+      if (!savedToken) {
+        throw new Error('UUID 토큰이 존재하지 않습니다');
+      }
+  
+      if (savedToken !== uuidToken) {
+        throw new Error('UUID 토큰이 일치하지 않습니다');
+      }
+  
+      await this.redisPort.deleteUuidToken(email);
+      return true;
+    } catch (error) {
+      console.error('[verifyUuidToken]', error);
+      return false;
+    }
+  }
 }
