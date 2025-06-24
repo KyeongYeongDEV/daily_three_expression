@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     images: ["/logo.png"],
   },
   icons: {
-    icon: "/title_icon.png", // 이 경로가 정확해야 합니다.
+    icon: "/title_icon.png", 
   },
 }
 
