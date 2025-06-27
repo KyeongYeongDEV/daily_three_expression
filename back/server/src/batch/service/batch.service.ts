@@ -26,8 +26,8 @@ export class BatchMailService {
 
   async sendEmails(): Promise<void> {
     try {
-      //const users: UserEmailType[] = await this.userPort.findAllUsersEmail();
-      const users: UserEmailType[] = [{email : 'cky4594709@gmail.com', u_id : 5}];
+      const users: UserEmailType[] = await this.userPort.findAllUsersEmail();
+      //const users: UserEmailType[] = [{email : 'cky4594709@gmail.com', u_id : 5}];
       const startEid: number = await this.expressionDeliveryPort.findStartExpressionId();
       const expressions: ExpressionResponseDto[] = await this.expressionPort.findThreeExpressionsByStartId(startEid);
 
