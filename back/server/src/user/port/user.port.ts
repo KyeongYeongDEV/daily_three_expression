@@ -9,4 +9,5 @@ export interface UserPort {
   findUserByUid( id : number ): Promise<UserEntity | null>;
   findAllUsersEmail() : Promise<UserEmailType[]>;
   updateSubscribeStatus( email : string, is_email_subscribed: boolean ): Promise<void>;
+  updateSubscribeByEmail(email: string): Promise<UserEntity>
 }

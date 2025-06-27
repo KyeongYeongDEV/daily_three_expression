@@ -36,7 +36,7 @@ export class UserController {
     return this.userService.updateSubscribeVerified(userVerifiedUpdateRequestDto);
   }
 
-  @Delete('email/unsubscribe')
+  @Post('email/unsubscribe')
   async unsubscribe(@Body() { email, token }: { email: string, token: string }) {
     return this.userService.updateSubscribeStatus(email, token);
   }

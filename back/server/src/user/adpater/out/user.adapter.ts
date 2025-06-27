@@ -30,7 +30,6 @@ export class UserAdapter implements UserPort {
   async findUserInfoByEmail( email: string ): Promise<UserEntity | null> {
     return this.userRepository.createQueryBuilder('user')
     .where('user.email = :email', { email })
-    .andWhere('user.is_email_subscribed = true')
     .getOne();
   }
 
@@ -78,12 +77,19 @@ export class UserAdapter implements UserPort {
       updated_at: now,
     };
   }
-  
+
   async updateSubscribeStatus(email: string, isSubscribed: boolean): Promise<void> {
     await this.userRepository.update(
       { email },
       { is_email_subscribed: isSubscribed }
     );
   }
-  
+  async updateSubscribeByEmail(email: string): Promise<UserEntity> {
+    await this.userRepository.update({ email }, { is_email_subscribed: true });
+    const user = await this.findUserInfoByEmail(email);
+    if (!user) {
+      throw new Error(`User with email ${email} not found`);
+    }
+    return user; // 업데이트된 값 반환
+  }
 }
