@@ -11,7 +11,6 @@ import { UserAdapter } from 'src/user/adpater/out/user.adapter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/domain/user.entity';
 import { TestController } from './adapter/in/test.controller';
-import { AuthService } from 'src/auth/service/auth.service';
 
 @Module({
   imports: [
@@ -20,7 +19,7 @@ import { AuthService } from 'src/auth/service/auth.service';
       name: 'email',
     }),
     ExpressionModule, 
-    UserModule,     
+    UserModule,   
     TypeOrmModule.forFeature([UserEntity]),   
   ],
   providers: [
@@ -37,10 +36,6 @@ import { AuthService } from 'src/auth/service/auth.service';
     {
       provide: 'UserPort',
       useClass: UserAdapter,
-    },
-    {
-      provide: 'AuthServicePort',
-      useExisting: AuthService,
     },
   ],
   exports: [MailerAdapter],

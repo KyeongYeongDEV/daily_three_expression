@@ -10,7 +10,7 @@ import { buildExpressionMailTemplate } from '../../templates/expression-mail.tem
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { buildVerificationCodeTemplate } from 'src/mailer/templates/verify-code.template';
-import { AuthService } from 'src/auth/service/auth.service';
+import { AuthServicePort } from 'src/auth/port/in/auth.service.port';
 
 
 // TODO service로 분리하기
@@ -25,8 +25,6 @@ export class MailerAdapter implements SendMailPort {
     private readonly expressionDeliveryPort: ExpressionDeliveryPort,
     @Inject('UserPort')
     private readonly userPort: UserPort,
-    @Inject('AuthService')
-    private readonly authService: AuthService,
     @InjectQueue('email') 
     private readonly emailQueue: Queue,
   ) {}
@@ -69,7 +67,9 @@ export class MailerAdapter implements SendMailPort {
       const todayLastDliveriedId = expressions[2].e_id;
       const baseUrl = 'https://www.daily-expression.site/unsubscribe';
       await Promise.all(users.map(async (user) => {
-        const uuidToken = await this.authService.createUuidToken(user.email);
+        //const uuidToken = await this.authService.createUuidToken(user.email);
+
+        const uuidToken = 'token';
         const unsubscribeUrl = `${baseUrl}?email=${user.email}&token=${uuidToken}`;
         const html = buildExpressionMailTemplate(expressions, unsubscribeUrl);
       
