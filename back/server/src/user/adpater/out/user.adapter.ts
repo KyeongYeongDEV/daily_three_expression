@@ -36,6 +36,7 @@ export class UserAdapter implements UserPort {
   async findUserByEmail( email: string ): Promise<UserExistDTO | null> {
     return this.userRepository.createQueryBuilder('user')
     .where('user.email = :email', { email })
+    .andWhere('user.is_email_subscribed = true')
     .getOne();
   }
 
@@ -46,12 +47,9 @@ export class UserAdapter implements UserPort {
       'user.email',
     ])
     .where('user.u_id = :u_id', { u_id })
+    .andWhere('user.is_email_subscribed = true')
     .getOne();
   }
-
-  // async saveUser( user: UserEntity ): Promise<UserEntity> {
-  //   return this.userRepository.save(user);
-  // }
 
   async saveUser(user: UserEntity): Promise<UserEntity> {
     const now = new Date();
@@ -79,5 +77,19 @@ export class UserAdapter implements UserPort {
       updated_at: now,
     };
   }
-  
+
+  async updateSubscribeStatus(email: string, isSubscribed: boolean): Promise<void> {
+    await this.userRepository.update(
+      { email },
+      { is_email_subscribed: isSubscribed }
+    );
+  }
+  async updateSubscribeByEmail(email: string): Promise<UserEntity> {
+    await this.userRepository.update({ email }, { is_email_subscribed: true });
+    const user = await this.findUserInfoByEmail(email);
+    if (!user) {
+      throw new Error(`User with email ${email} not found`);
+    }
+    return user; // 업데이트된 값 반환
+  }
 }

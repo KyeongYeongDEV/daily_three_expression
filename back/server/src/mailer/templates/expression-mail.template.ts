@@ -1,7 +1,7 @@
 import { ExpressionResponseDto } from "src/expression/dto/response.dto";
 
 
-export function buildExpressionMailTemplate(expressions: ExpressionResponseDto[]): string {
+export function buildExpressionMailTemplate(expressions: ExpressionResponseDto[], unsubscribeUrl : string): string {
   return `
     <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: auto; padding: 20px; background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
       
@@ -78,7 +78,7 @@ export function buildExpressionMailTemplate(expressions: ExpressionResponseDto[]
         <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #f3f4f6;">
           <p style="margin: 0; font-size: 11px; color: #9ca3af;">
             이 메일이 더 이상 필요하지 않으시다면 
-            <a href="#" style="color: #84CCFF; text-decoration: none;">구독 해지</a>를 클릭하세요.
+            <a href="${unsubscribeUrl}" style="color: #84CCFF; text-decoration: none;">구독 해지</a>
           </p>
         </div>
       </div>

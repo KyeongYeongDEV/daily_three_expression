@@ -68,16 +68,24 @@ export class UserService {
   
     try {
       const saved = await this.userPort.saveUser(user); 
-  
       return ResponseHelper.success(saved, '회원가입에 성공했습니다');
     } catch (err) {
       if (isDuplicateKeyError(err)) {
-        return ResponseHelper.fail('이미 존재하는 회원입니다.', 400);
+        const existing = await this.userPort.findUserInfoByEmail(email);
+        if (!existing) {
+          return ResponseHelper.fail('[registerUser] 회원을 찾을 수 없습니다.', 500);
+        }
+        if (existing.is_email_subscribed) {
+          return ResponseHelper.fail('[registerUser] 이미 구독 중인 이메일입니다.', 400);
+        }
+        const updatedUser = await this.userPort.updateSubscribeStatus(email, true);
+        return ResponseHelper.success(updatedUser, '구독이 재활성화 되었습니다.');
       }
       console.error('[registerUser] ', err);
       return ResponseHelper.fail('회원가입에 실패했습니다', 500);
     }
   }
+  
   
 
   async getUserInfoByEmail(userEmailRequestDto: UserEmailRequestDto): Promise<UserInfoResponse> {
@@ -119,6 +127,23 @@ export class UserService {
   
   async updateSubscribeVerified(userVerifiedUpdateRequestDto : UserVerifiedUpdateRequestDto): Promise<UserInfoResponse> {
     return this.updateUserVerifiedFlag(userVerifiedUpdateRequestDto.u_id, 'is_email_subscribed', userVerifiedUpdateRequestDto.verified)
+  }
+
+  async updateSubscribeStatus(email: string, token: string): Promise<UserInfoResponse> {
+    try {
+      const savedToken = await this.redisPort.getUuidToken(email);
+      if (!savedToken || savedToken !== token) {
+        return ResponseHelper.fail('유효하지 않은 구독 해지 요청입니다.', 400);
+      }
+  
+      await this.userPort.updateSubscribeStatus(email, false);
+      await this.redisPort.deleteUuidToken(email);
+  
+      return ResponseHelper.success(null, '구독 해지에 성공했습니다.');
+    } catch (error) {
+      console.error('[unsubscribe] ', error);
+      return ResponseHelper.fail('구독 해지에 실패했습니다.', 500);
+    }
   }
   
 }

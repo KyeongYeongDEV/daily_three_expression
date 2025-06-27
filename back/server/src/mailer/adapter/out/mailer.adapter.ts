@@ -4,8 +4,8 @@ import { SendMailPort } from 'src/mailer/port/out/send-mail.port';
 import { ExpressionPort } from 'src/expression/port/expression.port';
 import { UserPort } from 'src/user/port/user.port';
 import { ExpressionDeliveryPort } from 'src/expression/port/expression-delivery.port';
-import { UserEmailType } from 'src/common/types/user.type';
-import { ExpressionResponseDto } from 'src/expression/dto/response.dto';
+import { UsersWithUuidType, UserEmailType } from 'src/common/types/user.type';
+import { ExpressionResponseDto } from '../../../expression/dto/response.dto';
 import { buildExpressionMailTemplate } from '../../templates/expression-mail.template';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
@@ -52,29 +52,24 @@ export class MailerAdapter implements SendMailPort {
     }
   }
 
-  async sendExpression(): Promise<void> {
+  async sendExpression(usersWithUuid : UsersWithUuidType[], expressions : ExpressionResponseDto[], todayLastDeliveriedId : number): Promise<void> {
     try {
-      const users: UserEmailType[] = await this.userPort.findAllUsersEmail();
-      const startEid: number = await this.expressionDeliveryPort.findStartExpressionId();
-      const expressions: ExpressionResponseDto[] = await this.expressionPort.findThreeExpressionsByStartId(startEid);
-  
-      if (!expressions || expressions.length !== 3) {
-        console.warn('[SKIP] 표현 3개를 정상적으로 불러오지 못했습니다. 메일 전송 중단');
-        return;
-      }
-  
-      const html = buildExpressionMailTemplate(expressions);
-      const todayLastDliveriedId = expressions[2].e_id;
-  
-      for (const user of users) {
+      const baseUrl = 'https://www.dailyexpression.site/unsubscribe';
+      await Promise.all(usersWithUuid.map(async (user) => {
+
+        const uuidToken = user.uuid;
+        const unsubscribeUrl = `${baseUrl}?email=${user.email}&token=${uuidToken}`;
+        const html = buildExpressionMailTemplate(expressions, unsubscribeUrl);
+      
         await this.emailQueue.add('send-expression', {
           to: user.email,
           html,
           u_id: user.u_id,
-          deliveredId: todayLastDliveriedId,
+          deliveredId: todayLastDeliveriedId,
         });
+      
         console.log(`✅ ${user.email}로 가는 표현 메일 잡을 큐에 추가했습니다.`);
-      }
+      }));
   
     } catch (error) {
       console.error('표현 메일 잡을 큐에 추가하는 중 에러 발생:', error);

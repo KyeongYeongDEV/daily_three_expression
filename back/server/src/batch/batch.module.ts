@@ -11,12 +11,15 @@ import { AiModule } from 'src/ai/ai.module';
 import { ExpressionModule } from 'src/expression/expression.module';
 import { ExpressionDeliveryAdapter } from 'src/expression/adapter/out/expression-delivery.adapter';
 import { MailerModule } from 'src/mailer/mailer.module';
+import { AuthService } from 'src/auth/service/auth.service';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity, ExpressionEntity]),
     AiModule,
     MailerModule,
+    AuthModule,
     forwardRef(() => ExpressionModule), 
   ],
   providers: [

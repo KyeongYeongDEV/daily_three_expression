@@ -19,7 +19,7 @@ import { TestController } from './adapter/in/test.controller';
       name: 'email',
     }),
     ExpressionModule, 
-    UserModule,     
+    UserModule,   
     TypeOrmModule.forFeature([UserEntity]),   
   ],
   providers: [

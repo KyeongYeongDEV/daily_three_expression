@@ -51,4 +51,15 @@ export class RedisAdapter implements RedisPort {
   async deleteRefreshToken(email: string): Promise<void> {
     await this.redisClient.del(`refresh:${email}`);
   }  
+
+  async saveUuidToken(email: string, UuidToken: string): Promise<void> {
+    await this.redisClient.set(`uuid:${email}`, UuidToken, 'EX', 60 * 60 * 24) // 24시간 동안 유효
+  }
+
+  async getUuidToken(email: string): Promise<string | null> {
+    return this.redisClient.get(`uuid:${email}`);
+  }
+  async deleteUuidToken(email: string): Promise<void> {
+    await this.redisClient.del(`uuid:${email}`);
+  }  
 } 

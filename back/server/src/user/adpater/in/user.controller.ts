@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Delete } from '@nestjs/common';
 import { UserService } from '../../service/user.service';
 import { UserEmailRequestDto, UserRegisterRequestDto, UserVerifiedUpdateRequestDto } from '../../dto/request.dto';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
@@ -34,5 +34,10 @@ export class UserController {
   @Post('verified/subscribe') 
   async updateSubscribeVerified(@Body() userVerifiedUpdateRequestDto : UserVerifiedUpdateRequestDto) {
     return this.userService.updateSubscribeVerified(userVerifiedUpdateRequestDto);
+  }
+
+  @Post('email/unsubscribe')
+  async unsubscribe(@Body() { email, token }: { email: string, token: string }) {
+    return this.userService.updateSubscribeStatus(email, token);
   }
 } 

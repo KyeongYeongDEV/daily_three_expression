@@ -14,6 +14,9 @@ export const metadata: Metadata = {
     description: "출근, 등교하며 하루에 3문장만 공부해보아요!",
     images: ["/logo.png"],
   },
+  icons: {
+    icon: "/title_icon.png", 
+  },
 }
 
 export default function RootLayout({
