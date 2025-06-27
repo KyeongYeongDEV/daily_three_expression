@@ -11,6 +11,7 @@ import { LoginDto } from '../dto/auth.dto';
 import { Response } from 'express';
 import { SendMailPort } from 'src/mailer/port/out/send-mail.port';
 import { randomUUID } from 'crypto';
+import { UserEmailType, UsersWithUuidType } from 'src/common/types/user.type';
 
 @Injectable()
 export class AuthService implements AuthServicePort {
@@ -21,6 +22,7 @@ export class AuthService implements AuthServicePort {
     private readonly jwtPort : JwtPort,
     @Inject('SendMailPort')
     private readonly sendMailPort : SendMailPort,
+    // TODO: UserPort로 변경 필요
     private readonly userService: UserService,
   ) {}
 
@@ -168,6 +170,28 @@ export class AuthService implements AuthServicePort {
 
   private generateUuidToken(): string {
     return randomUUID();
+  }
+
+  async createUuidTokenForEmails(users: UserEmailType[]): Promise<UsersWithUuidType[]> {
+    try {
+      const userSendEmails = await Promise.all(
+        users.map(async (user) => {
+          const uuidToken = this.generateUuidToken();
+          await this.redisPort.saveUuidToken(user.email, uuidToken);
+  
+          return {
+            email: user.email,
+            u_id: user.u_id,
+            uuid: uuidToken,
+          };
+        })
+      );
+  
+      return userSendEmails;
+    } catch (error) {
+      console.error('[createUuidTokenForEmails]', error);
+      throw new Error('UUID 토큰 생성 중 에러가 발생했습니다');
+    }
   }
   
   async createUuidToken(email: string): Promise<string> {

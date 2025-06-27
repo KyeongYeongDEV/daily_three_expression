@@ -4,13 +4,12 @@ import { SendMailPort } from 'src/mailer/port/out/send-mail.port';
 import { ExpressionPort } from 'src/expression/port/expression.port';
 import { UserPort } from 'src/user/port/user.port';
 import { ExpressionDeliveryPort } from 'src/expression/port/expression-delivery.port';
-import { UserEmailType } from 'src/common/types/user.type';
-import { ExpressionResponseDto } from 'src/expression/dto/response.dto';
+import { UsersWithUuidType, UserEmailType } from 'src/common/types/user.type';
+import { ExpressionResponseDto } from '../../../expression/dto/response.dto';
 import { buildExpressionMailTemplate } from '../../templates/expression-mail.template';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
 import { buildVerificationCodeTemplate } from 'src/mailer/templates/verify-code.template';
-import { AuthServicePort } from 'src/auth/port/in/auth.service.port';
 
 
 // TODO service로 분리하기
@@ -53,23 +52,12 @@ export class MailerAdapter implements SendMailPort {
     }
   }
 
-  async sendExpression(): Promise<void> {
+  async sendExpression(usersWithUuid : UsersWithUuidType[], expressions : ExpressionResponseDto[], todayLastDeliveriedId : number): Promise<void> {
     try {
-      const users: UserEmailType[] = await this.userPort.findAllUsersEmail();
-      const startEid: number = await this.expressionDeliveryPort.findStartExpressionId();
-      const expressions: ExpressionResponseDto[] = await this.expressionPort.findThreeExpressionsByStartId(startEid);
-      
-      if (!expressions || expressions.length !== 3) {
-        console.warn('[SKIP] 표현 3개를 정상적으로 불러오지 못했습니다. 메일 전송 중단');
-        return;
-      }
-      
-      const todayLastDliveriedId = expressions[2].e_id;
-      const baseUrl = 'https://www.daily-expression.site/unsubscribe';
-      await Promise.all(users.map(async (user) => {
-        //const uuidToken = await this.authService.createUuidToken(user.email);
+      const baseUrl = 'https://www.dailyexpression.site/unsubscribe';
+      await Promise.all(usersWithUuid.map(async (user) => {
 
-        const uuidToken = 'token';
+        const uuidToken = user.uuid;
         const unsubscribeUrl = `${baseUrl}?email=${user.email}&token=${uuidToken}`;
         const html = buildExpressionMailTemplate(expressions, unsubscribeUrl);
       
@@ -77,7 +65,7 @@ export class MailerAdapter implements SendMailPort {
           to: user.email,
           html,
           u_id: user.u_id,
-          deliveredId: todayLastDliveriedId,
+          deliveredId: todayLastDeliveriedId,
         });
       
         console.log(`✅ ${user.email}로 가는 표현 메일 잡을 큐에 추가했습니다.`);

@@ -2,6 +2,7 @@ import { CreateTokenResponse, EmailResponse, LogoutResponse, VerifyTokenResponse
 import { ResponseHelper } from "src/common/helpers/response.helper";
 import { LoginDto } from "../../dto/auth.dto";
 import { Response } from "express";
+import { UsersWithUuidType, UserEmailType } from "src/common/types/user.type";
 
 export interface AuthServicePort {
   createToken(u_id: number, email: string): Promise<CreateTokenResponse>;
@@ -13,5 +14,6 @@ export interface AuthServicePort {
   verifyEmailCode(email: string, code: string): Promise<ResponseHelper>;
   login(loginDto: LoginDto, res: Response): Promise<ResponseHelper>;
   createUuidToken(email: string): Promise<string>;
+  createUuidTokenForEmails(users: UserEmailType[]): Promise<UsersWithUuidType[]>
   verifyUuidToken(email: string, uuidToken: string): Promise<boolean>;
 }
