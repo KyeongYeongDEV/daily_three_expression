@@ -1,7 +1,5 @@
 "use client"
 
-//'www.dailyexpression.site/unsubscribe 로 접속하면 됨'
-
 import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { CheckCircle, XCircle } from "lucide-react"
@@ -13,6 +11,8 @@ export default function UnsubscribePage() {
   const searchParams = useSearchParams()
   const email = searchParams.get("email")
   const token = searchParams.get("token")
+  const NEXT_PUBLIC_API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
@@ -37,11 +37,14 @@ export default function UnsubscribePage() {
     setIsSuccess(null)
 
     try {
-      const response = await axios.post("/user/unsubscribe", { email, token })
+      const response = await axios.post(
+        `${NEXT_PUBLIC_API_URL}/user/email/unsubscribe`,
+        { email, token }
+      )
 
       if (response.data.success) {
         setMessage(response.data.message || "구독이 성공적으로 해지되었습니다.")
-        setIsSuccess(true) 
+        setIsSuccess(true)
       } else {
         setMessage(response.data.error || "구독 해지 중 오류가 발생했습니다.")
         setIsSuccess(false)
