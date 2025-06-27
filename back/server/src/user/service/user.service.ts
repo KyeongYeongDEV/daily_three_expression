@@ -120,5 +120,22 @@ export class UserService {
   async updateSubscribeVerified(userVerifiedUpdateRequestDto : UserVerifiedUpdateRequestDto): Promise<UserInfoResponse> {
     return this.updateUserVerifiedFlag(userVerifiedUpdateRequestDto.u_id, 'is_email_subscribed', userVerifiedUpdateRequestDto.verified)
   }
+
+  async updateSubscribeStatus(email: string, token: string): Promise<UserInfoResponse> {
+    try {
+      const savedToken = await this.redisPort.getUuidToken(email);
+      if (!savedToken || savedToken !== token) {
+        return ResponseHelper.fail('유효하지 않은 구독 해지 요청입니다.', 400);
+      }
+  
+      await this.userPort.updateSubscribeStatus(email, false);
+      await this.redisPort.deleteUuidToken(email);
+  
+      return ResponseHelper.success(null, '구독 해지에 성공했습니다.');
+    } catch (error) {
+      console.error('[unsubscribe] ', error);
+      return ResponseHelper.fail('구독 해지에 실패했습니다.', 500);
+    }
+  }
   
 }

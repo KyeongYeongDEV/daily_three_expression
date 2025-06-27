@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { LoginDto, ReissueDto } from 'src/auth/dto/auth.dto';
 import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
 import { AuthService } from 'src/auth/service/auth.service';
@@ -23,6 +23,7 @@ export class AuthController {
   async logout(@Req() req : any) {
     return await this.authService.logout(req.user.email);
   }
+
   @Post('reissue')
   async reissue(@Body() { email, refreshToken }: ReissueDto) {
     return await this.authService.reissue( email, refreshToken );

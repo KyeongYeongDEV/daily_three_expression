@@ -30,12 +30,14 @@ export class UserAdapter implements UserPort {
   async findUserInfoByEmail( email: string ): Promise<UserEntity | null> {
     return this.userRepository.createQueryBuilder('user')
     .where('user.email = :email', { email })
+    .andWhere('user.is_email_subscribed = true')
     .getOne();
   }
 
   async findUserByEmail( email: string ): Promise<UserExistDTO | null> {
     return this.userRepository.createQueryBuilder('user')
     .where('user.email = :email', { email })
+    .andWhere('user.is_email_subscribed = true')
     .getOne();
   }
 
@@ -46,12 +48,9 @@ export class UserAdapter implements UserPort {
       'user.email',
     ])
     .where('user.u_id = :u_id', { u_id })
+    .andWhere('user.is_email_subscribed = true')
     .getOne();
   }
-
-  // async saveUser( user: UserEntity ): Promise<UserEntity> {
-  //   return this.userRepository.save(user);
-  // }
 
   async saveUser(user: UserEntity): Promise<UserEntity> {
     const now = new Date();
@@ -78,6 +77,13 @@ export class UserAdapter implements UserPort {
       created_at: now,
       updated_at: now,
     };
+  }
+  
+  async updateSubscribeStatus(email: string, isSubscribed: boolean): Promise<void> {
+    await this.userRepository.update(
+      { email },
+      { is_email_subscribed: isSubscribed }
+    );
   }
   
 }
