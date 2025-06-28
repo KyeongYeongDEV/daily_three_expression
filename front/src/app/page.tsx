@@ -20,7 +20,7 @@ export default function HomePage() {
   const [isCodeVerified, setIsCodeVerified] = useState(false)
   const [error, setError] = useState("")
   const [successMessage, setSuccessMessage] = useState("")
-  const [timeRemaining, setTimeRemaining] = useState(600) // 10분 = 600초
+  const [timeRemaining, setTimeRemaining] = useState(120)
   const [timerActive, setTimerActive] = useState(false)
 
   // 타이머 관리
@@ -62,7 +62,7 @@ export default function HomePage() {
     setError("")
     setSuccessMessage("")
     setTimerActive(false)
-    setTimeRemaining(600)
+    setTimeRemaining(120)
   }
 
   const handleSendVerification = async () => {
@@ -95,7 +95,7 @@ export default function HomePage() {
         setIsCodeSent(true)
         setSuccessMessage("인증 코드가 전송되었습니다. 이메일을 확인해주세요.")
         // 타이머 시작
-        setTimeRemaining(600) // 10분으로 리셋
+        setTimeRemaining(120) 
         setTimerActive(true)
       } else {
         setError("인증 코드 전송에 실패했습니다.")
@@ -616,9 +616,9 @@ export default function HomePage() {
                           <p className="text-xs text-gray-500">이메일로 전송된 6자리 인증 코드를 입력해주세요.</p>
                           <button
                             onClick={handleSendVerification}
-                            disabled={isLoading || (timerActive && timeRemaining > 540)} // 9분 이상 남았을 때는 재전송 비활성화
+                            disabled={isLoading || (timerActive && timeRemaining > 60)} // 1분 이상 남았을 때는 재전송 비활성화
                             className={`text-xs ${
-                              isLoading || (timerActive && timeRemaining > 540)
+                              isLoading || (timerActive && timeRemaining > 60)
                                 ? "text-gray-400"
                                 : "text-[#84CCFF] hover:underline"
                             }`}
