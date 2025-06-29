@@ -22,9 +22,9 @@ export class GeminiAdapter implements GeminiPort, OnModuleInit {
       //model: 'gemini-1.5-pro-latest', // pro는 유료임 
       model: 'gemini-1.5-flash-latest',
       generationConfig: {
-        temperature: 1.0,
+        temperature: 0.95,
         topK: 100,
-        topP: 0.95,
+        topP: 0.98,
       },
       tools: geminiTools,
       toolConfig: {
