@@ -3,8 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ExpressionEntity } from '../../domain/expression.entity';
 import { ExpressionPort } from '../../port/expression.port';
-import { ExpressionResponseDto } from '../../dto/response.dto';
+
 import { ExpressionBlackListEntity } from 'src/expression/domain/expression-black-list.entity';
+import { ExpressionResponseDto } from 'src/expression/dto/response.dto';
 
 @Injectable()
 export class ExpressionAdapter implements ExpressionPort {
@@ -60,11 +61,11 @@ export class ExpressionAdapter implements ExpressionPort {
   }
   
   
-  async findTop10BlacklistedExpressions(): Promise<string[]> {
+  async findTop20BlacklistedExpressions(): Promise<string[]> {
     const records = await this.expressionBlackListRepository
       .createQueryBuilder('blacklist')
       .orderBy('blacklist.count', 'DESC')
-      .limit(10)
+      .limit(20)
       .getMany();
   
     return records.map(record => record.expression);

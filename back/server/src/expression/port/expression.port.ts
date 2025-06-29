@@ -2,6 +2,7 @@ import { ExpressionBlackListEntity } from '../domain/expression-black-list.entit
 import { ExpressionEntity } from '../domain/expression.entity';
 import { ExpressionResponseDto } from '../dto/response.dto';
 
+
 export const EXPRESSION_PORT = Symbol('ExpressionPort');
 
 export interface ExpressionPort {
@@ -11,6 +12,6 @@ export interface ExpressionPort {
   findThreeExpressionsByStartIdAndCategory(id: number, category: string): Promise<ExpressionResponseDto[]>;
   save(expression: ExpressionEntity): Promise<ExpressionEntity>;
   saveExpressionBlackList(expression: string): Promise<ExpressionBlackListEntity>;
-  findTop10BlacklistedExpressions(): Promise<string[]>;
+  findTop20BlacklistedExpressions(): Promise<string[]>;
   toEntity(dto: any): ExpressionEntity;
 }
