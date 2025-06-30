@@ -56,6 +56,7 @@ jobs:
             docker-compose down || true
 
             docker rmi 123403344015.dkr.ecr.ap-northeast-2.amazonaws.com/dailyexpression:latest || true
+
             docker pull --quiet 123403344015.dkr.ecr.ap-northeast-2.amazonaws.com/dailyexpression:latest
 
             docker-compose up -d --remove-orphans
