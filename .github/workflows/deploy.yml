@@ -27,17 +27,16 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build Docker image
+      - name: Build Docker image (no cache)
         run: |
           echo "${{ secrets.ENV_PROD }}" > ./back/server/.env
-          docker build -t dailyexpression ./back/server
+          docker build --no-cache -t dailyexpression ./back/server
           docker tag dailyexpression:latest ${{ steps.login-ecr.outputs.registry }}/dailyexpression:latest
 
       - name: Push to Amazon ECR
         run: |
           docker push ${{ steps.login-ecr.outputs.registry }}/dailyexpression:latest
 
-      # SSH into EC2 and deploy with docker-compose
       - name: SSH into EC2 and deploy with docker-compose
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -47,21 +46,16 @@ jobs:
           script: |
             set -e
 
-            # ECR 로그인 추가
             aws ecr get-login-password --region ap-northeast-2 \
               | docker login --username AWS --password-stdin 123403344015.dkr.ecr.ap-northeast-2.amazonaws.com
 
-            # 정확한 위치로 이동
             cd ~/daily_three_expression/back/server
 
-            # .env 파일 덮어쓰기
             echo "${{ secrets.ENV_PROD }}" > .env
 
-            # 기존 컨테이너 중단 및 제거
             docker-compose down || true
 
-            # 최신 이미지 pull
-            docker pull 123403344015.dkr.ecr.ap-northeast-2.amazonaws.com/dailyexpression:latest
+            docker rmi 123403344015.dkr.ecr.ap-northeast-2.amazonaws.com/dailyexpression:latest || true
+            docker pull --quiet 123403344015.dkr.ecr.ap-northeast-2.amazonaws.com/dailyexpression:latest
 
-            # 재실행
-            docker-compose up -d
+            docker-compose up -d --remove-orphans
