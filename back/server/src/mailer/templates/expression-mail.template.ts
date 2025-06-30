@@ -1,6 +1,5 @@
 import { ExpressionResponseDto } from "src/expression/dto/response.dto";
 
-
 export function buildExpressionMailTemplate(expressions: ExpressionResponseDto[], unsubscribeUrl : string): string {
   return `
     <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: auto; padding: 20px; background: linear-gradient(135deg, #f0f8ff 0%, #ffffff 100%); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">

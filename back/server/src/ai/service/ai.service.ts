@@ -74,7 +74,7 @@ export class AiService {
     try {
       const results: string[] = [];
       let totalSaved = 0;
-      const blacklist = await this.expressionPort.findTop10BlacklistedExpressions();
+      const blacklist = await this.expressionPort.findTop20BlacklistedExpressions();
 
       while (true) {
         const expressions = await this.geminiPort.getExpressions(blacklist);
