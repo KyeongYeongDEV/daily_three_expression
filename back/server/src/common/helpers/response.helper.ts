@@ -4,7 +4,7 @@ export class ResponseHelper {
       success: true,
       statusCode,
       message,
-      data : null,
+      data,
     };
   }
 

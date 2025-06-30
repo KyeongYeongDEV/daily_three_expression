@@ -1,10 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import { SendMailPort } from 'src/mailer/port/out/send-mail.port';
-import { ExpressionPort } from 'src/expression/port/expression.port';
-import { UserPort } from 'src/user/port/user.port';
-import { ExpressionDeliveryPort } from 'src/expression/port/expression-delivery.port';
-import { UsersWithUuidType, UserEmailType } from 'src/common/types/user.type';
+import { UsersWithUuidType } from 'src/common/types/user.type';
 import { ExpressionResponseDto } from '../../../expression/dto/response.dto';
 import { buildExpressionMailTemplate } from '../../templates/expression-mail.template';
 import { Queue } from 'bull';
@@ -17,13 +13,6 @@ import { buildVerificationCodeTemplate } from 'src/mailer/templates/verify-code.
 export class MailerAdapter implements SendMailPort {
 
   constructor(
-    private readonly configService: ConfigService,
-    @Inject('ExpressionPort')
-    private readonly expressionPort: ExpressionPort,
-    @Inject('ExpressionDeliveryPort')
-    private readonly expressionDeliveryPort: ExpressionDeliveryPort,
-    @Inject('UserPort')
-    private readonly userPort: UserPort,
     @InjectQueue('email') 
     private readonly emailQueue: Queue,
   ) {}
