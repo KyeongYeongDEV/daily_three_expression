@@ -41,7 +41,7 @@ services:
     depends_on:
       - redis # Redis 서비스에 의존성 추가
 
-# #서버용
+#서버용
   server:
     image: 123403344015.dkr.ecr.ap-northeast-2.amazonaws.com/dailyexpression:latest
     container_name: nest-server
@@ -58,21 +58,21 @@ services:
 
 #################################################################################
 # 로컬용
-#   server:
-#     build:
-#       context: ./server
-#       dockerfile: Dockerfile
-#     container_name: nest-server
-#     restart: always
-#     ports:
-#       - "8000:8000"
-#     env_file:
-#       - ./server/.env
-#     environment:
-#       - TZ=Asia/Seoul
-#     depends_on:
-#       - redis
-#       - qdrant
+  # server:
+  #   build:
+  #     context: ./server
+  #     dockerfile: Dockerfile
+  #   container_name: nest-server
+  #   restart: always
+  #   ports:
+  #     - "8000:8000"
+  #   env_file:
+  #     - ./server/.env
+  #   environment:
+  #     - TZ=Asia/Seoul
+  #   depends_on:
+  #     - redis
+  #     - qdrant
 
 #   prometheus:
 #     image: prom/prometheus

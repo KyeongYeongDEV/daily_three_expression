@@ -21,7 +21,24 @@ export class ExpressionAdapter implements ExpressionPort {
   }
 
   async findAll(): Promise<ExpressionResponseDto[]> {
-    return this.expressionRepository.find();
+    const entities = await this.expressionRepository.find();
+    return entities.map(entity => this.toResponseDto(entity));
+  }
+  
+  private toResponseDto(entity: ExpressionEntity): ExpressionResponseDto {
+    return {
+      e_id: entity.e_id,
+      expression_number: entity.expression_number,
+      category: entity.category,
+      expression: entity.expression,
+      example1: entity.example1,
+      example2: entity.example2,
+      translation_expression: entity.translation_expression,
+      translation_example1: entity.translation_example1,
+      translation_example2: entity.translation_example2,
+      created_at: entity.created_at,
+      is_active: entity.is_active,
+    };
   }
 
   async findById(id: number): Promise<ExpressionResponseDto | null> {
