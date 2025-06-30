@@ -79,7 +79,7 @@ export class UserService {
           return ResponseHelper.fail('[registerUser] 이미 구독 중인 이메일입니다.', 400);
         }
         const updatedUser = await this.userPort.updateSubscribeStatus(email, true);
-        return ResponseHelper.success(updatedUser, '구독이 재활성화 되었습니다.');
+        return ResponseHelper.success(updatedUser ?? null, '구독이 재활성화 되었습니다.');
       }
       console.error('[registerUser] ', err);
       return ResponseHelper.fail('회원가입에 실패했습니다', 500);

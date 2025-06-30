@@ -6,6 +6,7 @@ import { ExpressionPort } from '../../port/expression.port';
 
 import { ExpressionBlackListEntity } from 'src/expression/domain/expression-black-list.entity';
 import { ExpressionResponseDto } from 'src/expression/dto/response.dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ExpressionAdapter implements ExpressionPort {
@@ -22,24 +23,10 @@ export class ExpressionAdapter implements ExpressionPort {
 
   async findAll(): Promise<ExpressionResponseDto[]> {
     const entities = await this.expressionRepository.find();
-    return entities.map(entity => this.toResponseDto(entity));
+    console.log('[entities]', entities); // ← 이거 로그 찍어봐
+    return plainToInstance(ExpressionResponseDto, entities);
   }
   
-  private toResponseDto(entity: ExpressionEntity): ExpressionResponseDto {
-    return {
-      e_id: entity.e_id,
-      expression_number: entity.expression_number,
-      category: entity.category,
-      expression: entity.expression,
-      example1: entity.example1,
-      example2: entity.example2,
-      translation_expression: entity.translation_expression,
-      translation_example1: entity.translation_example1,
-      translation_example2: entity.translation_example2,
-      created_at: entity.created_at,
-      is_active: entity.is_active,
-    };
-  }
 
   async findById(id: number): Promise<ExpressionResponseDto | null> {
     return this.expressionRepository.findOneBy({ e_id: id });
