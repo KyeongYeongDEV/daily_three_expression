@@ -14,7 +14,6 @@ export class UserEntity {
   u_id: number;
 
   @Column({ unique: true })
-  
   email: string;
 
   @Column({ type: 'boolean', default: true })
