@@ -23,7 +23,6 @@ export class ExpressionAdapter implements ExpressionPort {
 
   async findAll(): Promise<ExpressionResponseDto[]> {
     const entities = await this.expressionRepository.find();
-    console.log('[entities]', entities); // ← 이거 로그 찍어봐
     return plainToInstance(ExpressionResponseDto, entities);
   }
   
