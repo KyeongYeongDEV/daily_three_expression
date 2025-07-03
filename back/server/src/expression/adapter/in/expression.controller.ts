@@ -40,6 +40,4 @@ export class ExpressionController {
   ) : Promise<ExpressionListResponse> {
     return this.expressionService.getDeliveriedExpressionsByUid( id );
   }
-
-  
 }
