@@ -7,11 +7,5 @@
 구독하러 가기 ⇒ www.dailyexpression.site
 
 # 성능 개선
-
-- 이메일 발송 병목 현상 해결
-
 [이메일 전송 심각한 병목 현상 · Issue #25 · KyeongYeongDEV/daily_three_expression](https://github.com/KyeongYeongDEV/daily_three_expression/issues/25)
-
-- 구독 수행 병목 현상 해결
-
 [서비스 구독하기 진행 중 병목 발견 · Issue #56 · KyeongYeongDEV/daily_three_expression](https://github.com/KyeongYeongDEV/daily_three_expression/issues/56)
