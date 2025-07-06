@@ -72,11 +72,13 @@ export class AiService {
 
   async generateAndSaveUniqueExpressions(): Promise<string[]> {
     try {
+      console.log('🔥 표현 생성 시작 - ai.service의 메소드임');
       const results: string[] = [];
       let totalSaved = 0;
       const blacklist = await this.expressionPort.findTop20BlacklistedExpressions();
 
       while (true) {
+        console.log('생성 시작됨')
         const expressions = await this.geminiPort.getExpressions(blacklist);
 
         for (const exp of expressions) {

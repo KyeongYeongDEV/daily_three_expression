@@ -16,6 +16,7 @@ export class AiController {
 
   @Get('test')
   async testGenerate() {
+    console.log('🔥 표현 생성 controller 실행');
     const result = await this.aiservice.generateAndSaveUniqueExpressions();
     console.log('🔥 Gemini 응답 결과:', result);
     return { expressions: result };
