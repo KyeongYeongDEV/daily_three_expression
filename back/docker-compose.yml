@@ -25,21 +25,21 @@ services:
       - ./qdrant_data:/qdrant/storage      
 
 #모니터링 대시보드 서비스 추가
-  bull-board:
-    build:
-      context: ./bull-board 
-      dockerfile: Dockerfile
-    container_name: bull-board-dashboard
-    restart: always
-    ports:
-      - "4000:4000" 
-    env_file:
-      - ./server/.env
-    environment:
-      - TZ=Asia/Seoul
-      # REDIS_URL은 Dockerfile.arena 내부에서 설정되거나 .env 파일로 주입됩니다.
-    depends_on:
-      - redis # Redis 서비스에 의존성 추가
+  # bull-board:
+  #   build:
+  #     context: ./bull-board 
+  #     dockerfile: Dockerfile
+  #   container_name: bull-board-dashboard
+  #   restart: always
+  #   ports:
+  #     - "4000:4000" 
+  #   env_file:
+  #     - ./server/.env
+  #   environment:
+  #     - TZ=Asia/Seoul
+  #     # REDIS_URL은 Dockerfile.arena 내부에서 설정되거나 .env 파일로 주입됩니다.
+  #   depends_on:
+  #     - redis # Redis 서비스에 의존성 추가
 
 # #서버용
 #   server:
@@ -74,55 +74,55 @@ services:
       - redis
       - qdrant
 
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
+#   prometheus:
+#     image: prom/prometheus
+#     container_name: prometheus
+#     volumes:
+#       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+#     ports:
+#       - "9090:9090"
 
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana-storage:/var/lib/grafana
+#   grafana:
+#     image: grafana/grafana
+#     container_name: grafana
+#     ports:
+#       - "3000:3000"
+#     volumes:
+#       - grafana-storage:/var/lib/grafana
 
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor
-    container_name: cadvisor
-    restart: always
-    ports:
-      - "8080:8080"
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-    privileged: true
-    environment:
-      - TZ=Asia/Seoul
+#   cadvisor:
+#     image: gcr.io/cadvisor/cadvisor
+#     container_name: cadvisor
+#     restart: always
+#     ports:
+#       - "8080:8080"
+#     volumes:
+#       - /:/rootfs:ro
+#       - /var/run:/var/run:ro
+#       - /sys:/sys:ro
+#       - /var/lib/docker/:/var/lib/docker:ro
+#     privileged: true
+#     environment:
+#       - TZ=Asia/Seoul
 
-  node-exporter:
-    image: prom/node-exporter
-    container_name: node-exporter
-    restart: always
-    ports:
-      - "9100:9100"
-    environment:
-      - TZ=Asia/Seoul
+#   node-exporter:
+#     image: prom/node-exporter
+#     container_name: node-exporter
+#     restart: always
+#     ports:
+#       - "9100:9100"
+#     environment:
+#       - TZ=Asia/Seoul
 
-  redis-exporter:
-    image: oliver006/redis_exporter
-    container_name: redis-exporter
-    restart: always
-    ports:
-      - "9121:9121"
-    environment:
-      - REDIS_ADDR=redis://redis:6379
-      - TZ=Asia/Seoul
+#   redis-exporter:
+#     image: oliver006/redis_exporter
+#     container_name: redis-exporter
+#     restart: always
+#     ports:
+#       - "9121:9121"
+#     environment:
+#       - REDIS_ADDR=redis://redis:6379
+#       - TZ=Asia/Seoul
 
-volumes:
-  grafana-storage:
+# volumes:
+#   grafana-storage:
