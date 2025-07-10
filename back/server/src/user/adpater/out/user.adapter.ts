@@ -52,18 +52,14 @@ export class UserAdapter implements UserPort {
   }
 
   async saveUser(user: UserEntity): Promise<UserEntity> {
-    const now = new Date();
-  
     const result = await this.dataSource.query(
-      `INSERT INTO "user" (email, is_email_verified, is_email_subscribed, created_at, updated_at)
-      VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO "user" (email, is_email_verified, is_email_subscribed)
+      VALUES ($1, $2, $3)
       RETURNING u_id`,
       [
         user.email,
         user.is_email_verified,
         user.is_email_subscribed,
-        now,
-        now,
       ]
     );
   
@@ -73,8 +69,6 @@ export class UserAdapter implements UserPort {
     return {
       ...user,
       u_id: insertedId,
-      created_at: now,
-      updated_at: now,
     };
   }
 

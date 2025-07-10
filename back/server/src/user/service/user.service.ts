@@ -76,7 +76,7 @@ export class UserService {
           return ResponseHelper.fail('[registerUser] 회원을 찾을 수 없습니다.', 500);
         }
         if (existing.is_email_subscribed) {
-          return ResponseHelper.fail('[registerUser] 이미 구독 중인 이메일입니다.', 400);
+          return ResponseHelper.fail('[registerUser] 이미 구독 중인 이메일입니다.', 409);
         }
         const updatedUser = await this.userPort.updateSubscribeStatus(email, true);
         return ResponseHelper.success(updatedUser ?? null, '구독이 재활성화 되었습니다.');
