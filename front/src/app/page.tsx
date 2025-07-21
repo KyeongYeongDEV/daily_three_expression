@@ -20,7 +20,7 @@ export default function HomePage() {
   const [isCodeVerified, setIsCodeVerified] = useState(false)
   const [error, setError] = useState("")
   const [successMessage, setSuccessMessage] = useState("")
-  const [timeRemaining, setTimeRemaining] = useState(120)
+  const [timeRemaining, setTimeRemaining] = useState(600) // 10분 = 600초
   const [timerActive, setTimerActive] = useState(false)
 
   // 타이머 관리
@@ -62,7 +62,7 @@ export default function HomePage() {
     setError("")
     setSuccessMessage("")
     setTimerActive(false)
-    setTimeRemaining(120)
+    setTimeRemaining(600)
   }
 
   const handleSendVerification = async () => {
@@ -95,7 +95,7 @@ export default function HomePage() {
         setIsCodeSent(true)
         setSuccessMessage("인증 코드가 전송되었습니다. 이메일을 확인해주세요.")
         // 타이머 시작
-        setTimeRemaining(120) 
+        setTimeRemaining(600) // 10분으로 리셋
         setTimerActive(true)
       } else {
         setError("인증 코드 전송에 실패했습니다.")
@@ -202,16 +202,23 @@ export default function HomePage() {
 
       console.log("구독 응답:", response)
 
-      // 응답 상태가 200-299 범위이면 성공으로 처리
+      // 백엔드에서 ResponseHelper.success()로 응답하는 경우
       if (response.status >= 200 && response.status < 300) {
+        const responseMessage = response.data?.message || ""
+
         setIsSubscribed(true)
-        setSuccessMessage("구독이 완료되었습니다! 내일 아침 6시부터 패턴 영어를 받아보세요.")
+
+        // 구독 재활성화 메시지 확인
+        if (responseMessage.includes("구독이 재활성화")) {
+          setSuccessMessage("구독이 재활성화되었습니다! 내일 아침 6시부터 패턴 영어를 받아보세요.")
+        } else {
+          setSuccessMessage("구독이 완료되었습니다! 내일 아침 6시부터 패턴 영어를 받아보세요.")
+        }
+
         // 모달은 성공 메시지를 보여준 후 자동으로 닫힘
         setTimeout(() => {
           setIsModalOpen(false)
         }, 2000)
-      } else {
-        setError("구독 처리 중 오류가 발생했습니다.")
       }
     } catch (error: any) {
       console.error("사용자 등록 실패:", error)
@@ -219,31 +226,39 @@ export default function HomePage() {
 
       if (error.code === "ERR_NETWORK") {
         setError("백엔드 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해주세요.")
-      } else if (error.response?.status === 400) {
-        // 400 에러는 이미 가입된 회원으로 처리
-        setError("이미 구독중인 이메일입니다.")
       } else {
         const errorMessage = error.response?.data?.message || error.message
+        const statusCode = error.response?.status
 
-        // 백엔드에서 발생하는 구체적인 에러 메시지 처리
-        if (errorMessage.includes("이미 존재하는 회원")) {
-          setError("이미 구독중인 이메일입니다.")
-        } else if (errorMessage.includes("회원가입에 실패했습니다")) {
-          setError("이미 구독중인 이메일입니다.")
-        } else if (errorMessage.includes("이메일 인증이 필요합니다")) {
-          setError("이메일 인증이 만료되었습니다. 인증 코드를 다시 요청해주세요.")
-          // 인증 상태 초기화
-          setIsCodeVerified(false)
-          setIsCodeSent(false)
-          setVerificationCode("")
-          setTimerActive(false)
-        } else if (errorMessage.includes("사용자 정보 저장 실패")) {
-          setError("서버에서 정보 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
-        } else if (error.response?.status === 409) {
-          setError("이미 구독중인 이메일입니다.")
-        } else if (error.response?.status >= 500) {
-          setError("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+        // 백엔드 ResponseHelper.fail() 응답에 맞는 에러 처리
+        if (statusCode === 400) {
+          if (errorMessage.includes("이메일 인증이 필요합니다")) {
+            setError("이메일 인증이 만료되었습니다. 인증 코드를 다시 요청해주세요.")
+            // 인증 상태 초기화
+            setIsCodeVerified(false)
+            setIsCodeSent(false)
+            setVerificationCode("")
+            setTimerActive(false)
+          } else {
+            setError("잘못된 요청입니다. 다시 시도해주세요.")
+          }
+        } else if (statusCode === 409) {
+          // 백엔드에서 409 상태 코드로 "이미 구독 중인 이메일입니다" 메시지를 보냄
+          if (errorMessage.includes("이미 구독 중인 이메일입니다")) {
+            setError("이미 구독 중인 이메일입니다.")
+          } else {
+            setError("이미 구독 중인 이메일입니다.")
+          }
+        } else if (statusCode === 500) {
+          if (errorMessage.includes("회원가입에 실패했습니다")) {
+            setError("서버에서 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+          } else if (errorMessage.includes("회원을 찾을 수 없습니다")) {
+            setError("서버에서 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+          } else {
+            setError("서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
+          }
         } else {
+          // 기타 에러
           setError(errorMessage || "네트워크 오류가 발생했습니다. 다시 시도해주세요.")
         }
       }
@@ -616,9 +631,9 @@ export default function HomePage() {
                           <p className="text-xs text-gray-500">이메일로 전송된 6자리 인증 코드를 입력해주세요.</p>
                           <button
                             onClick={handleSendVerification}
-                            disabled={isLoading || (timerActive && timeRemaining > 60)} // 1분 이상 남았을 때는 재전송 비활성화
+                            disabled={isLoading || (timerActive && timeRemaining > 540)} // 9분 이상 남았을 때는 재전송 비활성화
                             className={`text-xs ${
-                              isLoading || (timerActive && timeRemaining > 60)
+                              isLoading || (timerActive && timeRemaining > 540)
                                 ? "text-gray-400"
                                 : "text-[#84CCFF] hover:underline"
                             }`}
