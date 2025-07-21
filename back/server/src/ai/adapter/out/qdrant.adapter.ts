@@ -32,7 +32,7 @@ export class QdrantAdapter implements QdrantPort {
 
     await firstValueFrom(
       this.httpService.put(
-        `http://qdrant:6333/collections/${this.COLLECTION}/points`,
+        `http://qdrant-server:6333/collections/${this.COLLECTION}/points`,
         payload,
       )
     );
@@ -50,10 +50,10 @@ export class QdrantAdapter implements QdrantPort {
 
     const res = await firstValueFrom(
       this.httpService.post(
-        `http://qdrant:6333/collections/${this.COLLECTION}/points/search`,
+        `http://qdrant-server:6333/collections/${this.COLLECTION}/points/search`,
         payload,
       )
-    );
+    );    
 
     return res.data.result?.[0]?.score ?? 0;
   }
@@ -63,7 +63,7 @@ export class QdrantAdapter implements QdrantPort {
 
     await firstValueFrom(
       this.httpService.post(
-        `http://qdrant:6333/collections/${this.COLLECTION}/points/delete`,
+        `http://qdrant-server:6333/collections/${this.COLLECTION}/points/delete`,
         payload
       )
     );
