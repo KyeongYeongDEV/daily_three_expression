@@ -11,10 +11,12 @@ import { UserAdapter } from 'src/user/adpater/out/user.adapter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/domain/user.entity';
 import { TestController } from './adapter/in/test.controller';
+import { CommonModule } from 'src/common/commom.module';
 
 @Module({
   imports: [
     ConfigModule, 
+    CommonModule,
     BullModule.registerQueue({
       name: 'email',
     }),

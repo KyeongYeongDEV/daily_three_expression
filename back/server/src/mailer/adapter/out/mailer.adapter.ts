@@ -51,16 +51,16 @@ export class MailerAdapter implements SendMailPort {
 
   async sendExpression(usersWithUuid : UsersWithUuidType[], expressions : ExpressionResponseDto[], todayLastDeliveriedId : number): Promise<void> {
     try {
-      const baseUrl = 'https://www.dailyexpression.site/unsubscribe';
-      const batchSize = 5; // 5명씩 보내기(최적화 필요시 숫자 조절)
-      const userChunks = this.chunkArray(usersWithUuid, batchSize);
+      const baseUrl : string = 'https://www.dailyexpression.site/unsubscribe';
+      const batchSize : number = 5; // 5명씩 보내기(최적화 필요시 숫자 조절)
+      const userChunks : UsersWithUuidType[][] = this.chunkArray(usersWithUuid, batchSize);
 
       for (const chunk of userChunks) {
         await Promise.all(
           chunk.map(async (user) => {
-            const uuidToken = user.uuid;
-            const unsubscribeUrl = `${baseUrl}?email=${user.email}&token=${uuidToken}`;
-            const html = buildExpressionMailTemplate(expressions, unsubscribeUrl);
+            const uuidToken : string = user.uuid;
+            const unsubscribeUrl : string = `${baseUrl}?email=${user.email}&token=${uuidToken}`;
+            const html : string = buildExpressionMailTemplate(expressions, unsubscribeUrl);
 
             await this.emailQueue.add(
               'send-expression',
@@ -73,6 +73,8 @@ export class MailerAdapter implements SendMailPort {
               {
                 attempts: 3, // 3회까지 재시도
                 backoff: { type: 'exponential', delay: 1000 }, // 1,2,4초 간격
+                removeOnComplete: true, // 공한 Job은 큐에서 제거
+                removeOnFail: false      // 실패한 Job은 큐에 남김 → BullBoard에서 확인 가능
               }
             );
             console.log(`✅ ${user.email}로 가는 표현 메일 잡을 큐에 추가`);
@@ -81,7 +83,7 @@ export class MailerAdapter implements SendMailPort {
         // 0~800ms 랜덤 딜레이 => SMTP/서버 부하 방지
         await new Promise((res) => setTimeout(res, Math.random() * 800));
       }
-    } catch (error) {
+    } catch ( error : unknown) {
       console.error('표현 메일 큐 추가 중 에러:', error);
     }
   }
