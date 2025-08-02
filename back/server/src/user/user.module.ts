@@ -6,10 +6,14 @@ import { UserEntity } from './domain/user.entity';
 import { UserAdapter } from './adpater/out/user.adapter';
 import { RedisAdapter } from 'src/auth/adapter/out/redis.adpter';
 import { RedisConfigModule } from 'src/common/config/config.module';
+import { TestUserPort } from './port/test-user.port';
+import { TestUserQueryAdapter } from './adpater/out/test-user.adapter';
+import { TestUserEntity } from './domain/test-user.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([TestUserEntity]), 
     RedisConfigModule
   ],
   controllers: [UserController],
@@ -25,7 +29,11 @@ import { RedisConfigModule } from 'src/common/config/config.module';
       provide: 'RedisPort',   
       useExisting: RedisAdapter,
     },
+    {
+      provide: TestUserPort,
+      useClass: TestUserQueryAdapter,
+    },
   ],
-  exports: [UserService],
+  exports: [UserService, TestUserPort],
 })
 export class UserModule {}

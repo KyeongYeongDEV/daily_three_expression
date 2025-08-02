@@ -1,22 +1,22 @@
-import { Controller, Post } from "@nestjs/common";
+import { Controller, Inject, Post } from "@nestjs/common";
 import { MailerAdapter } from "../out/mailer.adapter";
 import { UsersWithUuidType } from "src/common/types/user.type";
 import { ExpressionResponse } from "src/common/types/response.type";
 import { ExpressionResponseDto } from "src/expression/dto/response.dto";
+import { TestUserPort } from "src/user/port/test-user.port";
 
 @Controller('test')
 export class TestController {
-  constructor(private readonly mailerAdapter : MailerAdapter){}
+  constructor( 
+    private readonly mailerAdapter : MailerAdapter,
+    @Inject(TestUserPort)
+    private readonly testUserPort: TestUserPort,
+
+  ){}
 
   @Post('/expression')
   async triggerExpression() {
-    const users : UsersWithUuidType[] = [
-      {
-        u_id : 100,
-        email: "ck@gmail.com",
-        uuid : "adslkjfasi123123"
-      },
-    ] ;
+    const users : UsersWithUuidType[] = await this.testUserPort.findAll();
 
     const expressions : ExpressionResponseDto[] =[
       {

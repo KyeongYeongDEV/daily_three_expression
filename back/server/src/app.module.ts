@@ -19,6 +19,7 @@ import { jwtConfig } from './common/config/jwt.config';
 import { RedisConfig } from './common/config/redis.config';
 import { BullModule } from '@nestjs/bull';
 import { AppController } from './app.controller';
+import { TestUserEntity } from './user/domain/test-user.entity';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AppController } from './app.controller';
       ExpressionEntity,
       UserEntity,
       ExpressionDeliveryEntity,
+      TestUserEntity,
     ]),
     RedisModule.forRootAsync({
       imports: [ConfigModule],

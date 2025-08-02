@@ -2,7 +2,6 @@ import { Processor, Process } from '@nestjs/bull';
 import { Job } from 'bull';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
-import { buildVerificationCodeTemplate } from '../templates/verify-code.template';
 import { Inject } from '@nestjs/common';
 import { ExpressionDeliveryPort } from 'src/expression/port/expression-delivery.port';
 import { WebhookService } from 'src/common/service/webhook.service';
@@ -25,9 +24,9 @@ export class EmailProcessor {
         user: this.configService.get<string>('MAIL_USER'),
         pass: this.configService.get<string>('MAIL_PASS'),
       },
-      pool: true, 
-      maxConnections: 5, 
-      maxMessages: 100, 
+      // pool: true, 
+      // maxConnections: 5, 
+      // maxMessages: 100, 
     });
 
   }
@@ -65,7 +64,7 @@ export class EmailProcessor {
     }
   }
 
-  @Process({name : 'send-expression', concurrency : 10 })
+  @Process({name : 'send-expression' })//, concurrency : 10
   async handleSendExpressionEmail(job: Job<{ to: string; html: string; u_id: number; deliveredId: number }>) {
     const { to, html, u_id, deliveredId } = job.data;
     

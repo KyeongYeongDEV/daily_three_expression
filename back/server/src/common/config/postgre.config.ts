@@ -4,6 +4,7 @@ import { ExpressionEntity } from 'src/expression/domain/expression.entity';
 import { UserEntity } from 'src/user/domain/user.entity';
 import { ExpressionDeliveryEntity } from 'src/expression/domain/expression-delivery.entity';
 import { ExpressionBlackListEntity } from 'src/expression/domain/expression-black-list.entity';
+import { TestUserEntity } from 'src/user/domain/test-user.entity';
 
 export const postgreConfig = async (
   configService: ConfigService,
@@ -20,6 +21,7 @@ export const postgreConfig = async (
       UserEntity,
       ExpressionDeliveryEntity,
       ExpressionBlackListEntity,
+      TestUserEntity,
     ],
     synchronize: true, // 배포시 false
     logging: true,
