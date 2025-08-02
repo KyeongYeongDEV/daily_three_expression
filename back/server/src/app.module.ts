@@ -9,6 +9,8 @@ import { ExpressionModule } from './expression/expression.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ScheduleModule } from '@nestjs/schedule';
+import { MetricsModule } from './metrics/metrics.module';
+
 
 import { ExpressionEntity } from './expression/domain/expression.entity';
 import { UserEntity } from './user/domain/user.entity';
@@ -67,6 +69,7 @@ import { TestUserEntity } from './user/domain/test-user.entity';
     BatchModule,
     ExpressionModule,
     AuthModule,
+    MetricsModule,
   ],
   providers: [RedisConfig],
   controllers: [AppController],
