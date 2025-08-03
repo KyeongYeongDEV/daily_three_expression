@@ -62,7 +62,7 @@ export class EmailProcessor {
     } catch (error) {
       console.error(`[이메일 인증 전송 프로세스] ❌ 인증 코드 메일 전송 실패:`, error);
     }
-  }
+  } 
 
   @Process({name : 'send-expression' })//, concurrency : 10
   async handleSendExpressionEmail(job: Job<{ to: string; html: string; u_id: number; deliveredId: number }>) {

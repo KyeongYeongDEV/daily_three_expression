@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -22,6 +22,7 @@ import { RedisConfig } from './common/config/redis.config';
 import { BullModule } from '@nestjs/bull';
 import { AppController } from './app.controller';
 import { TestUserEntity } from './user/domain/test-user.entity';
+import { MetricsMiddleware } from './metrics/metrics.middleware';
 
 @Module({
   imports: [
@@ -75,4 +76,11 @@ import { TestUserEntity } from './user/domain/test-user.entity';
   controllers: [AppController],
   exports : ['REDIS']
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(MetricsMiddleware)
+      .exclude({ path: 'metrics', method: RequestMethod.GET }) // 제외 조건
+      .forRoutes('*'); // 전체 라우트에 적용
+  }
+}
