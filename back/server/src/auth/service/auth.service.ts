@@ -127,18 +127,18 @@ export class AuthService implements AuthServicePort {
     return code;
   }
 
-  async sendEmailVerificationCode(email: string): Promise<string>{
+  async sendEmailVerificationCode(email: string): Promise<string> {
     try {
       const code = this.generateVerificationCode();
-      const isSendEmailVerificationCode =  await this.sendMailPort.sendEmailVerificationCode(email, code);
-      if(!isSendEmailVerificationCode) {
+      const isSendEmailVerificationCode = await this.sendMailPort.sendEmailVerificationCode(email, code);
+      if (!isSendEmailVerificationCode) {
         throw new Error('이메일 인증 코드 전송 실패');
       }
 
-      await this.redisPort.saveEmailVerificationCode(email, code);  
+      await this.redisPort.saveEmailVerificationCode(email, code);
       console.log(`이메일 인증 코드가 ${email}로 전송되었습니다: ${code}`);
 
-      return "이메일 인증 코드가 전송되었습니다";
+      return '이메일 인증 코드가 전송되었습니다';
     } catch (error) {
       console.error('[sendEmailVerificationCode]', error);
       throw new Error('이메일 인증 코드 전송 중 에러가 발생했습니다');

@@ -40,4 +40,8 @@ export class TestController {
     await this.mailerAdapter.sendExpression(users, expressions, todayLastDeliveriedId);
     return 'Expression job triggered';
   }
+  @Post('/verify/email')
+  async triggerSendEmail() {
+    
+  }
 }

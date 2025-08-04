@@ -19,6 +19,14 @@ import { CommonModule } from 'src/common/commom.module';
     CommonModule,
     BullModule.registerQueue({
       name: 'email',
+      limiter: {
+        max: 1000,         // 초당 최대 1000개 작업만 추가
+        duration: 1000,    // 1초 단위
+      },
+      defaultJobOptions: {
+        removeOnComplete: true,
+        attempts: 2,
+      },
     }),
     ExpressionModule, 
     UserModule,   

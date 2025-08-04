@@ -86,18 +86,22 @@ export class MailerAdapter implements SendMailPort {
 
   async sendEmailVerificationCode(to: string, code: string): Promise<boolean> {
     try {
-      const html = buildVerificationCodeTemplate(code)
-      await this.emailQueue.add('send-verification', {
-        to,
-        html,
+      const html = buildVerificationCodeTemplate(code);
+  
+      // 큐 비동기 추가 (응답시간 최소화)
+      this.emailQueue.add(
+        'send-verification',
+        { to, html },
+        { removeOnComplete: true, removeOnFail: false }
+      ).catch(err => {
+        console.error('❌ 큐 추가 실패:', err);
       });
-
-      console.log(`✅ ${to}로 가는 인증 메일 잡을 큐에 추가했습니다.`);
-      return true; 
-      
+  
+      return true;
     } catch (error) {
-      console.error('메일 잡을 큐에 추가하는 중 에러 발생:', error);
+      console.error('❌ 큐 작업 중 에러 발생:', error);
       return false;
     }
   }
+  
 }

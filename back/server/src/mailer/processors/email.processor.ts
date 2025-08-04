@@ -24,9 +24,10 @@ export class EmailProcessor {
         user: this.configService.get<string>('MAIL_USER'),
         pass: this.configService.get<string>('MAIL_PASS'),
       },
-      // pool: true, 
-      // maxConnections: 5, 
-      // maxMessages: 100, 
+      pool: true, 
+      maxConnections: 5, // gmail은 5가 최대
+      maxMessages: 100, 
+      rateLimit: 5        // 초당 전송 제한 // gmail은 초당 요청수가 작다
     });
 
   }
@@ -46,7 +47,7 @@ export class EmailProcessor {
   }
   
 
-  @Process({ name : 'send-verification', concurrency : 10 })
+  @Process({ name : 'send-verification', concurrency : 20 }) 
   async handleSendVerificationEmail(job: Job<{ to: string; html: string }>) {
     try {
       const { to, html } = job.data;
@@ -90,24 +91,4 @@ export class EmailProcessor {
       throw new Error(`SMTP 전송 실패: ${error?.message ?? error}`);
     }
   }
-
-  @Process({ name: 'send-expression-test', concurrency: 10 })
-  async testSendExpressionEmail(job: Job<{ to: string; html: string; u_id: number; deliveredId: number }>) {
-    const { to, u_id, deliveredId } = job.data;
-  
-    try {
-      // 메일 전송 시뮬레이션
-      await new Promise(resolve => setTimeout(resolve, 50));
-  
-      // DB 저장 시뮬레이션
-      console.log(`[MOCK] DB 저장 → u_id: ${u_id}, e_id: ${deliveredId}, status: success`);
-  
-      // 진짜 DB에는 쓰지 않음
-      // await this.expressionDeliveryPort.saveExpressionDeliveried(u_id, deliveredId, 'success');
-  
-    } catch (error) {
-      console.error(`[MOCK] 테스트 이메일 처리 실패 → ${to}:`, error);
-    }
-  }
-  
 }
