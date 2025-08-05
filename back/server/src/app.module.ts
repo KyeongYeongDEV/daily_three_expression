@@ -19,7 +19,7 @@ import { ExpressionDeliveryEntity } from './expression/domain/expression-deliver
 import { postgreConfig } from './common/config/postgre.config';
 import { jwtConfig } from './common/config/jwt.config';
 import { RedisConfig } from './common/config/redis.config';
-import { BullModule } from '@nestjs/bull';
+import { BullModule } from '@nestjs/bullmq';
 import { AppController } from './app.controller';
 import { TestUserEntity } from './user/domain/test-user.entity';
 import { MetricsMiddleware } from './metrics/metrics.middleware';
@@ -55,15 +55,11 @@ import { MetricsMiddleware } from './metrics/metrics.middleware';
         },
       }), 
     }),
-    BullModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        redis: {
-          host: configService.get('REDIS_HOST'),
-          port: +configService.get('REDIS_PORT'),
-        },
-      }),
+    BullModule.forRoot({
+      connection: {
+        host: process.env.REDIS_HOST || 'redis',
+        port: parseInt(process.env.REDIS_PORT || '6379', 10),
+      },
     }),
     UserModule,
     AiModule,

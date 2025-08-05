@@ -4,7 +4,7 @@ import { DataSource, Repository } from 'typeorm';
 import { UserEntity } from '../../domain/user.entity';
 import { UserPort } from '../../port/user.port';
 import { UserExistDTO } from '../../dto/response.dto';
-import { UserEmailType } from 'src/common/types/user.type';
+import { UserEmailType } from '../../../common/types/user.type';
 
 @Injectable()
 export class UserAdapter implements UserPort {

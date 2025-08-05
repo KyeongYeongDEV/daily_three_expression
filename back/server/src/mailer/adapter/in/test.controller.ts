@@ -1,9 +1,9 @@
 import { Controller, Inject, Post } from "@nestjs/common";
 import { MailerAdapter } from "../out/mailer.adapter";
-import { UsersWithUuidType } from "src/common/types/user.type";
-import { ExpressionResponse } from "src/common/types/response.type";
-import { ExpressionResponseDto } from "src/expression/dto/response.dto";
-import { TestUserPort } from "src/user/port/test-user.port";
+import { UsersWithUuidType } from "../../../common/types/user.type";
+import { ExpressionResponse } from "../../../common/types/response.type";
+import { ExpressionResponseDto } from "../../../expression/dto/response.dto";
+import { TestUserPort } from "../../../user/port/test-user.port";
 
 @Controller('test')
 export class TestController {

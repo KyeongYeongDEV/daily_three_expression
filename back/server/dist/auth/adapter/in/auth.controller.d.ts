@@ -18,5 +18,5 @@ export declare class AuthController {
     verifyCode({ email, code }: {
         email: string;
         code: string;
-    }): Promise<string>;
+    }): Promise<any>;
 }

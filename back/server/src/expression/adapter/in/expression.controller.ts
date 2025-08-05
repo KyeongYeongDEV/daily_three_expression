@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ExpressionService } from '../../service/expression.service';
-import { ExpressionListResponse, ExpressionResponse } from 'src/common/types/response.type';
+import { ExpressionListResponse, ExpressionResponse } from '../../../common/types/response.type';
 
 @Controller('expression')
 export class ExpressionController {

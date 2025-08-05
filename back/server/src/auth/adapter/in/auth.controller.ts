@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { LoginDto, ReissueDto } from 'src/auth/dto/auth.dto';
-import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
-import { AuthService } from 'src/auth/service/auth.service';
+import { LoginDto, ReissueDto } from '../../../auth/dto/auth.dto';
+import { JwtAuthGuard } from '../../../auth/guard/jwt.guard';
+import { AuthService } from '../../../auth/service/auth.service';
 import { Response } from 'express';
 
 @Controller('auth')

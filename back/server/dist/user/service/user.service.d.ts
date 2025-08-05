@@ -6,8 +6,10 @@ import { RedisPort } from 'src/auth/port/out/redis.port';
 export declare class UserService {
     private readonly userPort;
     private readonly redisPort;
+    findAllUsersEmail(): void;
     constructor(userPort: UserPort, redisPort: RedisPort);
     getUserInfoByUid(u_id: number): Promise<UserEntity>;
+    getAllUsersEmail(): Promise<any>;
     isExistsUserByEmail(email: string): Promise<boolean>;
     private mapToUserEntity;
     registerUser(userRegisterRequestDto: UserRegisterRequestDto): Promise<UserInfoResponse>;
@@ -15,4 +17,5 @@ export declare class UserService {
     private updateUserVerifiedFlag;
     updateEmailVerified(userVerifiedUpdateRequestDto: UserVerifiedUpdateRequestDto): Promise<UserInfoResponse>;
     updateSubscribeVerified(userVerifiedUpdateRequestDto: UserVerifiedUpdateRequestDto): Promise<UserInfoResponse>;
+    updateSubscribeStatus(email: string, token: string): Promise<UserInfoResponse>;
 }

@@ -2,16 +2,16 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthServicePort } from '../port/in/auth.service.port';
 import { CreateTokenResponse, EmailResponse, LogoutResponse, VerifyTokenResponse } from '../dto/response.dto';
-import { ResponseHelper } from 'src/common/helpers/response.helper';
+import { ResponseHelper } from '../../common/helpers/response.helper';
 import { RedisPort } from '../port/out/redis.port';
 import { JwtPort } from '../port/out/jwt.port';
 import { error } from 'console';
-import { UserService } from 'src/user/service/user.service';
+import { UserService } from '../../user/service/user.service';
 import { LoginDto } from '../dto/auth.dto';
 import { Response } from 'express';
-import { SendMailPort } from 'src/mailer/port/out/send-mail.port';
+import { SendMailPort } from '../../mailer/port/out/send-mail.port';
 import { randomUUID } from 'crypto';
-import { UserEmailType, UsersWithUuidType } from 'src/common/types/user.type';
+import { UserEmailType, UsersWithUuidType } from '../../common/types/user.type';
 
 @Injectable()
 export class AuthService implements AuthServicePort {

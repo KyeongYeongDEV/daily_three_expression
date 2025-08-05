@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UseGuards, Get, Delete } from '@nestjs/common';
 import { UserService } from '../../service/user.service';
 import { UserEmailRequestDto, UserRegisterRequestDto, UserVerifiedUpdateRequestDto } from '../../dto/request.dto';
-import { JwtAuthGuard } from 'src/auth/guard/jwt.guard';
+import { JwtAuthGuard } from '../../../auth/guard/jwt.guard';
 
 
 //TODO try/catch response 방식을 service에서 controller로 옮기기

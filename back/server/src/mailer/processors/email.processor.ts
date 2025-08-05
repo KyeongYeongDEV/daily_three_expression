@@ -3,8 +3,8 @@ import { Job } from 'bull';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
 import { Inject } from '@nestjs/common';
-import { ExpressionDeliveryPort } from 'src/expression/port/expression-delivery.port';
-import { WebhookService } from 'src/common/service/webhook.service';
+import { ExpressionDeliveryPort } from '../../expression/port/expression-delivery.port';
+import { WebhookService } from '../../common/service/webhook.service';
 
 @Processor('email')
 export class EmailProcessor {

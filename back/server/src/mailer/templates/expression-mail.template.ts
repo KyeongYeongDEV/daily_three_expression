@@ -1,4 +1,4 @@
-import { ExpressionResponseDto } from "src/expression/dto/response.dto";
+import { ExpressionResponseDto } from "../../expression/dto/response.dto";
 
 export function buildExpressionMailTemplate(expressions: ExpressionResponseDto[], unsubscribeUrl : string): string {
   return `

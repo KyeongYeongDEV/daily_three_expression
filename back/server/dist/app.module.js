@@ -18,13 +18,24 @@ const expression_module_1 = require("./expression/expression.module");
 const auth_module_1 = require("./auth/auth.module");
 const jwt_1 = require("@nestjs/jwt");
 const schedule_1 = require("@nestjs/schedule");
+const metrics_module_1 = require("./metrics/metrics.module");
 const expression_entity_1 = require("./expression/domain/expression.entity");
 const user_entity_1 = require("./user/domain/user.entity");
 const expression_delivery_entity_1 = require("./expression/domain/expression-delivery.entity");
-const mysql_config_1 = require("./common/config/mysql.config");
+const postgre_config_1 = require("./common/config/postgre.config");
 const jwt_config_1 = require("./common/config/jwt.config");
 const redis_config_1 = require("./common/config/redis.config");
+const bullmq_1 = require("@nestjs/bullmq");
+const app_controller_1 = require("./app.controller");
+const test_user_entity_1 = require("./user/domain/test-user.entity");
+const metrics_middleware_1 = require("./metrics/metrics.middleware");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer
+            .apply(metrics_middleware_1.MetricsMiddleware)
+            .exclude({ path: 'metrics', method: common_1.RequestMethod.GET })
+            .forRoutes('*');
+    }
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
@@ -40,12 +51,13 @@ exports.AppModule = AppModule = __decorate([
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 inject: [config_1.ConfigService],
-                useFactory: mysql_config_1.typeOrmConfig,
+                useFactory: postgre_config_1.postgreConfig,
             }),
             typeorm_1.TypeOrmModule.forFeature([
                 expression_entity_1.ExpressionEntity,
                 user_entity_1.UserEntity,
                 expression_delivery_entity_1.ExpressionDeliveryEntity,
+                test_user_entity_1.TestUserEntity,
             ]),
             ioredis_1.RedisModule.forRootAsync({
                 imports: [config_1.ConfigModule],
@@ -58,14 +70,21 @@ exports.AppModule = AppModule = __decorate([
                     },
                 }),
             }),
+            bullmq_1.BullModule.forRoot({
+                connection: {
+                    host: process.env.REDIS_HOST || 'redis',
+                    port: parseInt(process.env.REDIS_PORT || '6379', 10),
+                },
+            }),
             user_module_1.UserModule,
             ai_module_1.AiModule,
             batch_module_1.BatchModule,
             expression_module_1.ExpressionModule,
             auth_module_1.AuthModule,
+            metrics_module_1.MetricsModule,
         ],
         providers: [redis_config_1.RedisConfig],
-        controllers: [],
+        controllers: [app_controller_1.AppController],
         exports: ['REDIS']
     })
 ], AppModule);

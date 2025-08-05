@@ -16,12 +16,29 @@ exports.BatchMailService = void 0;
 const common_1 = require("@nestjs/common");
 let BatchMailService = class BatchMailService {
     mailSender;
-    constructor(mailSender) {
+    expressionPort;
+    expressionDeliveryPort;
+    userPort;
+    authService;
+    constructor(mailSender, expressionPort, expressionDeliveryPort, userPort, authService) {
         this.mailSender = mailSender;
+        this.expressionPort = expressionPort;
+        this.expressionDeliveryPort = expressionDeliveryPort;
+        this.userPort = userPort;
+        this.authService = authService;
     }
     async sendEmails() {
         try {
-            await this.mailSender.sendExpression();
+            const users = await this.userPort.findAllUsersEmail();
+            const startEid = await this.expressionDeliveryPort.findStartExpressionId();
+            const expressions = await this.expressionPort.findThreeExpressionsByStartId(startEid);
+            if (!expressions || expressions.length !== 3) {
+                console.warn('[SKIP] 표현 3개를 정상적으로 불러오지 못했습니다. 메일 전송 중단');
+                return;
+            }
+            const usersWithUuid = await this.authService.createUuidTokenForEmails(users);
+            const todayLastDeliveriedId = expressions[2].e_id;
+            await this.mailSender.sendExpression(usersWithUuid, expressions, todayLastDeliveriedId);
         }
         catch (error) {
             console.error('Error sending test emails:', error);
@@ -33,6 +50,10 @@ exports.BatchMailService = BatchMailService;
 exports.BatchMailService = BatchMailService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)('SendMailPort')),
-    __metadata("design:paramtypes", [Object])
+    __param(1, (0, common_1.Inject)('ExpressionPort')),
+    __param(2, (0, common_1.Inject)('ExpressionDeliveryPort')),
+    __param(3, (0, common_1.Inject)('UserPort')),
+    __param(4, (0, common_1.Inject)('AuthServicePort')),
+    __metadata("design:paramtypes", [Object, Object, Object, Object, Object])
 ], BatchMailService);
 //# sourceMappingURL=batch.service.js.map

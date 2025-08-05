@@ -1,9 +1,7 @@
-// src/ai/ai.controller.ts
 import { Controller, Delete, Get, Inject, Post } from '@nestjs/common';
 import { OpenaiAdapter } from '../../adapter/out/openai.adapter';
 import { QdrantAdapter } from '../../adapter/out/qdrant.adapter';
-import { GeminiAdapter } from '../out/gemini.adapter';
-import { AiService } from 'src/ai/service/ai.service';
+import { AiService } from '../../service/ai.service';
 
 @Controller('ai')
 export class AiController {

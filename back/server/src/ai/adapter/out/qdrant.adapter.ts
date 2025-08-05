@@ -1,8 +1,8 @@
 import { HttpService } from "@nestjs/axios";
 import { Inject, Injectable } from "@nestjs/common";
 import { firstValueFrom } from "rxjs";
-import { QdrantPort } from "src/ai/port/out/qdrant.port";
-import { ExpressionPort } from "src/expression/port/expression.port";
+import { QdrantPort } from "../../../ai/port/out/qdrant.port";
+import { ExpressionPort } from "../../../expression/port/expression.port";
 import { OpenaiAdapter } from "./openai.adapter";
 
 @Injectable()

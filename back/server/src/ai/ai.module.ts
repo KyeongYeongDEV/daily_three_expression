@@ -6,12 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExpressionEntity } from "../expression/domain/expression.entity";
 import { QdrantAdapter } from "./adapter/out/qdrant.adapter";
 import { HttpModule } from "@nestjs/axios";
-import { ExpressionAdapter } from "src/expression/adapter/out/expression.adapter";
-import { ExpressionModule } from "src/expression/expression.module";
-import { ExpressionBlackListEntity } from "src/expression/domain/expression-black-list.entity";
+import { ExpressionAdapter } from "../expression/adapter/out/expression.adapter";
+import { ExpressionModule } from "../expression/expression.module";
+import { ExpressionBlackListEntity } from "../expression/domain/expression-black-list.entity";
 import { GeminiAdapter } from "./adapter/out/gemini.adapter";
 import { AiService } from "./service/ai.service";
-import { CommonModule } from "src/common/commom.module";
+import { CommonModule } from "../common/commom.module";
 
 
 @Module({

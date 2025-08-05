@@ -14,9 +14,10 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
-const response_helper_1 = require("../../common/helpers/response.helper");
+const response_helper_1 = require("src/common/helpers/response.helper");
 const console_1 = require("console");
-const user_service_1 = require("../../user/service/user.service");
+const user_service_1 = require("src/user/service/user.service");
+const crypto_1 = require("crypto");
 let AuthService = class AuthService {
     redisPort;
     jwtPort;
@@ -130,7 +131,7 @@ let AuthService = class AuthService {
             }
             await this.redisPort.saveEmailVerificationCode(email, code);
             console.log(`이메일 인증 코드가 ${email}로 전송되었습니다: ${code}`);
-            return "이메일 인증 코드가 전송되었습니다";
+            return '이메일 인증 코드가 전송되었습니다';
         }
         catch (error) {
             console.error('[sendEmailVerificationCode]', error);
@@ -141,18 +142,67 @@ let AuthService = class AuthService {
         try {
             const savedCode = await this.redisPort.getEmailVerificationCode(email);
             if (!savedCode) {
-                throw new Error('이메일 인증 코드가 존재하지 않습니다.');
+                return response_helper_1.ResponseHelper.fail('이메일 인증 코드가 존재하지 않습니다.', 400);
             }
             if (savedCode !== code) {
-                throw new Error('이메일 인증 코드가 일치하지 않습니다.');
+                return response_helper_1.ResponseHelper.fail('이메일 인증 코드가 일치하지 않습니다.', 400);
             }
             await this.redisPort.deleteEmailVerificationCode(email);
             await this.redisPort.saveVerifiedEmail(email);
-            return '이메일 인증에 성공했습니다.';
+            return response_helper_1.ResponseHelper.success(null, '이메일 인증에 성공했습니다.');
         }
         catch (error) {
             console.error('[verifyEmailCode]', error);
-            return '이메일 인증 코드 검증 중 에러가 발생했습니다.';
+            return response_helper_1.ResponseHelper.fail('이메일 인증 코드 검증 중 서버 에러가 발생했습니다.', 500);
+        }
+    }
+    generateUuidToken() {
+        return (0, crypto_1.randomUUID)();
+    }
+    async createUuidTokenForEmails(users) {
+        try {
+            const userSendEmails = await Promise.all(users.map(async (user) => {
+                const uuidToken = this.generateUuidToken();
+                await this.redisPort.saveUuidToken(user.email, uuidToken);
+                return {
+                    email: user.email,
+                    u_id: user.u_id,
+                    uuid: uuidToken,
+                };
+            }));
+            return userSendEmails;
+        }
+        catch (error) {
+            console.error('[createUuidTokenForEmails]', error);
+            throw new Error('UUID 토큰 생성 중 에러가 발생했습니다');
+        }
+    }
+    async createUuidToken(email) {
+        try {
+            const uuidToken = this.generateUuidToken();
+            await this.redisPort.saveUuidToken(email, uuidToken);
+            return uuidToken;
+        }
+        catch (error) {
+            console.error('[createUuidToken]', error);
+            throw new Error('UUID 토큰 생성 중 에러가 발생했습니다');
+        }
+    }
+    async verifyUuidToken(email, uuidToken) {
+        try {
+            const savedToken = await this.redisPort.getUuidToken(email);
+            if (!savedToken) {
+                throw new Error('UUID 토큰이 존재하지 않습니다');
+            }
+            if (savedToken !== uuidToken) {
+                throw new Error('UUID 토큰이 일치하지 않습니다');
+            }
+            await this.redisPort.deleteUuidToken(email);
+            return true;
+        }
+        catch (error) {
+            console.error('[verifyUuidToken]', error);
+            return false;
         }
     }
 };

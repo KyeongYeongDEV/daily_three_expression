@@ -16,10 +16,12 @@ const expression_port_1 = require("./port/expression.port");
 const expression_delivery_port_1 = require("./port/expression-delivery.port");
 const expression_adapter_1 = require("./adapter/out/expression.adapter");
 const expression_delivery_adapter_1 = require("./adapter/out/expression-delivery.adapter");
-const ai_module_1 = require("../ai/ai.module");
+const ai_module_1 = require("src/ai/ai.module");
 const expression_generation_service_1 = require("./service/expression-generation.service");
 const expression_black_list_entity_1 = require("./domain/expression-black-list.entity");
 const expression_delivery_entity_1 = require("./domain/expression-delivery.entity");
+const expression_delivery_controller_1 = require("./adapter/in/expression-delivery.controller");
+const expression_delivery_service_1 = require("./service/expression-delivery.service");
 let ExpressionModule = class ExpressionModule {
 };
 exports.ExpressionModule = ExpressionModule;
@@ -33,11 +35,12 @@ exports.ExpressionModule = ExpressionModule = __decorate([
             ]),
             (0, common_1.forwardRef)(() => ai_module_1.AiModule),
         ],
-        controllers: [expression_controller_1.ExpressionController],
+        controllers: [expression_controller_1.ExpressionController, expression_delivery_controller_1.ExpressionDeliveryController],
         providers: [
             expression_service_1.ExpressionService,
             expression_generation_service_1.ExpressionGenerationService,
             expression_adapter_1.ExpressionAdapter,
+            expression_delivery_service_1.ExpressionDeliveryService,
             expression_delivery_adapter_1.ExpressionDeliveryAdapter,
             {
                 provide: expression_port_1.EXPRESSION_PORT,

@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UserPort } from '../port/user.port';
 import { UserEntity } from '../domain/user.entity';
-import { UserInfoResponse } from 'src/common/types/response.type';
-import { ResponseHelper } from 'src/common/helpers/response.helper';
+import { UserInfoResponse } from '../../common/types/response.type';
+import { ResponseHelper } from '../../common/helpers/response.helper';
 import { UserExistDTO } from '../dto/response.dto';
 import { UserRegisterRequestDto, UserEmailRequestDto, UserVerifiedUpdateRequestDto } from '../dto/request.dto';
-import { RedisPort } from 'src/auth/port/out/redis.port';
-import { isDuplicateKeyError } from 'src/common/utils/db-error.util';
+import { RedisPort } from '../../auth/port/out/redis.port';
+import { isDuplicateKeyError } from '../../common/utils/db-error.util';
 
 @Injectable()
 export class UserService {

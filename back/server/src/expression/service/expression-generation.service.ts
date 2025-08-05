@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { AiService } from "../../ai/service/ai.service";
-import { ExpressionPort } from "src/expression/port/expression.port";
+import { ExpressionPort } from "../../expression/port/expression.port";
 import { QdrantPort } from "../../ai/port/out/qdrant.port";
 
 @Injectable()

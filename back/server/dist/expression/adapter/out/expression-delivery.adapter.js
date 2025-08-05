@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpressionDeliveryAdapter = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
-const expression_delivery_entity_1 = require("../../domain/expression-delivery.entity");
+const expression_delivery_entity_1 = require("src/expression/domain/expression-delivery.entity");
 const typeorm_2 = require("@nestjs/typeorm");
 let ExpressionDeliveryAdapter = class ExpressionDeliveryAdapter {
     expressionDeliveryRepository;
@@ -41,7 +41,6 @@ let ExpressionDeliveryAdapter = class ExpressionDeliveryAdapter {
     }
     async saveExpressionDeliveried(u_id, e_id, deliveryStatus) {
         await this.expressionDeliveryRepository.save({
-            transmitted_at: new Date(),
             delivery_status: deliveryStatus,
             u_id: u_id,
             e_id: e_id,

@@ -9,7 +9,14 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.use((0, cookie_parser_1.default)());
-    await app.listen(process.env.PORT ?? 8000);
+    app.setGlobalPrefix('api', {
+        exclude: [{ path: 'metrics', method: 0 }],
+    });
+    app.enableCors({
+        origin: true,
+        credentials: true,
+    });
+    await app.listen(8000, '0.0.0.0');
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

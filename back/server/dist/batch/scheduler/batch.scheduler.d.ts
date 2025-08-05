@@ -1,8 +1,9 @@
 import { BatchMailService } from '../service/batch.service';
-import { ExpressionGenerationService } from 'src/expression/service/expression-generation.service';
+import { AiService } from 'src/ai/service/ai.service';
 export declare class BatchMailScheduler {
     private readonly batchService;
-    private readonly expressionGenerator;
-    constructor(batchService: BatchMailService, expressionGenerator: ExpressionGenerationService);
-    handleCron(): Promise<void>;
+    private readonly aiService;
+    constructor(batchService: BatchMailService, aiService: AiService);
+    sendExpressionByEmail(): Promise<void>;
+    getExpressionFromAi(): Promise<void>;
 }

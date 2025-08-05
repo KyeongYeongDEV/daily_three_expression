@@ -11,8 +11,9 @@ RUN apt-get update && apt-get install -y tzdata && \
 
 ENV TZ=Asia/Seoul
 
+# tsconfig-paths가 devDependencies에 있을 수 있으므로 --legacy-peer-deps 사용
 COPY package*.json ./
-RUN npm ci
+RUN npm install --legacy-peer-deps
 
 # 소스 전체 복사 후 빌드
 COPY . .
@@ -40,6 +41,7 @@ COPY --from=builder /app/nest-cli.json ./
 COPY --from=builder /app/tsconfig*.json ./
 COPY --from=builder /app/.env .env
 
-RUN npm ci --omit=dev
+# ❗ 실행환경에서 devDependencies까지 포함 설치 (필수)
+RUN npm install --legacy-peer-deps
 
-CMD ["node", "dist/main"]
+CMD ["node", "-r", "tsconfig-paths/register", "dist/main"]

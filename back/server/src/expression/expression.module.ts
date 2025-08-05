@@ -9,7 +9,7 @@ import { EXPRESSION_DELIVERY_PORT } from './port/expression-delivery.port';
 
 import { ExpressionAdapter } from './adapter/out/expression.adapter';
 import { ExpressionDeliveryAdapter } from './adapter/out/expression-delivery.adapter';
-import { AiModule } from 'src/ai/ai.module';
+import { AiModule } from '../ai/ai.module';
 import { ExpressionGenerationService } from './service/expression-generation.service';
 import { ExpressionBlackListEntity } from './domain/expression-black-list.entity';
 import { ExpressionDeliveryEntity } from './domain/expression-delivery.entity';

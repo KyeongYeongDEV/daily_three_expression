@@ -1,8 +1,8 @@
 import { Repository } from 'typeorm';
 import { ExpressionEntity } from '../../domain/expression.entity';
 import { ExpressionPort } from '../../port/expression.port';
-import { ExpressionResponseDto } from '../../dto/response.dto';
 import { ExpressionBlackListEntity } from 'src/expression/domain/expression-black-list.entity';
+import { ExpressionResponseDto } from 'src/expression/dto/response.dto';
 export declare class ExpressionAdapter implements ExpressionPort {
     private readonly expressionRepository;
     private readonly expressionBlackListRepository;
@@ -13,6 +13,6 @@ export declare class ExpressionAdapter implements ExpressionPort {
     findThreeExpressionsByStartIdAndCategory(startId: number, category: string): Promise<ExpressionResponseDto[]>;
     findThreeExpressionsByStartId(startId: number): Promise<ExpressionResponseDto[]>;
     saveExpressionBlackList(expression: string): Promise<ExpressionBlackListEntity>;
-    findTop5BlacklistedExpressions(): Promise<string[]>;
+    findTop20BlacklistedExpressions(): Promise<string[]>;
     toEntity(dto: any): ExpressionEntity;
 }

@@ -1,6 +1,6 @@
 import { UserExistDTO } from '../dto/response.dto';
 import { UserEntity } from '../domain/user.entity';
-import { UserEmailType } from 'src/common/types/user.type';
+import { UserEmailType } from '../../common/types/user.type';
 
 export interface UserPort {
   findUserByEmail( email: string): Promise<UserExistDTO | null>;

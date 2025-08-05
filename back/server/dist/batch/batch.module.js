@@ -10,15 +10,17 @@ exports.BatchModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const batch_service_1 = require("./service/batch.service");
-const mailer_adapter_1 = require("./adapter/out/mailer.adapter");
+const mailer_adapter_1 = require("../mailer/adapter/out/mailer.adapter");
 const batch_scheduler_1 = require("./scheduler/batch.scheduler");
-const user_entity_1 = require("../user/domain/user.entity");
-const expression_entity_1 = require("../expression/domain/expression.entity");
-const expression_adapter_1 = require("../expression/adapter/out/expression.adapter");
-const user_adapter_1 = require("../user/adpater/out/user.adapter");
-const ai_module_1 = require("../ai/ai.module");
-const expression_module_1 = require("../expression/expression.module");
-const expression_delivery_adapter_1 = require("../expression/adapter/out/expression-delivery.adapter");
+const user_entity_1 = require("src/user/domain/user.entity");
+const expression_entity_1 = require("src/expression/domain/expression.entity");
+const expression_adapter_1 = require("src/expression/adapter/out/expression.adapter");
+const user_adapter_1 = require("src/user/adpater/out/user.adapter");
+const ai_module_1 = require("src/ai/ai.module");
+const expression_module_1 = require("src/expression/expression.module");
+const expression_delivery_adapter_1 = require("src/expression/adapter/out/expression-delivery.adapter");
+const mailer_module_1 = require("src/mailer/mailer.module");
+const auth_module_1 = require("src/auth/auth.module");
 let BatchModule = class BatchModule {
 };
 exports.BatchModule = BatchModule;
@@ -27,11 +29,12 @@ exports.BatchModule = BatchModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.UserEntity, expression_entity_1.ExpressionEntity]),
             ai_module_1.AiModule,
+            mailer_module_1.MailerModule,
+            auth_module_1.AuthModule,
             (0, common_1.forwardRef)(() => expression_module_1.ExpressionModule),
         ],
         providers: [
             batch_service_1.BatchMailService,
-            mailer_adapter_1.MailerAdapter,
             batch_scheduler_1.BatchMailScheduler,
             {
                 provide: 'ExpressionPort',
@@ -47,13 +50,13 @@ exports.BatchModule = BatchModule = __decorate([
             },
             {
                 provide: 'SendMailPort',
-                useClass: mailer_adapter_1.MailerAdapter,
+                useExisting: mailer_adapter_1.MailerAdapter,
             },
         ],
         exports: [
             {
                 provide: 'SendMailPort',
-                useClass: mailer_adapter_1.MailerAdapter,
+                useExisting: mailer_adapter_1.MailerAdapter,
             },
         ]
     })

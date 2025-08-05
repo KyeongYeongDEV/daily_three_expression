@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { SendMailPort } from 'src/mailer/port/out/send-mail.port';
-import { UsersWithUuidType } from 'src/common/types/user.type';
+import { SendMailPort } from '../../../mailer/port/out/send-mail.port';
+import { UsersWithUuidType } from '../../../common/types/user.type';
 import { ExpressionResponseDto } from '../../../expression/dto/response.dto';
 import { buildExpressionMailTemplate } from '../../templates/expression-mail.template';
-import { Queue } from 'bull';
-import { InjectQueue } from '@nestjs/bull';
-import { buildVerificationCodeTemplate } from 'src/mailer/templates/verify-code.template';
+import { Queue } from 'bullmq';
+import { InjectQueue } from '@nestjs/bullmq';
+import { buildVerificationCodeTemplate } from '../../../mailer/templates/verify-code.template';
 
 
 // TODO service로 분리하기

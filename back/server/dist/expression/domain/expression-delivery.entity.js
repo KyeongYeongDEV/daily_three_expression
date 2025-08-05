@@ -28,7 +28,7 @@ __decorate([
     __metadata("design:type", Number)
 ], ExpressionDeliveryEntity.prototype, "ue_id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'timestamp' }),
+    (0, typeorm_1.CreateDateColumn)({ type: 'timestamp' }),
     __metadata("design:type", Date)
 ], ExpressionDeliveryEntity.prototype, "transmitted_at", void 0);
 __decorate([

@@ -14,16 +14,23 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiController = void 0;
 const common_1 = require("@nestjs/common");
-const openAi_service_1 = require("../../service/openAi.service");
+const openai_adapter_1 = require("../../adapter/out/openai.adapter");
 const qdrant_adapter_1 = require("../../adapter/out/qdrant.adapter");
+const ai_service_1 = require("src/ai/service/ai.service");
 let AiController = class AiController {
-    aiService;
+    openAiAdapter;
+    aiservice;
     qdrant;
-    constructor(aiService, qdrant) {
-        this.aiService = aiService;
+    constructor(openAiAdapter, aiservice, qdrant) {
+        this.openAiAdapter = openAiAdapter;
+        this.aiservice = aiservice;
         this.qdrant = qdrant;
     }
     async testGenerate() {
+        console.log('🔥 표현 생성 controller 실행');
+        const result = await this.aiservice.generateAndSaveUniqueExpressions();
+        console.log('🔥 Gemini 응답 결과:', result);
+        return { expressions: result };
     }
     async syncAllExpressionsToQdrant() {
         this.qdrant.syncAllExpressionsToQdrant();
@@ -63,8 +70,9 @@ __decorate([
 ], AiController.prototype, "deleteAllExpressionsFromQdrant", null);
 exports.AiController = AiController = __decorate([
     (0, common_1.Controller)('ai'),
-    __param(1, (0, common_1.Inject)('QdrantPort')),
-    __metadata("design:paramtypes", [openAi_service_1.OpenAiService,
+    __param(2, (0, common_1.Inject)('QdrantPort')),
+    __metadata("design:paramtypes", [openai_adapter_1.OpenaiAdapter,
+        ai_service_1.AiService,
         qdrant_adapter_1.QdrantAdapter])
 ], AiController);
 //# sourceMappingURL=ai.controller.js.map

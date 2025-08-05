@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ExpressionDeliveryPort } from '../../port/expression-delivery.port';
 
-import { DeliveryStatus, ExpressionDeliveryEntity } from 'src/expression/domain/expression-delivery.entity';
+import { DeliveryStatus, ExpressionDeliveryEntity } from '../../../expression/domain/expression-delivery.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ExpressionResponseDto } from 'src/expression/dto/response.dto';
+import { ExpressionResponseDto } from '../../../expression/dto/response.dto';
 
 @Injectable()
 export class ExpressionDeliveryAdapter implements ExpressionDeliveryPort {

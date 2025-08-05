@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TestUserPort } from '../../port/test-user.port';
 import { TestUserEntity } from '../../domain/test-user.entity';
-import { UsersWithUuidType } from 'src/common/types/user.type';
+import { UsersWithUuidType } from '../../../common/types/user.type';
 
 @Injectable()
 export class TestUserQueryAdapter implements TestUserPort {

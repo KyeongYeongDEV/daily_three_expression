@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { BatchMailService } from '../service/batch.service';
-import { AiService } from 'src/ai/service/ai.service';
+import { AiService } from '../../ai/service/ai.service';
 
 @Injectable()
 export class BatchMailScheduler {

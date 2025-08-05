@@ -5,7 +5,8 @@ import { JwtPort } from '../port/out/jwt.port';
 import { UserService } from 'src/user/service/user.service';
 import { LoginDto } from '../dto/auth.dto';
 import { Response } from 'express';
-import { SendMailPort } from 'src/batch/port/out/send-mail.port';
+import { SendMailPort } from 'src/mailer/port/out/send-mail.port';
+import { UserEmailType, UsersWithUuidType } from 'src/common/types/user.type';
 export declare class AuthService implements AuthServicePort {
     private readonly redisPort;
     private readonly jwtPort;
@@ -26,5 +27,9 @@ export declare class AuthService implements AuthServicePort {
     private generateOneDigit;
     private generateVerificationCode;
     sendEmailVerificationCode(email: string): Promise<string>;
-    verifyEmailCode(email: string, code: string): Promise<string>;
+    verifyEmailCode(email: string, code: string): Promise<any>;
+    private generateUuidToken;
+    createUuidTokenForEmails(users: UserEmailType[]): Promise<UsersWithUuidType[]>;
+    createUuidToken(email: string): Promise<string>;
+    verifyUuidToken(email: string, uuidToken: string): Promise<boolean>;
 }

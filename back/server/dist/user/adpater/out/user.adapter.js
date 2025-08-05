@@ -19,8 +19,10 @@ const typeorm_2 = require("typeorm");
 const user_entity_1 = require("../../domain/user.entity");
 let UserAdapter = class UserAdapter {
     userRepository;
-    constructor(userRepository) {
+    dataSource;
+    constructor(userRepository, dataSource) {
         this.userRepository = userRepository;
+        this.dataSource = dataSource;
     }
     async findAllUsersEmail() {
         const results = await this.userRepository
@@ -41,6 +43,7 @@ let UserAdapter = class UserAdapter {
     async findUserByEmail(email) {
         return this.userRepository.createQueryBuilder('user')
             .where('user.email = :email', { email })
+            .andWhere('user.is_email_subscribed = true')
             .getOne();
     }
     async findUserByUid(u_id) {
@@ -50,16 +53,40 @@ let UserAdapter = class UserAdapter {
             'user.email',
         ])
             .where('user.u_id = :u_id', { u_id })
+            .andWhere('user.is_email_subscribed = true')
             .getOne();
     }
     async saveUser(user) {
-        return this.userRepository.save(user);
+        const result = await this.dataSource.query(`INSERT INTO "user" (email, is_email_verified, is_email_subscribed)
+      VALUES ($1, $2, $3)
+      RETURNING u_id`, [
+            user.email,
+            user.is_email_verified,
+            user.is_email_subscribed,
+        ]);
+        const insertedId = result.insertId || result[0]?.insertId;
+        return {
+            ...user,
+            u_id: insertedId,
+        };
+    }
+    async updateSubscribeStatus(email, isSubscribed) {
+        await this.userRepository.update({ email }, { is_email_subscribed: isSubscribed });
+    }
+    async updateSubscribeByEmail(email) {
+        await this.userRepository.update({ email }, { is_email_subscribed: true });
+        const user = await this.findUserInfoByEmail(email);
+        if (!user) {
+            throw new Error(`User with email ${email} not found`);
+        }
+        return user;
     }
 };
 exports.UserAdapter = UserAdapter;
 exports.UserAdapter = UserAdapter = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.DataSource])
 ], UserAdapter);
 //# sourceMappingURL=user.adapter.js.map

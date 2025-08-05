@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { GeminiPort } from '../port/out/gemini.port';
 import { QdrantPort } from '../port/out/qdrant.port';
-import { ExpressionPort } from 'src/expression/port/expression.port';
-import { ExpressionEntity } from 'src/expression/domain/expression.entity';
-import { WebhookService } from 'src/common/service/webhook.service';
+import { ExpressionPort } from '../../expression/port/expression.port';
+import { ExpressionEntity } from '../../expression/domain/expression.entity';
+import { WebhookService } from '../../common/service/webhook.service';
 
 @Injectable()
 export class AiService {

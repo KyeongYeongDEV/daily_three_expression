@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { ExpressionDeliveryPort } from '../../port/expression-delivery.port';
-import { ExpressionResponseDto } from '../../dto/response.dto';
 import { DeliveryStatus, ExpressionDeliveryEntity } from 'src/expression/domain/expression-delivery.entity';
+import { ExpressionResponseDto } from 'src/expression/dto/response.dto';
 export declare class ExpressionDeliveryAdapter implements ExpressionDeliveryPort {
     private readonly expressionDeliveryRepository;
     constructor(expressionDeliveryRepository: Repository<ExpressionDeliveryEntity>);

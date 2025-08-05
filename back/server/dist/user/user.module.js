@@ -13,8 +13,11 @@ const user_controller_1 = require("./adpater/in/user.controller");
 const user_service_1 = require("./service/user.service");
 const user_entity_1 = require("./domain/user.entity");
 const user_adapter_1 = require("./adpater/out/user.adapter");
-const redis_adpter_1 = require("../auth/adapter/out/redis.adpter");
-const config_module_1 = require("../common/config/config.module");
+const redis_adpter_1 = require("src/auth/adapter/out/redis.adpter");
+const config_module_1 = require("src/common/config/config.module");
+const test_user_port_1 = require("./port/test-user.port");
+const test_user_adapter_1 = require("./adpater/out/test-user.adapter");
+const test_user_entity_1 = require("./domain/test-user.entity");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
@@ -22,6 +25,7 @@ exports.UserModule = UserModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.UserEntity]),
+            typeorm_1.TypeOrmModule.forFeature([test_user_entity_1.TestUserEntity]),
             config_module_1.RedisConfigModule
         ],
         controllers: [user_controller_1.UserController],
@@ -37,8 +41,12 @@ exports.UserModule = UserModule = __decorate([
                 provide: 'RedisPort',
                 useExisting: redis_adpter_1.RedisAdapter,
             },
+            {
+                provide: test_user_port_1.TestUserPort,
+                useClass: test_user_adapter_1.TestUserQueryAdapter,
+            },
         ],
-        exports: [user_service_1.UserService],
+        exports: [user_service_1.UserService, test_user_port_1.TestUserPort],
     })
 ], UserModule);
 //# sourceMappingURL=user.module.js.map

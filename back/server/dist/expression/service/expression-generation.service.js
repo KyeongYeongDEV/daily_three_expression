@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpressionGenerationService = void 0;
 const common_1 = require("@nestjs/common");
-const openAi_service_1 = require("../../ai/service/openAi.service");
+const ai_service_1 = require("../../ai/service/ai.service");
 let ExpressionGenerationService = class ExpressionGenerationService {
     aiService;
     expressionPort;
@@ -26,41 +26,12 @@ let ExpressionGenerationService = class ExpressionGenerationService {
     }
     MAX_RETRY = 10;
     TARGET_COUNT = 3;
-    async runExpressionGenerationBatch() {
-        console.log('✅ Batch Expression Generation started');
-        let savedCount = 0;
-        for (let attempt = 0; attempt < this.MAX_RETRY; attempt++) {
-            const candidates = await this.aiService.getExpressionFromGPT();
-            for (const exp of candidates) {
-                const expressionEntity = this.expressionPort.toEntity(exp);
-                try {
-                    const result = await this.qdrant.trySaveIfNotSimilar(expressionEntity);
-                    if (result) {
-                        savedCount++;
-                        console.log(`누적 저장 ${savedCount}개`);
-                    }
-                    else {
-                        console.warn(`예상치 못한 응답: ${result}`);
-                    }
-                }
-                catch (err) {
-                    console.error(`표현 처리 중 오류: ${exp.expression}`, err);
-                }
-            }
-            if (savedCount >= this.TARGET_COUNT) {
-                console.log(`${savedCount}개 표현 저장 완료`);
-                return;
-            }
-            console.log(`아직 ${savedCount}/${this.TARGET_COUNT} 저장됨 → GPT 재요청`);
-        }
-        console.warn(`최대 ${this.MAX_RETRY}회 시도했지만 ${savedCount}개만 저장됨`);
-    }
 };
 exports.ExpressionGenerationService = ExpressionGenerationService;
 exports.ExpressionGenerationService = ExpressionGenerationService = __decorate([
     (0, common_1.Injectable)(),
     __param(1, (0, common_1.Inject)('ExpressionPort')),
     __param(2, (0, common_1.Inject)('QdrantPort')),
-    __metadata("design:paramtypes", [openAi_service_1.OpenAiService, Object, Object])
+    __metadata("design:paramtypes", [ai_service_1.AiService, Object, Object])
 ], ExpressionGenerationService);
 //# sourceMappingURL=expression-generation.service.js.map

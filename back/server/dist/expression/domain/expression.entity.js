@@ -32,7 +32,8 @@ __decorate([
     __metadata("design:type", Number)
 ], ExpressionEntity.prototype, "e_id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ type: 'int' }),
+    (0, typeorm_1.Generated)('increment'),
     __metadata("design:type", Number)
 ], ExpressionEntity.prototype, "expression_number", void 0);
 __decorate([

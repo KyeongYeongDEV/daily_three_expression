@@ -1,12 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { SendMailPort } from '../../mailer/port/out/send-mail.port';
-import { UsersWithUuidType, UserEmailType } from 'src/common/types/user.type';
-import { ExpressionResponseDto } from 'src/expression/dto/response.dto';
-import { ExpressionPort } from 'src/expression/port/expression.port';
-import { ExpressionDeliveryPort } from 'src/expression/port/expression-delivery.port';
-import { UserPort } from 'src/user/port/user.port';
-import { SendExpressionMailParams } from 'src/mailer/type/send-expression-mail-params';
-import { AuthServicePort } from 'src/auth/port/in/auth.service.port';
+import { UsersWithUuidType, UserEmailType } from '../../common/types/user.type';
+import { ExpressionResponseDto } from '../../expression/dto/response.dto';
+import { ExpressionPort } from '../../expression/port/expression.port';
+import { ExpressionDeliveryPort } from '../../expression/port/expression-delivery.port';
+import { UserPort } from '../../user/port/user.port';
+import { AuthServicePort } from '../../auth/port/in/auth.service.port';
 
 @Injectable()
 export class BatchMailService {

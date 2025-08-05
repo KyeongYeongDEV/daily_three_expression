@@ -1,10 +1,10 @@
 // src/config/typeorm.config.ts
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
-import { ExpressionEntity } from 'src/expression/domain/expression.entity';
-import { UserEntity } from 'src/user/domain/user.entity';
-import { ExpressionDeliveryEntity } from 'src/expression/domain/expression-delivery.entity';
-import { ExpressionBlackListEntity } from 'src/expression/domain/expression-black-list.entity';
+import { ExpressionEntity } from '../../expression/domain/expression.entity';
+import { UserEntity } from '../../user/domain/user.entity';
+import { ExpressionDeliveryEntity } from '../../expression/domain/expression-delivery.entity';
+import { ExpressionBlackListEntity } from '../../expression/domain/expression-black-list.entity';
 
 export const typeOrmConfig = async (
   configService: ConfigService,

@@ -3,7 +3,7 @@ import OpenAI from 'openai';
 import { ConfigService } from '@nestjs/config';
 import { functions } from '../../../common/helpers/openAI.helper';
 import { OpenAiPort } from '../../port/out/openai.port';
-import { ExpressionPort } from 'src/expression/port/expression.port';
+import { ExpressionPort } from '../../../expression/port/expression.port';
 
 @Injectable()
 export class OpenaiAdapter implements OpenAiPort {

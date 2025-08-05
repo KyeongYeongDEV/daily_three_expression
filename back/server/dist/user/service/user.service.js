@@ -15,10 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const user_entity_1 = require("../domain/user.entity");
-const response_helper_1 = require("../../common/helpers/response.helper");
+const response_helper_1 = require("src/common/helpers/response.helper");
+const db_error_util_1 = require("src/common/utils/db-error.util");
 let UserService = class UserService {
     userPort;
     redisPort;
+    findAllUsersEmail() {
+        throw new Error('Method not implemented.');
+    }
     constructor(userPort, redisPort) {
         this.userPort = userPort;
         this.redisPort = redisPort;
@@ -30,40 +34,52 @@ let UserService = class UserService {
         }
         return user;
     }
+    async getAllUsersEmail() {
+        try {
+            const userEmails = await this.userPort.findAllUsersEmail();
+            return response_helper_1.ResponseHelper.success(userEmails, '모든 회원들 이메일 정보 조회에 성공했습니다');
+        }
+        catch (error) {
+            console.error('[getAllUsersEmail] ', error);
+            return response_helper_1.ResponseHelper.fail('이메일 조회에 실패했습니다.', 500);
+        }
+    }
     async isExistsUserByEmail(email) {
         const exists = await this.userPort.findUserByEmail(email);
         return !!exists;
     }
     mapToUserEntity(dto) {
-        const current = new Date();
         const user = new user_entity_1.UserEntity();
         user.email = dto.email;
         user.is_email_verified = dto.is_email_verified;
         user.is_email_subscribed = dto.is_email_subscribed;
-        user.created_at = current;
-        user.updated_at = current;
         return user;
     }
     async registerUser(userRegisterRequestDto) {
-        try {
-            if (await this.isExistsUserByEmail(userRegisterRequestDto.email)) {
-                throw new Error('이미 존재하는 회원입니다');
-            }
-            const isVerifiedEmail = await this.redisPort.isVerifiedEmail(userRegisterRequestDto.email);
-            if (!isVerifiedEmail) {
-                throw new Error('이메일 인증이 필요합니다');
-            }
-            const user = this.mapToUserEntity(userRegisterRequestDto);
-            const result = await this.userPort.saveUser(user);
-            if (!result) {
-                throw new Error('사용자 정보 저장 실패');
-            }
-            await this.redisPort.deleteVerifiedEmail(userRegisterRequestDto.email);
-            return response_helper_1.ResponseHelper.success(result, '회원가입에 성공했습니다');
+        const { email } = userRegisterRequestDto;
+        const isVerified = await this.redisPort.isVerifiedEmail(email);
+        if (!isVerified) {
+            return response_helper_1.ResponseHelper.fail('이메일 인증이 필요합니다.', 400);
         }
-        catch (error) {
-            console.error('[registerUser] ', error);
-            return response_helper_1.ResponseHelper.fail('회원가입에 실패했습니다', 400);
+        const user = this.mapToUserEntity(userRegisterRequestDto);
+        try {
+            const saved = await this.userPort.saveUser(user);
+            return response_helper_1.ResponseHelper.success(saved, '회원가입에 성공했습니다');
+        }
+        catch (err) {
+            if ((0, db_error_util_1.isDuplicateKeyError)(err)) {
+                const existing = await this.userPort.findUserInfoByEmail(email);
+                if (!existing) {
+                    return response_helper_1.ResponseHelper.fail('[registerUser] 회원을 찾을 수 없습니다.', 500);
+                }
+                if (existing.is_email_subscribed) {
+                    return response_helper_1.ResponseHelper.fail('[registerUser] 이미 구독 중인 이메일입니다.', 409);
+                }
+                const updatedUser = await this.userPort.updateSubscribeStatus(email, true);
+                return response_helper_1.ResponseHelper.success(updatedUser ?? null, '구독이 재활성화 되었습니다.');
+            }
+            console.error('[registerUser] ', err);
+            return response_helper_1.ResponseHelper.fail('회원가입에 실패했습니다', 500);
         }
     }
     async getUserInfoByEmail(userEmailRequestDto) {
@@ -97,6 +113,21 @@ let UserService = class UserService {
     }
     async updateSubscribeVerified(userVerifiedUpdateRequestDto) {
         return this.updateUserVerifiedFlag(userVerifiedUpdateRequestDto.u_id, 'is_email_subscribed', userVerifiedUpdateRequestDto.verified);
+    }
+    async updateSubscribeStatus(email, token) {
+        try {
+            const savedToken = await this.redisPort.getUuidToken(email);
+            if (!savedToken || savedToken !== token) {
+                return response_helper_1.ResponseHelper.fail('유효하지 않은 구독 해지 요청입니다.', 400);
+            }
+            await this.userPort.updateSubscribeStatus(email, false);
+            await this.redisPort.deleteUuidToken(email);
+            return response_helper_1.ResponseHelper.success(null, '구독 해지에 성공했습니다.');
+        }
+        catch (error) {
+            console.error('[unsubscribe] ', error);
+            return response_helper_1.ResponseHelper.fail('구독 해지에 실패했습니다.', 500);
+        }
     }
 };
 exports.UserService = UserService;

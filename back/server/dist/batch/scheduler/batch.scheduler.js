@@ -11,30 +11,28 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BatchMailScheduler = void 0;
 const common_1 = require("@nestjs/common");
-const schedule_1 = require("@nestjs/schedule");
 const batch_service_1 = require("../service/batch.service");
-const expression_generation_service_1 = require("../../expression/service/expression-generation.service");
+const ai_service_1 = require("src/ai/service/ai.service");
 let BatchMailScheduler = class BatchMailScheduler {
     batchService;
-    expressionGenerator;
-    constructor(batchService, expressionGenerator) {
+    aiService;
+    constructor(batchService, aiService) {
         this.batchService = batchService;
-        this.expressionGenerator = expressionGenerator;
+        this.aiService = aiService;
     }
-    async handleCron() {
+    async sendExpressionByEmail() {
+        console.log('✅ Batch Send Expression started');
         await this.batchService.sendEmails();
+    }
+    async getExpressionFromAi() {
+        console.log('✅ Batch Get Expression From AI started');
+        await this.aiService.generateAndSaveUniqueExpressions();
     }
 };
 exports.BatchMailScheduler = BatchMailScheduler;
-__decorate([
-    (0, schedule_1.Cron)('0 6 * * 1-5'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], BatchMailScheduler.prototype, "handleCron", null);
 exports.BatchMailScheduler = BatchMailScheduler = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [batch_service_1.BatchMailService,
-        expression_generation_service_1.ExpressionGenerationService])
+        ai_service_1.AiService])
 ], BatchMailScheduler);
 //# sourceMappingURL=batch.scheduler.js.map

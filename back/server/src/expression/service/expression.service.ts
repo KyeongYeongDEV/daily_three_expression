@@ -2,9 +2,9 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { EXPRESSION_PORT, ExpressionPort } from '../port/expression.port';
 import { EXPRESSION_DELIVERY_PORT, ExpressionDeliveryPort } from '../port/expression-delivery.port';
 import { ExpressionEntity } from '../domain/expression.entity';
-import { ResponseHelper } from 'src/common/helpers/response.helper';
+import { ResponseHelper } from '../../common/helpers/response.helper';
 import { ExpressionResponseDto } from '../dto/response.dto';
-import { ExpressionListResponse, ExpressionResponse } from 'src/common/types/response.type';
+import { ExpressionListResponse, ExpressionResponse } from '../../common/types/response.type';
 import { ExpressionBlackListEntity } from '../domain/expression-black-list.entity';
 
 @Injectable()

@@ -17,7 +17,9 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const expression_entity_1 = require("../../domain/expression.entity");
-const expression_black_list_entity_1 = require("../../domain/expression-black-list.entity");
+const expression_black_list_entity_1 = require("src/expression/domain/expression-black-list.entity");
+const response_dto_1 = require("src/expression/dto/response.dto");
+const class_transformer_1 = require("class-transformer");
 let ExpressionAdapter = class ExpressionAdapter {
     expressionRepository;
     expressionBlackListRepository;
@@ -29,7 +31,8 @@ let ExpressionAdapter = class ExpressionAdapter {
         return this.expressionRepository.save(expression);
     }
     async findAll() {
-        return this.expressionRepository.find();
+        const entities = await this.expressionRepository.find();
+        return (0, class_transformer_1.plainToInstance)(response_dto_1.ExpressionResponseDto, entities);
     }
     async findById(id) {
         return this.expressionRepository.findOneBy({ e_id: id });
@@ -50,29 +53,20 @@ let ExpressionAdapter = class ExpressionAdapter {
             .getMany();
     }
     async saveExpressionBlackList(expression) {
-        console.log(`🧪 saveExpressionBlackList 호출됨: ${expression}`);
-        const found = await this.expressionBlackListRepository.findOne({ where: { expression } });
-        if (found) {
-            found.count += 1;
-            const result = await this.expressionBlackListRepository.save(found);
-            console.log(`🔁 count 증가 완료: ${found.expression} → ${found.count}`);
-            return result;
-        }
-        else {
-            const newEntry = this.expressionBlackListRepository.create({
-                expression,
-                count: 1,
-            });
-            const result = await this.expressionBlackListRepository.save(newEntry);
-            console.log(`🆕 새 표현 저장 완료: ${newEntry.expression}`);
-            return result;
-        }
+        await this.expressionBlackListRepository.query(`
+      INSERT INTO expression_black_list(expression, count)
+      VALUES ($1, 1)
+      ON CONFLICT (expression)
+      DO UPDATE SET count = expression_black_list.count + 1
+      `, [expression]);
+        const updated = await this.expressionBlackListRepository.findOne({ where: { expression } });
+        return updated;
     }
-    async findTop5BlacklistedExpressions() {
+    async findTop20BlacklistedExpressions() {
         const records = await this.expressionBlackListRepository
             .createQueryBuilder('blacklist')
             .orderBy('blacklist.count', 'DESC')
-            .limit(5)
+            .limit(20)
             .getMany();
         return records.map(record => record.expression);
     }

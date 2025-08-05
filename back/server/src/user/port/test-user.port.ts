@@ -1,4 +1,4 @@
-import { UsersWithUuidType } from 'src/common/types/user.type';
+import { UsersWithUuidType } from '../../common/types/user.type';
 
 export const TestUserPort = 'TestUserPort';
 

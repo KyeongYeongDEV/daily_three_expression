@@ -16,7 +16,7 @@ exports.ExpressionService = void 0;
 const common_1 = require("@nestjs/common");
 const expression_port_1 = require("../port/expression.port");
 const expression_delivery_port_1 = require("../port/expression-delivery.port");
-const response_helper_1 = require("../../common/helpers/response.helper");
+const response_helper_1 = require("src/common/helpers/response.helper");
 let ExpressionService = class ExpressionService {
     expressionPort;
     expressionDeliveryPort;

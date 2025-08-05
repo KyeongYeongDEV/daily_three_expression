@@ -25,7 +25,7 @@ let RedisAdapter = class RedisAdapter {
     }
     async saveEmailVerificationCode(email, code) {
         const key = `verify:${email}`;
-        await this.redisClient.set(key, code, 'EX', 60 * 10);
+        await this.redisClient.set(key, code, 'EX', 60 * 2);
     }
     async getEmailVerificationCode(email) {
         const key = `verify:${email}`;
@@ -37,7 +37,7 @@ let RedisAdapter = class RedisAdapter {
     }
     async saveVerifiedEmail(email) {
         const key = `isVerifiedEmail:${email}`;
-        await this.redisClient.set(key, 'true', 'EX', 60 * 30);
+        await this.redisClient.set(key, 'true', 'EX', 60);
     }
     async isVerifiedEmail(email) {
         const key = `isVerifiedEmail:${email}`;
@@ -57,6 +57,15 @@ let RedisAdapter = class RedisAdapter {
     }
     async deleteRefreshToken(email) {
         await this.redisClient.del(`refresh:${email}`);
+    }
+    async saveUuidToken(email, UuidToken) {
+        await this.redisClient.set(`uuid:${email}`, UuidToken, 'EX', 60 * 60 * 24);
+    }
+    async getUuidToken(email) {
+        return this.redisClient.get(`uuid:${email}`);
+    }
+    async deleteUuidToken(email) {
+        await this.redisClient.del(`uuid:${email}`);
     }
 };
 exports.RedisAdapter = RedisAdapter;

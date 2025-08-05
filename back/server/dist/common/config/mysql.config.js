@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.typeOrmConfig = void 0;
-const expression_entity_1 = require("../../expression/domain/expression.entity");
-const user_entity_1 = require("../../user/domain/user.entity");
-const expression_delivery_entity_1 = require("../../expression/domain/expression-delivery.entity");
-const expression_black_list_entity_1 = require("../../expression/domain/expression-black-list.entity");
+const expression_entity_1 = require("src/expression/domain/expression.entity");
+const user_entity_1 = require("src/user/domain/user.entity");
+const expression_delivery_entity_1 = require("src/expression/domain/expression-delivery.entity");
+const expression_black_list_entity_1 = require("src/expression/domain/expression-black-list.entity");
 const typeOrmConfig = async (configService) => {
     return {
         type: 'mysql',
