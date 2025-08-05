@@ -65,7 +65,7 @@ export class EmailProcessor {
     }
   } 
 
-  @Process({name : 'send-expression' })//, concurrency : 10
+  @Process({name : 'send-expression' , concurrency : 20}) 
   async handleSendExpressionEmail(job: Job<{ to: string; html: string; u_id: number; deliveredId: number }>) {
     const { to, html, u_id, deliveredId } = job.data;
     
