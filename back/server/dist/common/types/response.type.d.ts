@@ -1,5 +1,5 @@
-import { ExpressionResponseDto } from "src/expression/dto/response.dto";
-import { UserEntity } from "src/user/domain/user.entity";
+import { ExpressionResponseDto } from "../../expression/dto/response.dto";
+import { UserEntity } from "../../user/domain/user.entity";
 interface ApiResponse<T> {
     success: boolean;
     statusCode: number;

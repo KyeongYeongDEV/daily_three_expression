@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const user_entity_1 = require("../domain/user.entity");
-const response_helper_1 = require("src/common/helpers/response.helper");
-const db_error_util_1 = require("src/common/utils/db-error.util");
+const response_helper_1 = require("../../common/helpers/response.helper");
+const db_error_util_1 = require("../../common/utils/db-error.util");
 let UserService = class UserService {
     userPort;
     redisPort;

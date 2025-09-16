@@ -16,7 +16,7 @@ exports.AiController = void 0;
 const common_1 = require("@nestjs/common");
 const openai_adapter_1 = require("../../adapter/out/openai.adapter");
 const qdrant_adapter_1 = require("../../adapter/out/qdrant.adapter");
-const ai_service_1 = require("src/ai/service/ai.service");
+const ai_service_1 = require("../../service/ai.service");
 let AiController = class AiController {
     openAiAdapter;
     aiservice;

@@ -1,5 +1,5 @@
 import { JwtService } from "@nestjs/jwt";
-import { JwtPort } from "src/auth/port/out/jwt.port";
+import { JwtPort } from "../../../auth/port/out/jwt.port";
 export declare class JwtAdapter implements JwtPort {
     private readonly jwtService;
     constructor(jwtService: JwtService);

@@ -51,11 +51,25 @@ export class UserAdapter implements UserPort {
     .getOne();
   }
 
-  async saveUser(user: UserEntity): Promise<UserEntity> {
-    const result = await this.dataSource.query(
-      `INSERT INTO "user" (email, is_email_verified, is_email_subscribed)
+  async saveUser(user: UserEntity): Promise<UserEntity & { is_created: boolean }> {
+    const rows = await this.dataSource.query(
+      `
+      INSERT INTO "user" (email, is_email_verified, is_email_subscribed)
       VALUES ($1, $2, $3)
-      RETURNING u_id`,
+      ON CONFLICT (email)
+      DO UPDATE SET
+        is_email_verified   = EXCLUDED.is_email_verified,
+        is_email_subscribed = EXCLUDED.is_email_subscribed,
+        updated_at          = NOW()
+      RETURNING
+        u_id,
+        email,
+        is_email_verified,
+        is_email_subscribed,
+        created_at,
+        updated_at,
+        (xmax = 0) AS is_created   -- true면 신규 INSERT, false면 UPDATE
+      `,
       [
         user.email,
         user.is_email_verified,
@@ -63,14 +77,9 @@ export class UserAdapter implements UserPort {
       ]
     );
   
-    // INSERT 결과로 생성된 ID를 반환하려면 다음과 같이 처리
-    const insertedId = result.insertId || result[0]?.insertId;
-  
-    return {
-      ...user,
-      u_id: insertedId,
-    };
+    return rows[0];
   }
+  
 
   async updateSubscribeStatus(email: string, isSubscribed: boolean): Promise<void> {
     await this.userRepository.update(
@@ -78,6 +87,7 @@ export class UserAdapter implements UserPort {
       { is_email_subscribed: isSubscribed }
     );
   }
+
   async updateSubscribeByEmail(email: string): Promise<UserEntity> {
     await this.userRepository.update({ email }, { is_email_subscribed: true });
     const user = await this.findUserInfoByEmail(email);

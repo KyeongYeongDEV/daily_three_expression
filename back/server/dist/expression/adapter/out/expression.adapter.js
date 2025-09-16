@@ -17,8 +17,8 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const expression_entity_1 = require("../../domain/expression.entity");
-const expression_black_list_entity_1 = require("src/expression/domain/expression-black-list.entity");
-const response_dto_1 = require("src/expression/dto/response.dto");
+const expression_black_list_entity_1 = require("../../../expression/domain/expression-black-list.entity");
+const response_dto_1 = require("../../../expression/dto/response.dto");
 const class_transformer_1 = require("class-transformer");
 let ExpressionAdapter = class ExpressionAdapter {
     expressionRepository;

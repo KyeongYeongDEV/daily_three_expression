@@ -2,7 +2,7 @@ import { DataSource, Repository } from 'typeorm';
 import { UserEntity } from '../../domain/user.entity';
 import { UserPort } from '../../port/user.port';
 import { UserExistDTO } from '../../dto/response.dto';
-import { UserEmailType } from 'src/common/types/user.type';
+import { UserEmailType } from '../../../common/types/user.type';
 export declare class UserAdapter implements UserPort {
     private readonly userRepository;
     private readonly dataSource;

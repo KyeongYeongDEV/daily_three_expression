@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BatchMailScheduler = void 0;
 const common_1 = require("@nestjs/common");
 const batch_service_1 = require("../service/batch.service");
-const ai_service_1 = require("src/ai/service/ai.service");
+const ai_service_1 = require("../../ai/service/ai.service");
 let BatchMailScheduler = class BatchMailScheduler {
     batchService;
     aiService;

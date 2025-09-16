@@ -1,8 +1,8 @@
-import { CreateTokenResponse, EmailResponse, LogoutResponse, VerifyTokenResponse } from "src/auth/dto/response.dto";
-import { ResponseHelper } from "src/common/helpers/response.helper";
+import { CreateTokenResponse, EmailResponse, LogoutResponse, VerifyTokenResponse } from "../../../auth/dto/response.dto";
+import { ResponseHelper } from "../../../common/helpers/response.helper";
 import { LoginDto } from "../../dto/auth.dto";
 import { Response } from "express";
-import { UsersWithUuidType, UserEmailType } from "src/common/types/user.type";
+import { UsersWithUuidType, UserEmailType } from "../../../common/types/user.type";
 export interface AuthServicePort {
     createToken(u_id: number, email: string): Promise<CreateTokenResponse>;
     reissue(email: string, refreshToken: string): Promise<CreateTokenResponse>;

@@ -1,6 +1,6 @@
 import { OpenaiAdapter } from '../../adapter/out/openai.adapter';
 import { QdrantAdapter } from '../../adapter/out/qdrant.adapter';
-import { AiService } from 'src/ai/service/ai.service';
+import { AiService } from '../../service/ai.service';
 export declare class AiController {
     private readonly openAiAdapter;
     private readonly aiservice;

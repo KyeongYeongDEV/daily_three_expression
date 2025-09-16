@@ -1,5 +1,5 @@
 import { ExpressionService } from '../../service/expression.service';
-import { ExpressionListResponse, ExpressionResponse } from 'src/common/types/response.type';
+import { ExpressionListResponse, ExpressionResponse } from '../../../common/types/response.type';
 export declare class ExpressionController {
     private readonly expressionService;
     constructor(expressionService: ExpressionService);

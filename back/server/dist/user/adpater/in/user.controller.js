@@ -16,7 +16,7 @@ exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("../../service/user.service");
 const request_dto_1 = require("../../dto/request.dto");
-const jwt_guard_1 = require("src/auth/guard/jwt.guard");
+const jwt_guard_1 = require("../../../auth/guard/jwt.guard");
 let UserController = class UserController {
     userService;
     constructor(userService) {

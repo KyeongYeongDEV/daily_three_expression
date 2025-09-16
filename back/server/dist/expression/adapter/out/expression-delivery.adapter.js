@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpressionDeliveryAdapter = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
-const expression_delivery_entity_1 = require("src/expression/domain/expression-delivery.entity");
+const expression_delivery_entity_1 = require("../../../expression/domain/expression-delivery.entity");
 const typeorm_2 = require("@nestjs/typeorm");
 let ExpressionDeliveryAdapter = class ExpressionDeliveryAdapter {
     expressionDeliveryRepository;

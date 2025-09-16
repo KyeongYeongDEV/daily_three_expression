@@ -1,7 +1,7 @@
 import { ExpressionPort } from '../port/expression.port';
 import { ExpressionDeliveryPort } from '../port/expression-delivery.port';
 import { ExpressionEntity } from '../domain/expression.entity';
-import { ExpressionListResponse, ExpressionResponse } from 'src/common/types/response.type';
+import { ExpressionListResponse, ExpressionResponse } from '../../common/types/response.type';
 export declare class ExpressionService {
     private readonly expressionPort;
     private readonly expressionDeliveryPort;

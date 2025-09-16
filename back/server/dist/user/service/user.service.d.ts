@@ -1,8 +1,8 @@
 import { UserPort } from '../port/user.port';
 import { UserEntity } from '../domain/user.entity';
-import { UserInfoResponse } from 'src/common/types/response.type';
+import { UserInfoResponse } from '../../common/types/response.type';
 import { UserRegisterRequestDto, UserEmailRequestDto, UserVerifiedUpdateRequestDto } from '../dto/request.dto';
-import { RedisPort } from 'src/auth/port/out/redis.port';
+import { RedisPort } from '../../auth/port/out/redis.port';
 export declare class UserService {
     private readonly userPort;
     private readonly redisPort;

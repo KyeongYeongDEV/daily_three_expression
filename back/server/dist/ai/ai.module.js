@@ -15,12 +15,12 @@ const typeorm_1 = require("@nestjs/typeorm");
 const expression_entity_1 = require("../expression/domain/expression.entity");
 const qdrant_adapter_1 = require("./adapter/out/qdrant.adapter");
 const axios_1 = require("@nestjs/axios");
-const expression_adapter_1 = require("src/expression/adapter/out/expression.adapter");
-const expression_module_1 = require("src/expression/expression.module");
-const expression_black_list_entity_1 = require("src/expression/domain/expression-black-list.entity");
+const expression_adapter_1 = require("../expression/adapter/out/expression.adapter");
+const expression_module_1 = require("../expression/expression.module");
+const expression_black_list_entity_1 = require("../expression/domain/expression-black-list.entity");
 const gemini_adapter_1 = require("./adapter/out/gemini.adapter");
 const ai_service_1 = require("./service/ai.service");
-const commom_module_1 = require("src/common/commom.module");
+const commom_module_1 = require("../common/commom.module");
 let AiModule = class AiModule {
 };
 exports.AiModule = AiModule;

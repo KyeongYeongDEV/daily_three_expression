@@ -1,5 +1,5 @@
 import Redis from "ioredis";
-import { RedisPort } from "src/auth/port/out/redis.port";
+import { RedisPort } from "../../../auth/port/out/redis.port";
 export declare class RedisAdapter implements RedisPort {
     private readonly redisClient;
     constructor(redisClient: Redis);

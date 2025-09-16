@@ -1,5 +1,5 @@
-import { LoginDto, ReissueDto } from 'src/auth/dto/auth.dto';
-import { AuthService } from 'src/auth/service/auth.service';
+import { LoginDto, ReissueDto } from '../../../auth/dto/auth.dto';
+import { AuthService } from '../../../auth/service/auth.service';
 import { Response } from 'express';
 export declare class AuthController {
     private readonly authService;

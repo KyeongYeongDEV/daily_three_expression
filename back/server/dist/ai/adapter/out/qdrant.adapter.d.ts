@@ -1,6 +1,6 @@
 import { HttpService } from "@nestjs/axios";
-import { QdrantPort } from "src/ai/port/out/qdrant.port";
-import { ExpressionPort } from "src/expression/port/expression.port";
+import { QdrantPort } from "../../../ai/port/out/qdrant.port";
+import { ExpressionPort } from "../../../expression/port/expression.port";
 import { OpenaiAdapter } from "./openai.adapter";
 export declare class QdrantAdapter implements QdrantPort {
     private readonly httpService;

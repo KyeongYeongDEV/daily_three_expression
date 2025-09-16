@@ -2,11 +2,11 @@ import { AuthServicePort } from '../port/in/auth.service.port';
 import { CreateTokenResponse, EmailResponse, LogoutResponse, VerifyTokenResponse } from '../dto/response.dto';
 import { RedisPort } from '../port/out/redis.port';
 import { JwtPort } from '../port/out/jwt.port';
-import { UserService } from 'src/user/service/user.service';
+import { UserService } from '../../user/service/user.service';
 import { LoginDto } from '../dto/auth.dto';
 import { Response } from 'express';
-import { SendMailPort } from 'src/mailer/port/out/send-mail.port';
-import { UserEmailType, UsersWithUuidType } from 'src/common/types/user.type';
+import { SendMailPort } from '../../mailer/port/out/send-mail.port';
+import { UserEmailType, UsersWithUuidType } from '../../common/types/user.type';
 export declare class AuthService implements AuthServicePort {
     private readonly redisPort;
     private readonly jwtPort;
