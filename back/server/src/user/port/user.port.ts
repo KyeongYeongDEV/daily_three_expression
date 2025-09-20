@@ -10,4 +10,5 @@ export interface UserPort {
   findAllUsersEmail() : Promise<UserEmailType[]>;
   updateSubscribeStatus( email : string, is_email_subscribed: boolean ): Promise<void>;
   updateSubscribeByEmail(email: string): Promise<UserEntity>
+  findUsersForBatch(lastId: number, limit: number): Promise<UserEmailType[]>;
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bullmq';
 import { MailerAdapter } from './adapter/out/mailer.adapter';
 import { EmailProcessor } from './processors/email.processor';
@@ -10,8 +10,12 @@ import { ExpressionDeliveryAdapter } from '../expression/adapter/out/expression-
 import { UserAdapter } from '../user/adpater/out/user.adapter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '../user/domain/user.entity';
-import { TestController } from './adapter/in/test.controller';
 import { CommonModule } from '../common/commom.module';
+import { BatchModule } from '../batch/batch.module';
+
+import { TestUserEntity } from '../user/domain/test-user.entity';
+import { TestController } from './adapter/in/test.controller';
+import { TestUserQueryAdapter } from '../user/adpater/out/test-user.adapter';
 
 @Module({
   imports: [
@@ -27,6 +31,8 @@ import { CommonModule } from '../common/commom.module';
     ExpressionModule, 
     UserModule,   
     TypeOrmModule.forFeature([UserEntity]),   
+    TypeOrmModule.forFeature([TestUserEntity]),
+    forwardRef(() => BatchModule),
   ],
   providers: [
     MailerAdapter, 
@@ -42,6 +48,10 @@ import { CommonModule } from '../common/commom.module';
     {
       provide: 'UserPort',
       useClass: UserAdapter,
+    },
+    {
+      provide: 'TestUserPort',
+      useClass: TestUserQueryAdapter,
     },
   ],
   exports: [MailerAdapter],

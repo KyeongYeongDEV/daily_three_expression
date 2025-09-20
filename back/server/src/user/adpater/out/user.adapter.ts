@@ -68,7 +68,7 @@ export class UserAdapter implements UserPort {
         is_email_subscribed,
         created_at,
         updated_at,
-        (xmax = 0) AS is_created   -- true면 신규 INSERT, false면 UPDATE
+        (xmax = 0) AS is_created  
       `,
       [
         user.email,
@@ -95,5 +95,22 @@ export class UserAdapter implements UserPort {
       throw new Error(`User with email ${email} not found`);
     }
     return user; // 업데이트된 값 반환
+  }
+
+  async findUsersForBatch(lastId: number, limit: number): Promise<UserEmailType[]> {
+    const query = this.userRepository
+      .createQueryBuilder('user')
+      .select(['user.u_id', 'user.email'])
+      .where('user.is_email_subscribed = true')
+      .andWhere('user.u_id > :lastId', { lastId }) // 마지막 ID보다 큰 ID만 조회
+      .orderBy('user.u_id', 'ASC') // ID 순서로 정렬해야 페이지네이션이 보장됨
+      .limit(limit);
+
+    const results = await query.getRawMany();
+
+    return results.map(result => ({
+      u_id: result.user_u_id,
+      email: result.user_email,
+    }));
   }
 }

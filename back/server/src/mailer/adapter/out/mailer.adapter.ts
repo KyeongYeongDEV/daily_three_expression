@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { SendMailPort } from '../../../mailer/port/out/send-mail.port';
 import { UsersWithUuidType } from '../../../common/types/user.type';
 import { ExpressionResponseDto } from '../../../expression/dto/response.dto';
@@ -6,6 +6,7 @@ import { buildExpressionMailTemplate } from '../../templates/expression-mail.tem
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
 import { buildVerificationCodeTemplate } from '../../../mailer/templates/verify-code.template';
+import { TestUserPort } from '../../..//user/port/test-user.port';
 
 
 // TODO service로 분리하기
@@ -15,6 +16,8 @@ export class MailerAdapter implements SendMailPort {
   constructor(
     @InjectQueue('email') 
     private readonly emailQueue: Queue,
+    @Inject('TestUserPort') 
+    private readonly testUserPort: TestUserPort,
   ) {}
 
   async testSendExpression(): Promise<void> {
@@ -102,6 +105,67 @@ export class MailerAdapter implements SendMailPort {
       console.error('❌ 큐 작업 중 에러 발생:', error);
       return false;
     }
+
   }
-  
+  async sendEmailsToAllTestUsers(): Promise<void> {
+    console.log('[TEST BATCH START] 전체 테스트 사용자 대상 이메일 발송 작업을 시작합니다.');
+    try {
+      // 1. 테스트용 표현(공통 콘텐츠) 생성
+      const { expressions, todayLastDeliveriedId } = this._createMockExpressions();
+
+      // 2. 페이지네이션을 위한 변수 초기화
+      let lastId = 0;
+      const pageSize = 1000;
+      let totalUserCount = 0;
+
+      // 3. 루프를 돌며 모든 테스트 유저 처리
+      while (true) {
+        // 3-1. DB에서 한 페이지(1000명)의 테스트 유저 데이터를 가져옵니다.
+        console.log('🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥');
+        const userPage = await this.testUserPort.findUsersForBatch(lastId, pageSize);
+
+        if (userPage.length === 0) {
+          console.log('[TEST BATCH INFO] 모든 테스트 사용자에 대한 작업 생성을 완료했습니다.');
+          break;
+        }
+        
+        console.log(`[TEST BATCH INFO] u_id > ${lastId} 부터 ${userPage.length}명의 테스트 사용자를 처리합니다.`);
+
+        // 3-2. 기존 sendExpression 메서드를 호출하여 현재 페이지의 잡(job)을 큐에 추가합니다.
+        // TestUserPort의 findUsersForBatch가 UsersWithUuidType을 반환하도록 수정하거나, 여기서 변환이 필요합니다.
+        // 여기서는 findUsersForBatch가 UsersWithUuidType을 반환한다고 가정합니다.
+        await this.sendExpression(userPage as UsersWithUuidType[], expressions, todayLastDeliveriedId);
+
+        totalUserCount += userPage.length;
+        
+        // 3-3. 다음 페이지 조회를 위해 마지막 사용자의 ID를 커서로 사용합니다.
+        lastId = userPage[userPage.length - 1].u_id;
+      }
+
+      console.log(`[TEST BATCH END] 총 ${totalUserCount}명의 테스트 사용자에게 잡을 성공적으로 추가했습니다.`);
+    } catch (error) {
+      console.error('[TEST BATCH ERROR] 테스트 이메일 발송 작업 중 오류 발생:', error);
+      throw new Error('전체 테스트 이메일 발송 작업에 실패했습니다.');
+    }
+  }
+
+  private _createMockExpressions(): { expressions: ExpressionResponseDto[], todayLastDeliveriedId: number } {
+    const expressions: ExpressionResponseDto[] = [
+      {
+        e_id: 100,
+        category: "test",
+        expression_number: 1000,
+        expression: "Test Expression",
+        example1: "Example 1",
+        example2: "Example 2",
+        translation_expression: "테스트 표현",
+        translation_example1: "테스트 예시 1",
+        translation_example2: "테스트 예시 2",
+        created_at: new Date(),
+        is_active: true,
+      }
+    ];
+    const todayLastDeliveriedId = 99999999;
+    return { expressions, todayLastDeliveriedId };
+  }
 }

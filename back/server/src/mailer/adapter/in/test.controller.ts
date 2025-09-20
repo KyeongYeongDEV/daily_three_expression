@@ -40,6 +40,17 @@ export class TestController {
     await this.mailerAdapter.sendExpression(users, expressions, todayLastDeliveriedId);
     return 'Expression job triggered';
   }
+
+
+  @Post('/emails/all-test-users')
+  async triggerSendEmailsToAllTestUsers() {
+    await this.mailerAdapter.sendEmailsToAllTestUsers();
+
+    return {
+      message: 'Batch email job for ALL TEST USERS has been triggered.',
+    };
+  }
+
   @Post('/verify/email')
   async triggerSendEmail() {
     

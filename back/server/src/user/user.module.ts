@@ -14,12 +14,13 @@ import { TestUserEntity } from './domain/test-user.entity';
   imports: [
     TypeOrmModule.forFeature([UserEntity]),
     TypeOrmModule.forFeature([TestUserEntity]), 
-    RedisConfigModule
+    RedisConfigModule,
   ],
   controllers: [UserController],
   providers: [
     UserService,
     UserAdapter,
+    TestUserQueryAdapter,
     RedisAdapter,
     {
       provide: 'UserPort',
@@ -30,10 +31,10 @@ import { TestUserEntity } from './domain/test-user.entity';
       useExisting: RedisAdapter,
     },
     {
-      provide: TestUserPort,
+      provide: 'TestUserPort',
       useClass: TestUserQueryAdapter,
     },
   ],
-  exports: [UserService, TestUserPort],
+  exports: [UserService, 'TestUserPort'],
 })
 export class UserModule {}

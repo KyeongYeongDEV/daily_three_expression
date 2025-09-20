@@ -23,6 +23,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { AppController } from './app.controller';
 import { TestUserEntity } from './user/domain/test-user.entity';
 import { MetricsMiddleware } from './metrics/metrics.middleware';
+import { MailerModule } from './mailer/mailer.module';
 
 @Module({
   imports: [
@@ -67,6 +68,8 @@ import { MetricsMiddleware } from './metrics/metrics.middleware';
     ExpressionModule,
     AuthModule,
     MetricsModule,
+    MailerModule
+
   ],
   providers: [RedisConfig],
   controllers: [AppController],
