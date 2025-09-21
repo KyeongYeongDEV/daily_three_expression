@@ -50,7 +50,7 @@ import { MailerModule } from './mailer/mailer.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'single',
-        options: {
+        options: { 
           host: configService.get<string>('REDIS_HOST') || 'localhost',
           port: parseInt(configService.get<string>('REDIS_PORT') || '6379', 10),
         },
