@@ -4,15 +4,24 @@ global:
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['prometheus:9090']
+      - targets: ['localhost:9090']
 
-  - job_name: 'node_exporter'
+  - job_name: 'nestjs-app'
+    metrics_path: /metrics
     static_configs:
-      - targets: ['node_exporter:9100']
+      - targets: ['server:8000'] # ⬅️ 'nestjs-app'이 아니라 'server'가 서비스 이름입니다.
 
   - job_name: 'redis_exporter'
     static_configs:
-      - targets: ['redis_exporter:9121']
+      - targets: ['redis-exporter:9121'] # ⬅️ 이전 에러 발생 지점
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['node-exporter:9100'] # ⬅️ 이전 에러 발생 지점
+
+  - job_name: 'postgres_exporter'
+    static_configs:
+      - targets: ['postgres_exporter:9187']
 
   - job_name: 'cadvisor'
     static_configs:

@@ -48,8 +48,7 @@ import { MetricsMiddleware } from './metrics/metrics.middleware';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: 'single',
-        options: {
+        config: { 
           host: configService.get<string>('REDIS_HOST') || 'localhost',
           port: parseInt(configService.get<string>('REDIS_PORT') || '6379', 10),
         },
