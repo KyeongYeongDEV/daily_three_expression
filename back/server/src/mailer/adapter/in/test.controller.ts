@@ -4,6 +4,7 @@ import { UsersWithUuidType } from "../../../common/types/user.type";
 import { ExpressionResponse } from "../../../common/types/response.type";
 import { ExpressionResponseDto } from "../../../expression/dto/response.dto";
 import { TestUserPort } from "../../../user/port/test-user.port";
+import { BlockingMailerService } from "../../../mailer/service/blocking-mailer.service";
 
 @Controller('test')
 export class TestController {
@@ -11,6 +12,7 @@ export class TestController {
     private readonly mailerAdapter : MailerAdapter,
     @Inject(TestUserPort)
     private readonly testUserPort: TestUserPort,
+    private readonly blockingMailerService : BlockingMailerService
 
   ){}
 
@@ -51,8 +53,16 @@ export class TestController {
     };
   }
 
-  @Post('/verify/email')
+  @Post('/')
   async triggerSendEmail() {
+   
     
+  }
+
+  @Post('/verify/email')
+  async triggerBlockingSend() {
+    // 이 요청은 모든 이메일 발송이 끝날 때까지 응답하지 않고 기다립니다.
+    const result = await this.blockingMailerService.sendEmailVerificationCode_Before();
+    return result;
   }
 }

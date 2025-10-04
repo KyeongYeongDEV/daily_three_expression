@@ -16,6 +16,7 @@ import { BatchModule } from '../batch/batch.module';
 import { TestUserEntity } from '../user/domain/test-user.entity';
 import { TestController } from './adapter/in/test.controller';
 import { TestUserQueryAdapter } from '../user/adpater/out/test-user.adapter';
+import { BlockingMailerService } from './service/blocking-mailer.service';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { TestUserQueryAdapter } from '../user/adpater/out/test-user.adapter';
   providers: [
     MailerAdapter, 
     EmailProcessor,
+    BlockingMailerService,
     {
       provide: 'ExpressionPort',
       useExisting: ExpressionAdapter,

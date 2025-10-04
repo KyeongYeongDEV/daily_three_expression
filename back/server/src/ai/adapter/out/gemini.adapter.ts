@@ -20,7 +20,7 @@ export class GeminiAdapter implements GeminiPort, OnModuleInit {
   
     this.model = genAI.getGenerativeModel({
       //model: 'gemini-1.5-pro-latest', // pro는 유료임 
-      model: 'gemini-1.5-flash-latest',
+      model: 'gemini-1.5-flash',
       generationConfig: {
         temperature: 0.95,
         topK: 100,

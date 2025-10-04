@@ -107,6 +107,7 @@ export class MailerAdapter implements SendMailPort {
     }
 
   }
+  
   async sendEmailsToAllTestUsers(): Promise<void> {
     console.log('[TEST BATCH START] 전체 테스트 사용자 대상 이메일 발송 작업을 시작합니다.');
     try {
