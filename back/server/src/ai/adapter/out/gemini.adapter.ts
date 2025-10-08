@@ -9,7 +9,7 @@ import { geminiTools } from '../../../common/helpers/gemini.helper';
 @Injectable()
 export class GeminiAdapter implements GeminiPort {
   private auth: GoogleAuth;
-  private readonly project = '169737705347'; 
+  private project: string; 
   private readonly location = 'us-central1';
   private readonly modelName = 'gemini-2.5-flash'; 
 
@@ -17,10 +17,25 @@ export class GeminiAdapter implements GeminiPort {
     private readonly configService: ConfigService,
     private readonly httpService: HttpService,
   ) {
+    
+    const projectId = this.configService.get<string>('GOOGLE_PROJECT_ID');
+    const clientEmail = this.configService.get<string>('GOOGLE_CLIENT_EMAIL');
+    const privateKey = this.configService.get<string>('GOOGLE_PRIVATE_KEY');
+
+    if (!projectId || !clientEmail || !privateKey) {
+      throw new Error('Google credentials (PROJECT_ID, CLIENT_EMAIL, PRIVATE_KEY) are not configured in environment variables.');
+    }
+
     this.auth = new GoogleAuth({
-      keyFilename: 'google-credentials.json',
+      credentials: {
+        project_id: projectId,
+        client_email: clientEmail,
+        private_key: privateKey.replace(/\\n/g, '\n'),
+      },
       scopes: 'https://www.googleapis.com/auth/cloud-platform',
     });
+
+    this.project = projectId;
     console.log(`✅ Google Cloud Project ID를 ${this.project}로 설정했습니다.`);
   }
 
