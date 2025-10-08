@@ -1,9 +1,9 @@
-# 1단계: 빌드 스테이지 (Node.js 20 버전으로 변경)
+# 1단계: 빌드 스테이지
 FROM node:20-slim AS builder
 
 WORKDIR /app
 
-# 타임존 설정 (기존과 동일)
+# 타임존 설정
 RUN apt-get update && apt-get install -y tzdata && \
     ln -fs /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
     dpkg-reconfigure -f noninteractive tzdata && \
@@ -11,21 +11,22 @@ RUN apt-get update && apt-get install -y tzdata && \
 ENV TZ=Asia/Seoul
 
 COPY package*.json ./
-# devDependencies 포함하여 모든 의존성 설치
+# google-credentials.json은 builder 스테이지에도 복사합니다.
+COPY google-credentials.json .
+
 RUN npm install
 
-# 소스 전체 복사 후 빌드
 COPY . .
 RUN npm run build
 
 # ---
 
-# 2단계: 실행 스테이지 (Node.js 20 버전으로 변경)
+# 2단계: 실행 스테이지
 FROM node:20-slim AS runner
 
 WORKDIR /app
 
-# 타임존 설정 (기존과 동일)
+# 타임존 설정
 RUN apt-get update && apt-get install -y tzdata && \
     ln -fs /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
     dpkg-reconfigure -f noninteractive tzdata && \
@@ -33,16 +34,19 @@ RUN apt-get update && apt-get install -y tzdata && \
 ENV TZ=Asia/Seoul
 ENV NODE_OPTIONS="--experimental-global-webcrypto"
 
-# ✨ 최적화: package.json과 node_modules를 빌더에서 복사
-# 이렇게 하면 실행 환경에서 npm install을 다시 할 필요가 없습니다.
+# 의존성 및 빌드 결과물 복사
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
-
-# 빌드 결과물 및 필수 설정 파일 복사
 COPY --from=builder /app/dist ./dist
+
+# 필수 설정 파일 복사
 COPY --from=builder /app/nest-cli.json ./
 COPY --from=builder /app/tsconfig*.json ./
-COPY --from=builder /app/.env .env
 
-# tsconfig-paths는 devDependencies에 있지만, 실행에 필요하므로 node_modules 전체를 복사했습니다.
+# builder 스테이지에서 runner 스테이지로 credentials 파일을 복사합니다.
+COPY --from=builder /app/google-credentials.json ./google-credentials.json
+
+# .env 파일은 docker-compose에서 env_file로 주입되므로 Dockerfile에서 복사하지 않아도 됩니다.
+# COPY --from=builder /app/.env .env 
+
 CMD ["node", "-r", "tsconfig-paths/register", "dist/main"]
