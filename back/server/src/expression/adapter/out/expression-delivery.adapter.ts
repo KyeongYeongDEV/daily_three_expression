@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { ExpressionDeliveryPort } from '../../port/expression-delivery.port';
+import { DeliveryLogDto, ExpressionDeliveryPort } from '../../port/expression-delivery.port';
 
 import { DeliveryStatus, ExpressionDeliveryEntity } from '../../../expression/domain/expression-delivery.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -42,5 +42,19 @@ export class ExpressionDeliveryAdapter implements ExpressionDeliveryPort {
       u_id: u_id,
       e_id: e_id,
     });
+  }
+
+  async saveExpressionDeliveriesInBatch(logs: DeliveryLogDto[]): Promise<void> {
+    if (logs.length === 0) {
+      return;
+    }
+    
+    // TypeORM Query Builder를 사용해 한 번의 쿼리로 여러 데이터를 INSERT
+    await this.expressionDeliveryRepository
+      .createQueryBuilder()
+      .insert()
+      .into(ExpressionDeliveryEntity)
+      .values(logs)
+      .execute();
   }
 }

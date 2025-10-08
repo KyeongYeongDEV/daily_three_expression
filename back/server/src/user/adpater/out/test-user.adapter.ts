@@ -11,6 +11,9 @@ export class TestUserQueryAdapter implements TestUserPort {
     @InjectRepository(TestUserEntity)
     private readonly testUserRepository: Repository<TestUserEntity>,
   ) {}
+  sendEmailsToAllUsers(): Promise<{ count: number; }> {
+    throw new Error('Method not implemented.');
+  }
 
   async findAll(): Promise<UsersWithUuidType[]> {
     const users = await this.testUserRepository.find();
