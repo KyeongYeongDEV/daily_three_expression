@@ -41,10 +41,6 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/nest-cli.json ./
 COPY --from=builder /app/tsconfig*.json ./
 
-# builder 스테이지에서 runner 스테이지로 credentials 파일을 복사합니다.
-COPY --from=builder /app/google-credentials.json ./google-credentials.json
 
-# .env 파일은 docker-compose에서 env_file로 주입되므로 Dockerfile에서 복사하지 않아도 됩니다.
-# COPY --from=builder /app/.env .env 
 
 CMD ["node", "-r", "tsconfig-paths/register", "dist/main"]
