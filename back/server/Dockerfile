@@ -11,8 +11,6 @@ RUN apt-get update && apt-get install -y tzdata && \
 ENV TZ=Asia/Seoul
 
 COPY package*.json ./
-# google-credentials.json은 builder 스테이지에도 복사합니다.
-COPY google-credentials.json .
 
 RUN npm install
 
