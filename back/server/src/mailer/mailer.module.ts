@@ -11,7 +11,6 @@ import { UserAdapter } from '../user/adpater/out/user.adapter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '../user/domain/user.entity';
 import { CommonModule } from '../common/commom.module';
-import { BatchModule } from '../batch/batch.module';
 
 import { TestUserEntity } from '../user/domain/test-user.entity';
 import { TestController } from './adapter/in/test.controller';
@@ -33,7 +32,6 @@ import { BlockingMailerService } from './service/blocking-mailer.service';
     UserModule,   
     TypeOrmModule.forFeature([UserEntity]),   
     TypeOrmModule.forFeature([TestUserEntity]),
-    forwardRef(() => BatchModule),
   ],
   providers: [
     MailerAdapter, 
