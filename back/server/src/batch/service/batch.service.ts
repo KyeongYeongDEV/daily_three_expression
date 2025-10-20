@@ -47,7 +47,6 @@ export class BatchMailService {
   async sendEmailsToAllUsers(): Promise<void> {
     console.log('[BATCH START] 전체 사용자 대상 이메일 발송 작업을 시작합니다.');
     try {
-      // 1. 공통으로 사용할 표현 데이터를 미리 한 번만 조회합니다.
       const startEid: number = await this.expressionDeliveryPort.findStartExpressionId();
       const expressions: ExpressionResponseDto[] = await this.expressionPort.findThreeExpressionsByStartId(startEid);
 
@@ -57,34 +56,27 @@ export class BatchMailService {
       }
       const todayLastDeliveriedId = expressions[2].e_id;
 
-      // 2. 페이지네이션을 위한 변수를 초기화합니다.
       let lastId = 0;
-      const pageSize = 1000; // 한 번에 처리할 사용자 수
+      const pageSize = 1000; 
       let totalUserCount = 0;
 
-      // 3. 루프를 돌며 모든 사용자를 페이지 단위로 처리합니다.
       while (true) {
-        // 3-1. DB에서 한 페이지(1000명)의 사용자 데이터를 가져옵니다.
         const userPage: UserEmailType[] = await this.userPort.findUsersForBatch(lastId, pageSize);
-        
-        // 3-2. 더 이상 처리할 사용자가 없으면 루프를 종료합니다.
+
         if (userPage.length === 0) {
           console.log('[BATCH INFO] 모든 사용자에 대한 작업 생성을 완료했습니다.');
           break;
         }
 
         console.log(`[BATCH INFO] u_id > ${lastId} 부터 ${userPage.length}명의 사용자를 처리합니다.`);
-        
-        // 3-3. 현재 페이지의 사용자들에게 UUID 토큰을 생성합니다.
+
         const usersWithUuid: UsersWithUuidType[] = await this.authService.createUuidTokenForEmails(userPage);
 
-        // 3-4. 기존 sendExpression 메서드를 호출하여 현재 페이지(1000명)의 잡(job)을 큐에 추가합니다.
         await this.mailSender.sendExpression(usersWithUuid, expressions, todayLastDeliveriedId);
 
         totalUserCount += userPage.length;
         console.log(`[BATCH INFO] ${userPage.length}명에 대한 잡 추가 완료 (누적: ${totalUserCount}명)`);
 
-        // 3-5. 다음 페이지 조회를 위해 마지막 사용자의 ID를 커서로 사용합니다.
         lastId = userPage[userPage.length - 1].u_id;
       }
 
