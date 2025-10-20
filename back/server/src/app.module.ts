@@ -8,7 +8,7 @@ import { BatchModule } from './batch/batch.module';
 import { ExpressionModule } from './expression/expression.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import { ScheduleModule } from '@nestjs/schedule';
+import { ScheduleModule } from '@nestjs/schedule'; 
 import { MetricsModule } from './metrics/metrics.module';
 
 
@@ -25,61 +25,70 @@ import { TestUserEntity } from './user/domain/test-user.entity';
 import { MetricsMiddleware } from './metrics/metrics.middleware';
 import { MailerModule } from './mailer/mailer.module';
 
-@Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    ScheduleModule.forRoot(),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: jwtConfig,
-    }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: postgreConfig,
-    }),
-    TypeOrmModule.forFeature([
-      ExpressionEntity,
-      UserEntity,
-      ExpressionDeliveryEntity,
-      TestUserEntity,
-    ]),
-    RedisModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'single',
-        options: { 
-          host: configService.get<string>('REDIS_HOST') || 'localhost',
-          port: parseInt(configService.get<string>('REDIS_PORT') || '6379', 10),
-        },
-      }), 
-    }),
-    BullModule.forRoot({
-      connection: {
-        host: process.env.REDIS_HOST || 'redis',
-        port: parseInt(process.env.REDIS_PORT || '6379', 10),
+const dynamicImports = [
+  ConfigModule.forRoot({ isGlobal: true }),
+  JwtModule.registerAsync({
+    imports: [ConfigModule],
+    inject: [ConfigService],
+    useFactory: jwtConfig,
+  }),
+  TypeOrmModule.forRootAsync({
+    imports: [ConfigModule],
+    inject: [ConfigService],
+    useFactory: postgreConfig,
+  }),
+  TypeOrmModule.forFeature([
+    ExpressionEntity,
+    UserEntity,
+    ExpressionDeliveryEntity,
+    TestUserEntity,
+  ]),
+  RedisModule.forRootAsync({
+    imports: [ConfigModule],
+    inject: [ConfigService],
+    useFactory: (configService: ConfigService) => ({
+      type: 'single',
+      options: { 
+        host: configService.get<string>('REDIS_HOST') || 'localhost',
+        port: parseInt(configService.get<string>('REDIS_PORT') || '6379', 10),
       },
-    }),
-    UserModule,
-    AiModule,
-    BatchModule,
-    ExpressionModule,
-    AuthModule,
-    MetricsModule,
-    MailerModule
+    }), 
+  }),
+  BullModule.forRoot({
+    connection: {
+      host: process.env.REDIS_HOST || 'redis',
+      port: parseInt(process.env.REDIS_PORT || '6379', 10),
+    },
+  }),
+  UserModule,
+  AiModule,
+  ExpressionModule,
+  AuthModule,
+  MetricsModule,
+  MailerModule
+];
 
-  ],
+if (process.env.RUN_MODE !== 'WORKER') {
+  console.log('[AppModule] RUN_MODE is not WORKER. Loading ScheduleModule and BatchModule.');
+  dynamicImports.push(ScheduleModule.forRoot());
+  dynamicImports.push(BatchModule);
+} else {
+ 
+  console.log('[AppModule] RUN_MODE is WORKER. Skipping ScheduleModule and BatchModule.');
+}
+
+
+@Module({
+  imports: dynamicImports,
   providers: [RedisConfig],
   controllers: [AppController],
   exports : ['REDIS']
-})
+}) 
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(MetricsMiddleware)
-      .exclude({ path: 'metrics', method: RequestMethod.GET }) // 제외 조건
-      .forRoutes('*'); // 전체 라우트에 적용
+      .exclude({ path: 'metrics', method: RequestMethod.GET }) 
+      .forRoutes('*'); 
   }
 }

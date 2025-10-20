@@ -77,6 +77,7 @@ services:
       - ./server/.env
     environment:
       - TZ=Asia/Seoul
+      - RUN_MODE=SERVER
     depends_on:
       - redis
       - qdrant
@@ -154,6 +155,7 @@ services:
       - ./server/.env
     environment:
       - TZ=Asia/Seoul
+      - RUN_MODE=WORKER
     command: node -r tsconfig-paths/register dist/mailer/worker/email.worker.js
 
 
