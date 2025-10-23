@@ -7,9 +7,6 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  app.setGlobalPrefix('api', {
-    exclude: [{ path: 'metrics', method: 0 }],
-  });
 
   app.enableCors({
     origin: true, 
