@@ -1,23 +1,103 @@
 services:
-  redis:
+# 1. Redis Master (기존 redis 서비스 수정)
+  redis-master:
     image: redis:7
-    container_name: redis-server
+    container_name: redis-master
     restart: always
     ports:
-      - "6379:6379"
+      - "6379:6379" # 마스터는 호스트에서 디버깅을 위해 포트 유지
     environment:
       - TZ=Asia/Seoul
     volumes:
       - ./redis_data:/data
       - ./redis_conf/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf
-
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5
       start_period: 5s
+
+  # 2. Redis Slave 1 추가
+  redis-slave-1:
+    image: redis:7
+    container_name: redis-slave-1
+    restart: always
+    # ports: # 슬레이브는 호스트에 포트를 노출할 필요가 없습니다.
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - ./redis_slave1_data:/data # 데이터 볼륨 분리
+      - ./redis_conf/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf --slaveof redis-master 6379
+    depends_on:
+      - redis-master
+
+  # 3. Redis Slave 2 추가
+  redis-slave-2:
+    image: redis:7
+    container_name: redis-slave-2
+    restart: always
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - ./redis_slave2_data:/data # 데이터 볼륨 분리
+      - ./redis_conf/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf --slaveof redis-master 6379
+    depends_on:
+      - redis-master
+
+  # 4. Redis Sentinel 1 추가
+  sentinel-1:
+    image: redis:7
+    container_name: sentinel-1
+    restart: always
+    ports:
+      - "26379:26379" # 센티넬 포트 (호스트<->컨테이너)
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - ./redis_conf/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+
+  # 5. Redis Sentinel 2 추가
+  sentinel-2:
+    image: redis:7
+    container_name: sentinel-2
+    restart: always
+    ports:
+      - "26380:26379" # 호스트 포트 충돌 방지
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - ./redis_conf/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+
+  # 6. Redis Sentinel 3 추가
+  sentinel-3:
+    image: redis:7
+    container_name: sentinel-3
+    restart: always
+    ports:
+      - "26381:26379" # 호스트 포트 충돌 방지
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - ./redis_conf/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
 
   qdrant:
     image: qdrant/qdrant:latest
@@ -79,7 +159,12 @@ services:
       - TZ=Asia/Seoul
       - RUN_MODE=SERVER
     depends_on:
-      - redis
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+      - sentinel-1
+      - sentinel-2
+      - sentinel-3
       - qdrant
 
   # prometheus:
@@ -150,7 +235,12 @@ services:
     container_name: mail-worker
     restart: always
     depends_on:
-      - redis
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
+      - sentinel-1
+      - sentinel-2
+      - sentinel-3
     env_file:
       - ./server/.env
     environment:
