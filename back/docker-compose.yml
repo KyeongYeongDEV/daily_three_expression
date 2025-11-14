@@ -5,7 +5,7 @@ services:
     container_name: redis-master
     restart: always
     ports:
-      - "6379:6379" # 마스터는 호스트에서 디버깅을 위해 포트 유지
+      - "6380:6379" # 마스터는 호스트에서 디버깅을 위해 포트 유지
     environment:
       - TZ=Asia/Seoul
     volumes:
@@ -32,7 +32,14 @@ services:
       - ./redis_conf/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf --slaveof redis-master 6379
     depends_on:
-      - redis-master
+      redis-master:
+        condition: service_healthy # ✅ 마스터가 healthy 상태일 때까지 대기
+    healthcheck: # ✅ 슬레이브 healthcheck 추가
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s # 마스터와 동기화 시간 대기
 
   # 3. Redis Slave 2 추가
   redis-slave-2:
@@ -46,7 +53,14 @@ services:
       - ./redis_conf/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf --slaveof redis-master 6379
     depends_on:
-      - redis-master
+      redis-master:
+        condition: service_healthy # ✅ 마스터가 healthy 상태일 때까지 대기
+    healthcheck: # ✅ 슬레이브 healthcheck 추가
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
 
   # 4. Redis Sentinel 1 추가
   sentinel-1:
@@ -58,12 +72,15 @@ services:
     environment:
       - TZ=Asia/Seoul
     volumes:
-      - ./redis_conf/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    - ./server/src/common/config/sentinel.conf:/usr/local/etc/redis/sentinel.conf
     command: redis-sentinel /usr/local/etc/redis/sentinel.conf
     depends_on:
-      - redis-master
-      - redis-slave-1
-      - redis-slave-2
+      redis-master:
+        condition: service_healthy
+      redis-slave-1:
+        condition: service_healthy
+      redis-slave-2:
+        condition: service_healthy
 
   # 5. Redis Sentinel 2 추가
   sentinel-2:
@@ -75,12 +92,15 @@ services:
     environment:
       - TZ=Asia/Seoul
     volumes:
-      - ./redis_conf/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+      - ./server/src/common/config/sentinel.conf:/usr/local/etc/redis/sentinel.conf
     command: redis-sentinel /usr/local/etc/redis/sentinel.conf
     depends_on:
-      - redis-master
-      - redis-slave-1
-      - redis-slave-2
+      redis-master:
+        condition: service_healthy
+      redis-slave-1:
+        condition: service_healthy
+      redis-slave-2:
+        condition: service_healthy
 
   # 6. Redis Sentinel 3 추가
   sentinel-3:
@@ -92,12 +112,15 @@ services:
     environment:
       - TZ=Asia/Seoul
     volumes:
-      - ./redis_conf/sentinel.conf:/usr/local/etc/redis/sentinel.conf
+      - ./server/src/common/config/sentinel.conf:/usr/local/etc/redis/sentinel.conf
     command: redis-sentinel /usr/local/etc/redis/sentinel.conf
     depends_on:
-      - redis-master
-      - redis-slave-1
-      - redis-slave-2
+      redis-master:
+        condition: service_healthy
+      redis-slave-1:
+        condition: service_healthy
+      redis-slave-2:
+        condition: service_healthy
 
   qdrant:
     image: qdrant/qdrant:latest
@@ -109,7 +132,13 @@ services:
     environment:
       - TZ=Asia/Seoul
     volumes:
-      - ./qdrant_data:/qdrant/storage      
+      - ./qdrant_data:/qdrant/storage     
+    healthcheck: # ✅ Qdrant healthcheck 추가
+      test: ["CMD", "curl", "-f", "http://localhost:6333/"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
 
 #모니터링 대시보드 서비스 추가
   # bull-board:
@@ -159,13 +188,14 @@ services:
       - TZ=Asia/Seoul
       - RUN_MODE=SERVER
     depends_on:
-      - redis-master
-      - redis-slave-1
-      - redis-slave-2
-      - sentinel-1
-      - sentinel-2
-      - sentinel-3
-      - qdrant
+      sentinel-1:
+        condition: service_started
+      sentinel-2:
+        condition: service_started
+      sentinel-3:
+        condition: service_started
+      qdrant:
+        condition: service_healthy # Qdrant는 healthy까지 대기
 
   # prometheus:
   #   image: prom/prometheus
@@ -235,12 +265,12 @@ services:
     container_name: mail-worker
     restart: always
     depends_on:
-      - redis-master
-      - redis-slave-1
-      - redis-slave-2
-      - sentinel-1
-      - sentinel-2
-      - sentinel-3
+      sentinel-1:
+        condition: service_started
+      sentinel-2:
+        condition: service_started
+      sentinel-3:
+        condition: service_started
     env_file:
       - ./server/.env
     environment:
@@ -250,4 +280,6 @@ services:
 
 
 volumes:
+  redis_slave1_data: # ✅ 슬레이브 볼륨 추가
+  redis_slave2_data: # ✅ 슬레이브 볼륨 추가
   grafana-storage:

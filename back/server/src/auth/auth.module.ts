@@ -6,7 +6,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtAdapter } from './adapter/out/jwt.adapter';
 import { RedisAdapter } from './adapter/out/redis.adpter';
 import { UserModule } from '../user/user.module';
-import { RedisConfigModule } from '../common/config/config.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -21,8 +20,8 @@ import { BatchModule } from '../batch/batch.module';
       useFactory: jwtConfig,
     }),
     forwardRef(() => BatchModule),
-    RedisConfigModule,
-    UserModule,
+    ConfigModule,
+    forwardRef(() => UserModule),
     PassportModule,
   ],
   providers: [

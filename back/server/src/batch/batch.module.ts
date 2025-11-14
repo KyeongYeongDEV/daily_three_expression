@@ -17,7 +17,7 @@ import { AuthModule } from '../auth/auth.module';
   imports: [
     TypeOrmModule.forFeature([UserEntity, ExpressionEntity]),
     AiModule,
-    AuthModule,
+    forwardRef(() => AuthModule),
     forwardRef(() => MailerModule),
     forwardRef(() => ExpressionModule), 
   ],

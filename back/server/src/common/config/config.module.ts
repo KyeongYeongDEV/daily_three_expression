@@ -1,8 +1,19 @@
-import { Module } from '@nestjs/common';
-import { RedisConfig } from './redis.config';
+import { Global, Module } from '@nestjs/common';
+import { ConfigModule as NestConfigModule } from '@nestjs/config';
+import {
+  RedisWriteClientProvider,
+  RedisReadClientProvider,
+} from './redis.config';
 
+@Global() 
 @Module({
-  providers: [RedisConfig],
-  exports: ['REDIS'], 
+  imports: [
+    NestConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  ],
+  providers: [RedisWriteClientProvider, RedisReadClientProvider],
+
+  exports: [RedisWriteClientProvider, RedisReadClientProvider],
 })
-export class RedisConfigModule {}
+export class ConfigModule {}
